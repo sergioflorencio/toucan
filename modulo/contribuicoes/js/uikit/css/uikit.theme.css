@@ -1,0 +1,29 @@
+#div_cadatro{
+
+
+}
+
+		.uk-navbar {
+			border: 0px !important;
+			box-shadow: 1px 5px 8px -3px #ccc !important;
+			z-index: 1 !important;
+			position: fixed;
+			top: 0px;
+			width: 100%;
+		}
+		body {
+			padding-top: 60px !important;
+		
+		
+		
+		}
+		
+		.uk-icon-button{
+		border-radius: 100px !important;
+		}
+		
+		#cad_alertas_numero{
+		margin-top: -25px !important; 
+		margin-left: -10px !important; 
+		border-radius: 100px !important;
+		}

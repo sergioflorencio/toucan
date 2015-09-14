@@ -1,0 +1,803 @@
+﻿			
+					<div class="tm-content">
+						<div class="uk-overflow-container">
+						﻿<h3> Resultado da pesquisa</h3><table class="uk-table uk-table-hover uk-table-condensed uk-text-nowrap uk-panel-box" style="font-size: 11px;max-width: 100%;"><tbody><tr>
+							<th class="cabecalho"></th>
+							<th class="cabecalho">Selecionar</th>
+							<th class="cabecalho">Editar</th>
+							<th class="cabecalho">Status</th>
+							<th class="cabecalho">M.Canc.</th>
+							<th class="cabecalho">Captacao</th>
+							<th class="cabecalho">Carta</th>
+							<th class="cabecalho">Banco</th>
+							<th class="cabecalho">Pmto</th>
+							<th class="cabecalho">Contribuinte</th>
+							<th class="cabecalho">Data Vcto.</th>
+							<th class="cabecalho">Data Receb.</th>
+							<th class="cabecalho">Capt. (R$)</th>
+							<th class="cabecalho">Receb. (R$)</th>
+							<th class="cabecalho">Saldo (R$)</th>
+							</tr><tr>
+								<td>1</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="120.02" id="321">
+								</td>
+								<td>
+									<a href="?id=321" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">321</td>
+								<td style="text-align: center;">15</td>
+								<td class="nome"></td>
+								<td>transferencia</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">JAMES GIACOMINI ALVES</div></td>
+								<td>10/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">120,02</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">120,02</td>
+							</tr><tr>
+								<td>2</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="300.00" id="459">
+								</td>
+								<td>
+									<a href="?id=459" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">459</td>
+								<td style="text-align: center;">23</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">NEMERCIO RODRIGUES MARQUES</div></td>
+								<td>10/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">300,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">300,00</td>
+							</tr><tr>
+								<td>3</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="200.00" id="633">
+								</td>
+								<td>
+									<a href="?id=633" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">633</td>
+								<td style="text-align: center;">1</td>
+								<td class="nome"></td>
+								<td>transferencia</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">FRANCISCO MARTINS LOENERT</div></td>
+								<td>10/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">200,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">200,00</td>
+							</tr><tr>
+								<td>4</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="120.00" id="77">
+								</td>
+								<td>
+									<a href="?id=77" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">77</td>
+								<td style="text-align: center;">2</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">ANDRE LUIS MACHADO PELICIONI</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">120,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">120,00</td>
+							</tr><tr>
+								<td>5</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="200.00" id="107">
+								</td>
+								<td>
+									<a href="?id=107" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">107</td>
+								<td style="text-align: center;">3</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">ANTONIO CORTEZ FERNANDES</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">200,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">200,00</td>
+							</tr><tr>
+								<td>6</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="100.00" id="123">
+								</td>
+								<td>
+									<a href="?id=123" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">123</td>
+								<td style="text-align: center;">4</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">CESAR AUGUSTO FERREIRA</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">100,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">100,00</td>
+							</tr><tr>
+								<td>7</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="200.00" id="139">
+								</td>
+								<td>
+									<a href="?id=139" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">139</td>
+								<td style="text-align: center;">5</td>
+								<td class="nome"></td>
+								<td>credito</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">EDUARDO RICCO</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">200,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">200,00</td>
+							</tr><tr>
+								<td>8</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="200.00" id="163">
+								</td>
+								<td>
+									<a href="?id=163" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">163</td>
+								<td style="text-align: center;">7</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">EDUARDO THOMAZIN DE OLIVEIRA</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">200,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">200,00</td>
+							</tr><tr>
+								<td>9</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="120.00" id="179">
+								</td>
+								<td>
+									<a href="?id=179" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">179</td>
+								<td style="text-align: center;">8</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">EUSTAQUIO BELCHIOR FERREIRA</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">120,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">120,00</td>
+							</tr><tr>
+								<td>10</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="100.00" id="195">
+								</td>
+								<td>
+									<a href="?id=195" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">195</td>
+								<td style="text-align: center;">9</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">FABIANO AUGUSTO A. GUIMARAES</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">100,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">100,00</td>
+							</tr><tr>
+								<td>11</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="300.00" id="211">
+								</td>
+								<td>
+									<a href="?id=211" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">211</td>
+								<td style="text-align: center;">10</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">FERNANDO H. COSTA ROXO DA FONS</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">300,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">300,00</td>
+							</tr><tr>
+								<td>12</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="788.00" id="229">
+								</td>
+								<td>
+									<a href="?id=229" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">229</td>
+								<td style="text-align: center;">11</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">FERNANDO PASSOS</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">788,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">788,00</td>
+							</tr><tr>
+								<td>13</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="200.00" id="247">
+								</td>
+								<td>
+									<a href="?id=247" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">247</td>
+								<td style="text-align: center;">12</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">FERNANDO PLASTINA</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">200,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">200,00</td>
+							</tr><tr>
+								<td>14</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="120.00" id="263">
+								</td>
+								<td>
+									<a href="?id=263" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">263</td>
+								<td style="text-align: center;">13</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">GECE WALLACE SANTOS RENO</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">120,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">120,00</td>
+							</tr><tr>
+								<td>15</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="50.00" id="279">
+								</td>
+								<td>
+									<a href="?id=279" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">279</td>
+								<td style="text-align: center;">14</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">GUSTAVO BASILE SIKORA</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">50,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">50,00</td>
+							</tr><tr>
+								<td>16</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="50.00" id="295">
+								</td>
+								<td>
+									<a href="?id=295" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">295</td>
+								<td style="text-align: center;">15</td>
+								<td class="nome"></td>
+								<td>transferencia</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">JAMES GIACOMINI ALVES</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">50,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">50,00</td>
+							</tr><tr>
+								<td>17</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="500.00" id="345">
+								</td>
+								<td>
+									<a href="?id=345" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">345</td>
+								<td style="text-align: center;">16</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">JAZIEL PAVINE DE LIMA</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">500,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">500,00</td>
+							</tr><tr>
+								<td>18</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="120.00" id="361">
+								</td>
+								<td>
+									<a href="?id=361" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">361</td>
+								<td style="text-align: center;">17</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">JOAO CARLOS ANEAS FILHO</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">120,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">120,00</td>
+							</tr><tr>
+								<td>19</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="200.00" id="377">
+								</td>
+								<td>
+									<a href="?id=377" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">377</td>
+								<td style="text-align: center;">18</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">JOSE ALFREDO P. MONTEIRO</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">200,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">200,00</td>
+							</tr><tr>
+								<td>20</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="120.00" id="393">
+								</td>
+								<td>
+									<a href="?id=393" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">393</td>
+								<td style="text-align: center;">19</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">LAURO MATTAR JUNIOR</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">120,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">120,00</td>
+							</tr><tr>
+								<td>21</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="100.00" id="443">
+								</td>
+								<td>
+									<a href="?id=443" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">443</td>
+								<td style="text-align: center;">22</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">NARCISO BETTI BORSARO</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">100,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">100,00</td>
+							</tr><tr>
+								<td>22</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="120.00" id="483">
+								</td>
+								<td>
+									<a href="?id=483" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">483</td>
+								<td style="text-align: center;">24</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">NILTON MESSIAS DE ALMEIDA JR</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">120,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">120,00</td>
+							</tr><tr>
+								<td>23</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="500.00" id="501">
+								</td>
+								<td>
+									<a href="?id=501" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">501</td>
+								<td style="text-align: center;">25</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">PROTENCO PROJETOS TECNICOS COM</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">500,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">500,00</td>
+							</tr><tr>
+								<td>24</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="150.00" id="517">
+								</td>
+								<td>
+									<a href="?id=517" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">517</td>
+								<td style="text-align: center;">26</td>
+								<td class="nome"></td>
+								<td>credito</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">RICARDO MENOTTI</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">150,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">150,00</td>
+							</tr><tr>
+								<td>25</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="250.00" id="535">
+								</td>
+								<td>
+									<a href="?id=535" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">535</td>
+								<td style="text-align: center;">27</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">ROBERTO CARVALHEIRO</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">250,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">250,00</td>
+							</tr><tr>
+								<td>26</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="200.00" id="551">
+								</td>
+								<td>
+									<a href="?id=551" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">551</td>
+								<td style="text-align: center;">28</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">RODRIGO ASSED DE CASTRO</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">200,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">200,00</td>
+							</tr><tr>
+								<td>27</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="400.00" id="567">
+								</td>
+								<td>
+									<a href="?id=567" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">567</td>
+								<td style="text-align: center;">29</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">SIDNEI CALIL</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">400,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">400,00</td>
+							</tr><tr>
+								<td>28</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="300.00" id="583">
+								</td>
+								<td>
+									<a href="?id=583" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">583</td>
+								<td style="text-align: center;">30</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">TADEU RICCIARDI RODRIGUEZ</div></td>
+								<td>20/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">300,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">300,00</td>
+							</tr><tr>
+								<td>29</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="350.00" id="409">
+								</td>
+								<td>
+									<a href="?id=409" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">409</td>
+								<td style="text-align: center;">20</td>
+								<td class="nome"></td>
+								<td>boleto</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">LEONARDO CARNEIRO</div></td>
+								<td>25/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">350,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">350,00</td>
+							</tr><tr>
+								<td>30</td>
+								<td style="text-align: center;vertical-align: middle;">
+									<input type="checkbox" class="checkbox_selecionar" valor_captacao="15.00" id="2">
+								</td>
+								<td>
+									<a href="?id=2" target="_blank">
+										<div class="uk-button uk-button-mini uk-button-primary" style="width: 100%;"><i class="uk-icon-edit"></i>Editar</div>
+									</a>
+								</td>
+								<td>
+									<div class="uk-badge" style="text-align: center; vertical-align: middle; padding-top: 4px; padding-bottom: 5px; width: 20px;" data-uk-tooltip="" title="captacao_gerada"><i class="uk-icon-flag-checkered"></i></div><div style="visibility: hidden; height: 0px; width: 0px ! important;">captacao_gerada</div>
+								</td>
+								<td style="text-align: center;">
+									<span style="width: 15px !important;" class="uk-badge uk-badge-success uk-text-truncate" data-uk-tooltip="{pos:'right'}" title="0 - ">0</span>
+								</td>
+								<td style="text-align: center;">2</td>
+								<td style="text-align: center;">1</td>
+								<td class="nome"></td>
+								<td>transferencia</td>
+								<td class="nome"><div style="width: 100px !important;" class="uk-text-truncate">FRANCISCO MARTINS LOENERT</div></td>
+								<td>30/06/2015</td>
+								<td>00/00/0000</td>
+								<td style="text-align:right;">15,00</td>
+								<td style="text-align:right;">0,00</td>
+								<td style="text-align:right;">15,00</td>
+							</tr></tbody></table>
+						</div>
+					</div>
+				
