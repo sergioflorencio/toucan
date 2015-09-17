@@ -65,15 +65,15 @@ class salvar{
 		include "php/config.php";		
 		
 		//gerar captações
-		$consulta="CALL `vepinho`.`gerar_captacoes`();";
+		$consulta="CALL `".$schema."`.`gerar_captacoes`();";
 		$consulta=mysql_query($consulta,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main uk-width-medium-1-2 uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	
 		
 		
 		//atualizar status
-		$consulta="CALL `vepinho`.`atualizar_status_captacao_cartas`();";
+		$consulta="CALL `".$schema."`.`atualizar_status_captacao_cartas`();";
 		$consulta=mysql_query($consulta,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main uk-width-medium-1-2 uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	
 		
-		$consulta="CALL `vepinho`.`atualizar_status_carta`();";
+		$consulta="CALL `".$schema."`.`atualizar_status_carta`();";
 		$consulta=mysql_query($consulta,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main uk-width-medium-1-2 uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	
 		
 			
@@ -730,15 +730,15 @@ class salvar{
 		}		
 		
 		//gerar captações
-		$consulta="CALL `vepinho`.`gerar_captacoes`();";
+		$consulta="CALL `".$schema."`.`gerar_captacoes`();";
 		$consulta=mysql_query($consulta,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main uk-width-medium-1-2 uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	
 		
 		
 		//atualizar status
-		$consulta="CALL `vepinho`.`atualizar_status_captacao_cartas`();";
+		$consulta="CALL `".$schema."`.`atualizar_status_captacao_cartas`();";
 		$consulta=mysql_query($consulta,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main uk-width-medium-1-2 uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	
 		
-		$consulta="CALL `vepinho`.`atualizar_status_carta`();";
+		$consulta="CALL `".$schema."`.`atualizar_status_carta`();";
 		$consulta=mysql_query($consulta,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main uk-width-medium-1-2 uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	
 		
 		
