@@ -197,7 +197,7 @@ body .ui-tooltip{border-width:2px}
 .ui-state-default a,.ui-state-default a:link,.ui-state-default a:visited{color:#000}
 .ui-state-hover,.ui-widget-content .ui-state-hover,.ui-widget-header .ui-state-hover{border:1px solid #ccc;background-color:#f8f8f8;color:#007aff}
 .ui-state-hover a,.ui-state-hover a:hover{color:#fff}
-.ui-state-active,.ui-widget-content .ui-state-active,.ui-widget-header .ui-state-active{border:1px solid #ccc;background-color:#e5f2ff;color:#007aff}
+.ui-state-active,.ui-widget-content .ui-state-active,.ui-widget-header .ui-state-active{border:1px solid #ccc !important;background-color:#e5f2ff !important;color:#007aff !important}
 .ui-state-active a,.ui-state-active a:link,.ui-state-active a:visited{text-decoration:none}
 .ui-widget-header.ui-state-default{border:1px solid #ccc;background-color:#f8f8f8;color:#000;font-weight:normal;border-width:0}
 .ui-widget-header.ui-state-active{border:1px solid #ccc;background-color:#e5f2ff;color:#007aff;border-width:0}
@@ -519,6 +519,7 @@ body .ui-tooltip{border-width:2px}
 .ui-iggrid tr.ui-state-focus td,.ui-iggrid tr.ui-state-focus th,.ui-iggrid tr.ui-ig-altrecord.ui-state-focus td,.ui-iggrid tr.ui-ig-altrecord.ui-state-focus th{border-top:1px solid #007aff!important;border-bottom:1px solid #007aff!important}
 .ui-iggrid td.ui-state-active.ui-state-focus,.ui-iggrid td.ui-state-focus{border:1px solid #007aff!important}
 .ui-iggrid-activerow .ui-iggrid-selectedcell .ui-state-active{border-color:transparent!important; color:#000 !important}
+.ui-iggrid-selectedcell .ui-state-active .ui-iggrid-editingcell{padding: 4px ! important;}
 .ui-iggrid td.ui-state-active,.ui-iggrid .ui-ig-altrecord td.ui-state-active,.ui-iggrid th.ui-iggrid-rowselector-class.ui-state-active,.ui-iggrid .ui-ig-altrecord th.ui-iggrid-rowselector-class.ui-state-active,.ui-iggrid tbody .ui-iggrid-mergedcell.ui-state-active,.ui-iggrid tbody .ui-ig-altrecord .ui-iggrid-mergedcell.ui-state-active,.ui-iggrid tbody .ui-iggrid-mergedcellstop.ui-state-active,.ui-iggrid tbody .ui-ig-altrecord .ui-iggrid-mergedcellstop.ui-state-active{border:1px solid #007aff;background-color:#007aff;color:#fff}
 .ui-iggrid .ui-iggrid-paging-item.ui-state-focus,.ui-iggrid .ui-iggrid-paging-item.ui-state-default.ui-state-focus,.ui-iggrid .ui-iggrid-page.ui-state-focus,.ui-iggrid .ui-iggrid-pageui-state-default.ui-state-focus{border-color:#007aff}
 .ui-iggrid .ui-iggrid-footer .ui-iggrid-paging-item.ui-state-default:hover,.ui-iggrid .ui-iggrid-page:hover a,.ui-iggrid .ui-iggrid-pagecurrent:hover a,.ui-iggrid .ui-iggrid-paging-item.ui-state-focus span,.ui-iggrid .ui-iggrid-paging-item.ui-state-default.ui-state-focus span,.ui-iggrid .ui-iggrid-page.ui-state-focus a,.ui-iggrid .ui-iggrid-page.ui-state-default.ui-state-focus a{background-color:#e5f2ff;color:#007aff}
@@ -657,7 +658,8 @@ body .ui-tooltip{border-width:2px}
 .ui-ightmleditor .ui-igtoolbar-wrap .ui-igbutton.ui-state-hover,.ui-ightmleditor .ui-igtoolbar .ui-igbutton.ui-state-hover{border:1px solid #ccc;background-color:#f8f8f8;color:#007aff}
 .ui-ightmleditor .ui-igtoolbar-wrap .ui-igbutton.ui-state-focus,.ui-ightmleditor .ui-igtoolbar .ui-igbutton.ui-state-focus{border:1px solid #66afff;background-color:#ececec;color:#000}
 .ui-ightmleditor .ui-igtoolbar-wrap .ui-igbutton.ui-state-active,.ui-ightmleditor .ui-igtoolbar .ui-igbutton.ui-state-active{border:1px solid #ccc;background-color:#e5f2ff;color:#007aff}
-.ui-ightmleditor .ui-igcombo-fieldholder{border-color:#ececec}
+.ui-ightmleditor .ui-igcombo-fieldholder{border-color:#ececec;}
+.ui-igcombo-fieldholder{margin-left: 0px !important; position: relative !important;}
 .ui-igbutton-viewsource.ui-state-default .ui-igbutton-viewsource-icon{background-position:0 -160px}
 .ui-igbutton-viewsource.ui-state-hover .ui-igbutton-viewsource-icon{background-position:-32px -160px}
 .ui-ightmleditor .ui-igtoolbar .ui-igbutton.ui-state-hover{border:1px solid #ccc;background-color:#f8f8f8;color:#007aff}
@@ -813,3 +815,4 @@ body .ui-tooltip{border-width:2px}
 .ui-igpopover-title{background-color:#E5E5E5!important}
 .ui-igpopover>.ui-widget-content{box-shadow:3px 3px 5px rgba(0,0,0,0.25)!important}
 .ui-igtrialwatermark{}
+.ui-igcombo .ui-state-default .ui-widget .ui-corner-all .ui-iggrid-editor .ui-igvalidator-target{margin-left: -1px !important; margin-top: -11px !important;}
