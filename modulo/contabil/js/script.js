@@ -1,4 +1,5 @@
-﻿function ajax(id_responseText, metodo, url,formData,reload){
+﻿
+function ajax(id_responseText, metodo, url,formData,reload){
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = function()
 			{
@@ -183,10 +184,15 @@ function salvar_cadastro(tabela,plano_conta){
 }
 
 
-function salvar_documento(){
-	$("#igrid_editavel_add").igGrid("commit");
-	//alert(JSON.stringify($("#igrid_editavel_add").data("igGrid").dataSource.data()));
-	
-	
-}
+
+
+
+
+
+
+
+
+
+
+
 

@@ -62,7 +62,6 @@
 			
 			
 		}
-		
 		if(isset($_POST) and isset($_POST['tabela']) and $_POST['tabela']=='cad_centro_custo'){
 					
 					include "php.php";

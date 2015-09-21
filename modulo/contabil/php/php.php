@@ -65,8 +65,40 @@ class selects{
 		$select=new selects;
 		$select->_____modelo____($sql_select,$campo_id,$id,$campo_descricao,$label);
 	}
-
+	function ctrcusto_autocomplete($id_orcamento){
+		include "config.php";
+		$select = "SELECT ".$schema.".cad_centro_custo.numero_centro_custo as 'text', concat(".$schema.".cad_centro_custo.numero_centro_custo,' - ',".$schema.".cad_centro_custo.descricao) as 'value'  FROM ".$schema.".cad_centro_custo where cod_empresa=".$_SESSION['cod_empresa'].";";
+		$resultado=mysql_query($select,$conexao) or die (mysql_error());
+		$bs_ctrcusto="";
+		while($row = mysql_fetch_array($resultado))
+		{
+			$bs_ctrcusto.=json_encode($row);
+		}	
+			$bs_ctrcusto=str_replace("}{","},{",$bs_ctrcusto);
+			$bs_ctrcusto="var bs_ctrcusto=[".$bs_ctrcusto."];";
+			echo $bs_ctrcusto;
 	
+		
+		
+	
+	}
+	function conta_autocomplete($id_orcamento){
+		include "config.php";
+		$select = "SELECT ".$schema.".cad_conta.numero_conta as 'text', concat(".$schema.".cad_conta.numero_conta,' - ',".$schema.".cad_conta.descricao) as 'value'   FROM ".$schema.".cad_conta  where cod_empresa=".$_SESSION['cod_empresa']." ;";
+		$resultado=mysql_query($select,$conexao) or die (mysql_error());
+		$bs_conta="";
+		while($row = mysql_fetch_array($resultado))
+		{
+			$bs_conta.=json_encode($row);
+		}	
+			$bs_conta=str_replace("}{","},{",$bs_conta);
+			$bs_conta="var bs_conta=[".$bs_conta."];";
+			echo $bs_conta;
+		
+		
+		
+	
+	}
 }
 
 class menus{
@@ -336,8 +368,8 @@ class sql{
 	public function update($table,$campos,$where,$msg){
 		
 		include "config.php";
-		if(isset($_SESSION['cod_usuario']['cod_usuario'])){$uid=$_SESSION['cod_usuario']['cod_usuario'];$username=$_SESSION['user'];}else{$uid=0;$username='';}
-		$consulta="UPDATE `".$schema."`.`".$table."` SET ".$campos.", cod_empresa='".$_SESSION['cod_empresa']."', data_ultima_alteracao=Now(),usuario_ultima_alteracao=".$_SESSION['cod_usuario']['cod_usuario']." WHERE ".$where.";";
+		if(isset($_SESSION['cod_usuario'])){$uid=$_SESSION['cod_usuario'];$username=$_SESSION['user'];}else{$uid=0;$username='';}
+		$consulta="UPDATE `".$schema."`.`".$table."` SET ".$campos.", cod_empresa='".$_SESSION['cod_empresa']."', data_ultima_alteracao=Now(),usuario_ultima_alteracao=".$_SESSION['cod_usuario']." WHERE ".$where.";";
 		$update=mysql_query($consulta,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main uk-width-medium-1-2 uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	
 		if($msg=='S'){
 		echo "
@@ -351,8 +383,8 @@ class sql{
 	}
 	public function insert($table,$campos,$values,$msg){
 		include "config.php";
-		if(isset($_SESSION['cod_usuario']['cod_usuario'])){$uid=$_SESSION['cod_usuario']['cod_usuario'];$username=$_SESSION['user'];}else{$uid=0;$username='';}
-		$consulta="INSERT INTO `".$schema."`.".$table." (".$campos.",`cod_empresa`,`usuario_inclusao`)  VALUES (".$values.",'".$_SESSION['cod_empresa']."','".$_SESSION['cod_usuario']['cod_usuario']."');"; 
+		if(isset($_SESSION['cod_usuario'])){$uid=$_SESSION['cod_usuario'];$username=$_SESSION['user'];}else{$uid=0;$username='';}
+		$consulta="INSERT INTO `".$schema."`.".$table." (".$campos.",`cod_empresa`,`usuario_inclusao`)  VALUES (".$values.",'".$_SESSION['cod_empresa']."','".$_SESSION['cod_usuario']."');"; 
 		$insert=mysql_query($consulta,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main  uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	;	
 		if($msg=='S'){
 		echo "
@@ -951,6 +983,18 @@ class cadastros{
 		$cadastro=new cadastros;
 		$cadastro->pesquisa($select,'cad_fornecedor','cod_fornecedor');
 	}
+	function cad_periodo($id){
+		include "config.php";
+		$select="SELECT 
+			cod_periodo,
+			DATE_FORMAT(data_inicio,'%d/%m/%Y') as data_inicio,
+			DATE_FORMAT(data_fim,'%d/%m/%Y') as data_fim,
+			status
+			
+		FROM ".$schema.".cad_periodo where cod_periodo='".$id."'  and cod_empresa='".$_SESSION['cod_empresa']."';";
+		$cadastro=new cadastros;
+		$cadastro->pesquisa($select,'cad_periodo','cod_periodo');
+	}
 	function cad_cliente($id){
 		include "config.php";
 		$select="SELECT * FROM ".$schema.".cad_cliente where cod_cliente='".$id."'  and cod_empresa='".$_SESSION['cod_empresa']."';";
@@ -971,22 +1015,46 @@ class cadastros{
 	}
 	function cad_documento($id){
 		include "config.php";
-		$select="SELECT * FROM ".$schema.".cad_documento where cod_documento='".$id."'  and cod_empresa='".$_SESSION['cod_empresa']."';";
+		$select="
+				SELECT 
+					cod_documento, 
+					cod_empresa, 
+					cod_tipo_documento, 
+					referencia, 
+					texto_cabecalho_documento, 
+					DATE_FORMAT(data_lancamento,'%d/%m/%Y') as data_lancamento,
+					DATE_FORMAT(data_base,'%d/%m/%Y') as data_base,
+					DATE_FORMAT(data_estorno,'%d/%m/%Y') as data_estorno,
+					DATE_FORMAT(data_alteracao,'%d/%m/%Y') as data_alteracao,
+					exercicio, 
+					periodo, 
+					historico, 
+					DATE_FORMAT(data_inclusao,'%d/%m/%Y') as data_inclusao,
+					DATE_FORMAT(data_ultima_alteracao,'%d/%m/%Y') as data_ultima_alteracao,
+					usuario_inclusao, 
+					usuario_ultima_alteracao 
+				FROM ".$schema.".cad_documento
+				where cod_documento='".$id."'  and cod_empresa='".$_SESSION['cod_empresa']."';";
 		$cadastro=new cadastros;
 		$cadastro->pesquisa($select,'cad_documento','cod_documento');
+	}
+	function cad_documento_item_json_____excluir____($id){
+		include "config.php";
+		$select="SELECT * FROM ".$schema.".cad_documento_item where cod_documento='".$id."'  and cod_empresa='".$_SESSION['cod_empresa']."';";
+		$pesquisa=new pesquisa;
+		$base=$pesquisa->json($select);
+			include "includes/cad_documento_item.php";		
 	}
 	function cad_documento_item($id){
 		include "config.php";
 		$select="SELECT * FROM ".$schema.".cad_documento_item where cod_documento='".$id."'  and cod_empresa='".$_SESSION['cod_empresa']."';";
 		$pesquisa=new pesquisa;
 		$base=$pesquisa->json($select);
-		
-		//echo $select;
-		
-		
-		
 			include "includes/cad_documento_item.php";		
 	}
+
+
+
 	function cad_conta($id){
 		
 		include "config.php";		
@@ -1324,6 +1392,44 @@ class pesquisa{
 					$igniteui=new igniteui;
 					echo $igniteui->igrid($json,$column,$tabela);
 	}
+	function cad_periodo($id){
+		include "config.php";
+		
+		$menus=new menus;
+		//echo "<div id='grid'></div>";
+		
+		$filtro="";
+		if($id!=""){
+			$filtro="  and ( cad_periodo.cod_periodo like '%".$id."%' )";
+		}
+				$select= "
+					SELECT
+						cod_periodo as id,
+						DATE_FORMAT(data_inicio,'%d/%m/%Y') as data_inicio,
+						DATE_FORMAT(data_fim,'%d/%m/%Y') as data_fim,
+						status
+					FROM 
+						".$schema.".cad_periodo 
+					WHERE 
+						cod_empresa='".$_SESSION['cod_empresa']."'
+					".$filtro." ;";
+					
+					$pesquisa=new pesquisa;
+					$json=$pesquisa->json($select);
+
+					$column= "{headerText: 'ID', key: 'id', width: '50px', dataType: 'string'},";
+					$column.="{headerText: 'Inicio', key: 'data_inicio',width: '100px', dataType: 'string'},";
+					$column.="{headerText: 'Fim', key: 'data_fim', width: '100px', dataType: 'string'},";
+					$column.="{headerText: 'Status', key: 'status', dataType: 'string'}";
+
+
+	
+
+					$tabela="cad_periodo";
+					
+					$igniteui=new igniteui;
+					echo $igniteui->igrid($json,$column,$tabela);
+	}
 	function cad_fornecedor($id){
 		include "config.php";
 		
@@ -1570,659 +1676,174 @@ class pesquisa{
 		
 		//var_dump($_POST);
 	}
+	function periodo(){
+		include "config.php";
+		$select="SELECT max(data_fim) as data_fim FROM ".$schema.".cad_periodo WHERE cod_empresa='".$_SESSION['cod_empresa']."' ";
+		$resultado=mysql_query($select,$conexao) or die (mysql_error());
+		$valores = mysql_fetch_array($resultado);
+		 return $valores;
+		
+	}
+	function periodo_aberto(){
+		include "config.php";
+		$select="
+			SELECT 
+				min(data_inicio) as data_inicio,
+				tb_max.data_fim
+				
+			FROM 
+				".$schema.".cad_periodo,
+				(
+					SELECT 
+						max(data_fim) as data_fim 
+					FROM 
+						".$schema.".cad_periodo 
+					where 
+						cod_empresa=".$_SESSION['cod_empresa']." and status='ativo'
+				) as tb_max
+			where 
+					cod_empresa=".$_SESSION['cod_empresa']." 
+				and status='ativo'
+				and tb_max.data_fim=cad_periodo.data_fim;";
+		$resultado=mysql_query($select,$conexao) or die (mysql_error());
+		$valores = mysql_fetch_array($resultado);
+		 return $valores;
+		
+	}
 	
 }
 
 class lancamento{
-	function resultado_table_header($data_inicio,$data_fim,$processo,$registros,$consulta,$msg_erro){
-					echo "<div class='uk-width-1-1' style='margin-bottom: 30px;'>
-							<div class='uk-overflow-container ' style='padding: 20px; '>
-								<table class='uk-table'>
-									<caption>Resultado</caption>
-									<thead>
-										<tr>
-											<th>".$data_inicio."</th>
-											<th>".$data_fim."</th>
-											<th>".$processo."</th>
-											<th>".$registros."</th>
-											<th>".$consulta."</th>
-											<th>".$msg_erro."</th>
-										</tr>
-									</thead>
-									<tbody>";
-	}
-	function resultado_table_footer(){
-							
-					echo	"			</tbody>
-								</table>
+	function listar_cad_documento_item($cod_documento){
+		/////////////////////////////////////////////////////////////////////////////
+	
+		function tbody($codigo_lancamento,$cod_ctr_custo,$cod_conta,$historico,$montante,$data_vencimento_liquidacao){
+
+				if(intval($_GET['id'])>0){
+					$disabled=" disabled ";
+				}else{
+					$disabled="  ";
+					
+				}
+
+		return "<tr id='rowToClone'>
+						<td class='uk-form-row' style='width: 20px;'><input ".$disabled." id='' placeholder='' class=' codigo_lancamento uk-form-small' type='text' style='width: 100%;' value='".$codigo_lancamento."'></td>
+						<td class='uk-form-row' style='width: 150px;'>
+							<div class='uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_ctrcusto}' style='width: 100%;'>
+								<input ".$disabled." id='' placeholder='' class='cod_ctr_custo uk-form-small' type='text' style='width: 100%;' value='".$cod_ctr_custo."'>
 							</div>
-					
-					
-					";		
-	}
-	function resultado_tr($data_inicio,$data_fim,$processo,$registros,$consulta,$msg_erro){
-			echo "
-								<tr>
-									<td>".$data_inicio."</td>
-									<td>".$data_fim."</td>
-									<td>".$processo."</td>
-									<td>". $registros."</td>
-									<td>
-										<div  data-uk-dropdown={mode:'click',justify:'table'}>
-											<button class='uk-button'> SQL <i class='uk-icon-caret-down'></i></button>
-											<div style='margin-left: -59px;' class='uk-dropdown uk-dropdown-center'>
-												". $consulta."
-											</div>
-										</div>
-									</td>
-									<td><span class='uk-badge uk-badge-notification uk-badge-danger'>".$msg_erro."</span></td>
-								</tr>			
-			";	
-	}
-	function sql($select){
-		include "config.php";
-		$consulta=mysql_query($select,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main  uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	;	
-}
-
-//Depreciação	
-	function calculo_depreciacao($cod_item,$cod_grupo_patrimonio,$data_inicio,$data_fim){
-		$filtro="";
-		if($cod_grupo_patrimonio!=""){
-			$filtro.="and cad_itens.cod_grupo_patrimonio='".$cod_grupo_patrimonio."' ";
+						</td>
+						<td class='uk-form-row' style='width: 150px;'>
+							<div class='uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_conta}' style='width: 100%;'>
+								<input ".$disabled." id='' placeholder='' class='cod_conta uk-form-small' type='text' style='width: 100%;' value='".$cod_conta."'>
+							</div>
+						</td>
+						<td class='uk-form-row' style='min-width: 100px; '><input ".$disabled." id='' placeholder='' class='historico uk-form-small' type='text' style='width: 100%;' value='".$historico."'></td>
+						<td class='uk-form-row' style='width: 100px;'><input ".$disabled." id='' placeholder='' class='montante uk-form-small' type='text' style='width: 100%;' onchange='formatar_numero(this);' onkeyup='formatar_numero(this);' value='".$montante."'></td>
+						<td class='uk-form-row' style='width: 100px;'><input ".$disabled." id='' placeholder='' class='data_vencimento_liquidacao uk-form-small' type='text' style='width: 100%;' onchange='formatar_data(this);' onkeyup='formatar_data(this);' value='".$data_vencimento_liquidacao."'></td>
+						<td class='uk-form-row' style='width: 10px;'>
+							<button ".$disabled." class='uk-button uk-button-mini uk-button-primary' type='button' onclick='delRow(this)' data-uk-tooltip title='Excluir linha'><i class='uk-icon-trash-o'></i></button>
+						</td>
+					</tr>";
 		}
-		if($cod_item!=""){
-			$filtro.="and cad_itens.cod_item='".$cod_item."' ";
-		}
-		include "config.php";
-		
-		$select_="
-				insert into ".$schema.".cad_movimento (cod_item,data, valor ,cod_tipo_movimento) 
-				select tb_calculo.cod_item,tb_calculo.data_depreciacao,-tb_calculo.valor_depreciacao,6 from (
-				select 
-					tb_movimento_.*,
-					TIMESTAMPDIFF(MONTH,tb_movimento_.data_ultimo_movimento,tb_movimento_.data_morte) as meses_vida_util,
-					(tb_movimento_.valor_residual/TIMESTAMPDIFF(MONTH,tb_movimento_.data_ultimo_movimento,tb_movimento_.data_morte)) as valor_depreciacao,
-					LAST_DAY(DATE_ADD(tb_movimento_.data_ultimo_movimento, INTERVAL 1 month)) as data_depreciacao
-				from
-				(
-					SELECT 
-						cad_itens.cod_item,
-						cad_itens.valor_aquisicao,
-						cad_itens.cod_grupo_patrimonio,
-						tb_movimento.valor_residual,
-						cad_itens.data_inicio_depreciacao,
-						DATE_ADD(cad_itens.data_inicio_depreciacao,INTERVAL IF(cad_itens.vida_util!=0,cad_itens.vida_util*365,cad_grupo_patrimonio.vida_util*365)  DAY) as data_morte,
-						tb_movimento.data_ultimo_movimento,
-						cad_itens.vida_util as vida_util_item,
-						cad_grupo_patrimonio.vida_util as vida_util_grupo
-						
-					 FROM 
-						".$schema.".cad_itens,
-						".$schema.".cad_grupo_patrimonio,
-						(
-							SELECT
-								cod_item,
-								max(data) as data_ultimo_movimento,
-								sum(valor) as valor_residual
-							FROM 
-								".$schema.".cad_movimento
-							GROUP BY
-								cod_item
-						) as tb_movimento 
-
-					where
-						cad_itens.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio and
-						tb_movimento.cod_item=cad_itens.cod_item ".$filtro."
-
-				) as tb_movimento_	
-
-				) as tb_calculo
-				where (tb_calculo.data_depreciacao between '".$data_inicio."' and '".$data_fim."') 
-		";
-		$select="
-				insert into ".$schema.".cad_movimento (cod_item,data, valor ,cod_tipo_movimento) 
-				select tb_calculo.cod_item,tb_calculo.data_depreciacao,-tb_calculo.valor_depreciacao,6 from (
-				select 
-					tb_movimento_.*,
-					TIMESTAMPDIFF(MONTH,tb_movimento_.data_ultimo_movimento,tb_movimento_.data_morte) as meses_vida_util,
-					(tb_movimento_.valor_aquisicao/IF(vida_util_item=0,vida_util_grupo,vida_util_item)/12) as valor_depreciacao,
-					LAST_DAY(DATE_ADD(tb_movimento_.data_ultimo_movimento, INTERVAL 1 month)) as data_depreciacao
-				from
-				(
-					SELECT 
-						cad_itens.cod_item,
-						cad_itens.valor_aquisicao,
-						cad_itens.cod_grupo_patrimonio,
-						tb_movimento.valor_residual,
-						cad_itens.data_inicio_depreciacao,
-						DATE_ADD(cad_itens.data_inicio_depreciacao,INTERVAL IF(cad_itens.vida_util!=0,cad_itens.vida_util*365,cad_grupo_patrimonio.vida_util*365)  DAY) as data_morte,
-						tb_movimento.data_ultimo_movimento,
-						cad_itens.vida_util as vida_util_item,
-						cad_grupo_patrimonio.vida_util as vida_util_grupo
-						
-					 FROM 
-						".$schema.".cad_itens,
-						".$schema.".cad_grupo_patrimonio,
-						(
-							SELECT
-								cod_item,
-								max(data) as data_ultimo_movimento,
-								sum(valor) as valor_residual
-							FROM 
-								".$schema.".cad_movimento
-							GROUP BY
-								cod_item
-						) as tb_movimento 
-
-					where
-						cad_itens.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio and
-						cad_itens.data_aquisicao<='".$data_fim."' and
-						cad_itens.data_inicio_depreciacao<='".$data_fim."' and
-						tb_movimento.cod_item=cad_itens.cod_item ".$filtro."
-
-				) as tb_movimento_	
-
-				) as tb_calculo
-				where (tb_calculo.data_depreciacao between '".$data_inicio."' and '".$data_fim."') 
-		";
-
-		$lancamento=new lancamento;
-		$lancamento->sql($select);
-		
-				$processo="Gerar depreciações";
-				$registros=mysql_affected_rows();
-				$consulta=$select;
-				$msg_erro=mysql_error();
-				
-				$lancamento->resultado_tr($data_inicio,$data_fim,$processo,$registros,$consulta,$msg_erro);
-				
-	
-	}
-	function deletar_depreciacao($cod_item,$cod_grupo_patrimonio,$data_inicio,$data_fim){
-		//$data_inicio=date("Y-m-d", strtotime($data_inicio) );
-		include "config.php";
-		$filtro="";
-		if($cod_grupo_patrimonio!=""){
-			$filtro.=" and cad_itens.cod_grupo_patrimonio=".$cod_grupo_patrimonio." ";
-		}
-		if($cod_item!=""){
-			$filtro.=" and cad_itens.cod_item=".$cod_item." ";
-		}
-		$select="
-				DELETE  
-					".$schema.".cad_movimento
-				FROM 
-					".$schema.".cad_movimento,
-					".$schema.".cad_grupo_patrimonio,
-					".$schema.".cad_itens
-				WHERE
-
-					cad_itens.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio and
-					cad_itens.cod_item=cad_movimento.cod_item and
-					cad_movimento.data>='".$data_inicio."' and
-					cad_movimento.cod_tipo_movimento=6
-					".$filtro."
-					;
-		";
-		$lancamento=new lancamento;
-		$lancamento->sql($select);
-		
-				$processo="Excluir depreciações";
-				$registros=mysql_affected_rows();
-				$consulta=$select;
-				$msg_erro=mysql_error();
-				
-				$lancamento->resultado_tr($data_inicio,$data_fim,$processo,$registros,$consulta,$msg_erro);	
-	}
-	function calcular_saldo($data_inicio,$data_fim){
-		$select="
-				UPDATE 
-					".$schema.".`cad_itens`,
-					(select
-						cad_itens.cod_item,
-						cad_itens.valor_aquisicao,
-						sum(cad_movimento.valor) as saldo
-					FROM 
-						".$schema.".cad_movimento,
-						".$schema.".cad_grupo_patrimonio,
-						".$schema.".cad_itens
-					WHERE
-						cad_itens.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio and
-						cad_itens.cod_item=cad_movimento.cod_item 
-					group by
-						cad_itens.cod_item) as tb_update
-				SET 
-					cad_itens.valor_atual=tb_update.saldo
-				WHERE 
-					cad_itens.cod_item=tb_update.cod_item;	
-		";
-
-		$lancamento=new lancamento;
-		$lancamento->sql($select);
-		
-				$processo="Calcular saldos atuais";
-				$registros=mysql_affected_rows();
-				$consulta=$select;
-				$msg_erro=mysql_error();
-				
-				$lancamento->resultado_tr($data_inicio,$data_fim,$processo,$registros,$consulta,$msg_erro);
-
-		
-	}
-	function gerar_depreciacao(){
-			$inputs=new inputs;
-			$selects=new selects;
-			$lancamento=new lancamento;
-			
-		if(isset($_POST) and $_POST!=null and $_POST['data_inicio']!="00/00/0000" and $_POST['data_fim']!="00/00/0000"){
-			
-			$data_inicio= DateTime::createFromFormat('d/m/Y', $_POST['data_inicio'])->format('Y-m-d');
-			$data_fim= DateTime::createFromFormat('d/m/Y', $_POST['data_fim'])->format('Y-m-d');
-			$cod_grupo_patrimonio=$_POST['cod_grupo_patrimonio'];
-			$cod_item=$_POST['cod_item'];
-			
-			$data_intervalo_inicio = new DateTime($data_inicio);
-			$data_intervalo_fim = new DateTime($data_fim);
-			$date1 = new DateTime($data_inicio);
-			$date2 = new DateTime($data_fim);
-			$date2->modify( '+1 day' );
-			$interval = date_diff($date1, $date2);
-
-
-			//echo $interval->d . "d<br/>";
-			//echo $interval->m . "m<br/>";
-			//echo $interval->y . "y<br/>";
-			//echo $interval->m + ($interval->y * 12) . ' months'."<br/>";
-			
-			$i=$interval->m + ($interval->y * 12);
-			$data_intervalo_inicio->modify( '-1 months' );
-
-			$lancamento->resultado_table_header('Data Inicio','Data Fim','Processo','Registros afetados','Consulta SQL','Mensagem de erro')	;								
-
-				for($n=0;$n< $i; $n++){
-					
-					$data_intervalo_inicio->modify( '+1 months');
-					$data_inicio=$data_intervalo_inicio->format("Y-m-1");
-					$data_fim=$data_intervalo_inicio->format("Y-m-t");
-					
-					$lancamento->deletar_depreciacao($cod_item,$cod_grupo_patrimonio,$data_inicio,$data_fim);			
-					$lancamento->calculo_depreciacao($cod_item,$cod_grupo_patrimonio,$data_inicio,$data_fim);
-					$lancamento->calcular_saldo($data_inicio,$data_fim);
-				
-				}
-			
-			$lancamento->resultado_table_footer();
-		
+		if(intval($_GET['id'])>0){
+			$tbody="";
 		}else{
-
-
-		
+			$tbody=tbody('','' ,'','','','');
+			
 		}
-	
 		
+		include "config.php";
+		$select = "
+					SELECT 
+							cad_documento_item.cod_documento_item, 
+							cad_documento_item.cod_documento, 
+							cad_documento_item.numero_item, 
+							cad_documento_item.codigo_lancamento,
+							
+							concat(cad_conta.numero_conta,' - ', cad_conta.descricao) as cod_conta,
+							concat(cad_centro_custo.numero_centro_custo,' - ', cad_centro_custo.descricao) as cod_ctr_custo,
+
+							
+							montante, 
+							historico, 
+
+							DATE_FORMAT(data_vencimento_liquidacao,'%d/%m/%Y') as data_vencimento_liquidacao,
+							cod_documento_compensacao
+					 FROM 
+						".$schema.".cad_documento_item, 
+						".$schema.".cad_conta,
+						".$schema.".cad_centro_custo 
+						
+						where 
+							cad_documento_item.cod_conta=cad_conta.cod_conta and
+							cad_documento_item.cod_ctr_custo=cad_centro_custo.cod_centro_custo and
+							cod_documento='".$cod_documento."'  and cad_documento_item.cod_empresa=".$_SESSION['cod_empresa']." ; ";
+							
+							
+		$resultado=mysql_query($select,$conexao) or die (mysql_error());
+		while($row = mysql_fetch_array($resultado))
+		{
+			$tbody.=tbody($row['codigo_lancamento'],$row['cod_ctr_custo'] ,$row['cod_conta'] ,$row['historico'] ,$row['montante'] ,$row['data_vencimento_liquidacao'] );
+		}	
 	
+	
+	
+	
+			echo	" <div>
+						<script>";
+							$selects=new selects;
+							$selects-> ctrcusto_autocomplete('');
+
+			echo		"</script>
+						<script>";
+							$selects=new selects;
+							$selects-> conta_autocomplete('');
+
+			echo		"</script>
+					</div>
+					<div class='uk-form'>
+						<table class='uk-table uk-table-hover uk-table-condensed' id='tableToModify'>
+							<thead>
+								<tr>
+									<th style='width: 20px;'>CL</th>
+									<th style='width: 150px;'>Ctr. Custo</th>
+									<th style='width: 150px;'>Conta</th>
+									<th style='min-width: 100px;'>Descrição</th>
+									<th style='width: 100px;'>Valor</th>
+									<th style='width: 100px;'>Vencimento</th>
+									<th style='width: 10px;'></th>
+								</tr>
+							</thead>
+				<tbody>
+					".$tbody."
+				</tbody>
+			</table>
+	</div>
+	
+	";
+		
+		
+		
+		
+		
+		
+		/////////////////////////////////////////////////////////////////////////////
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	}
 
-//Baixas	
-	function baixar(){
-			$html=new html;
-			$lancamento=new lancamento;	
-			
-			function update($table,$campos,$where){
-				$lancamento=new lancamento;
-				include "config.php";
-				$consulta="UPDATE ".$schema.".`".$table."` SET ".$campos." WHERE ".$where.";";
-				$update=mysql_query($consulta,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main uk-width-medium-1-2 uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	
-				
-				$processo="Baixa de ativo imobilizado";
-				$registros=mysql_affected_rows();
-				$consulta=$consulta;
-				$msg_erro=mysql_error();
-				
-				$lancamento->resultado_tr("","data-uk-datepicker={format:'DD/MM/YYYY'}",$processo,$registros,$consulta,$msg_erro);
 
-			}
-		
-
-
-			if(
-					isset($_POST) and 
-					$_POST!=null and 
-					
-					isset($_POST['cod_motivo_baixa']) and 
-					isset($_POST['textarea_cod_item']) and 
-					$_POST['cod_motivo_baixa']!="" and 
-					$_POST['textarea_cod_item']!="" and 
-					$_POST['data_baixa']!="00/00/0000" 
-					
-				){
-					$data_baixa= DateTime::createFromFormat('d/m/Y', $_POST['data_baixa'])->format('Y-m-d');
-					$table="cad_itens";
-					$campos="cod_motivo_baixa=".$_POST['cod_motivo_baixa'].", data_baixa='".$data_baixa."', cod_status_patrimonio=2 ";
-					$cod_tens=$_POST['textarea_cod_item'];
-					$cod_tens=str_replace("}{","},{",$cod_tens);
-					$cod_tens=explode(',',$cod_tens);
-					
-	
-					$lancamento->resultado_table_header('Processo','Registros afetados','Consulta SQL','Mensagem de erro')	;	
-							for($i=0;$i<count($cod_tens);$i++){
-								$cod_tens[$i]=str_replace("}","",$cod_tens[$i]);
-								$cod_tens[$i]=str_replace("{","",$cod_tens[$i]);
-								$where="cod_item=".$cod_tens[$i];
-								update($table,$campos,$where);
-							}
-					$lancamento->resultado_table_footer();
-					
-					
-					
-					
-					
-					
-					
-				
-			}else{}
-		if(
-				isset($_POST) and 
-				$_POST!=null and 
-				
-				isset($_POST['data_inicio']) and 
-				isset($_POST['data_fim']) and 
-				isset($_POST['cod_item']) and 
-				isset($_POST['cod_grupo_patrimonio']) and 
-				isset($_POST['cod_filial']) 	
-				
-
-				
-				){
-		
-		
-		
-		
-		
-		
-		
-			$data_inicio= DateTime::createFromFormat('d/m/Y', $_POST['data_inicio'])->format('Y-m-d');
-			$data_fim= DateTime::createFromFormat('d/m/Y', $_POST['data_fim'])->format('Y-m-d');
-			$filtro="";
-			
-			if($_POST['data_inicio']!="00/00/0000"){
-				$filtro.="and cad_itens.data_aquisicao >= '".$data_inicio."'  ";
-			}
-			if($_POST['data_fim']!="00/00/0000"){
-				$filtro.="and cad_itens.data_aquisicao <= '".$data_fim."'  ";
-			}
-			if($_POST['cod_item']!=""){
-				$filtro.=" and cad_itens.cod_item='".$_POST['cod_item']."' ";
-			}
-			if($_POST['cod_grupo_patrimonio']!=""){
-				$filtro.=" and cad_itens.cod_grupo_patrimonio='".$_POST['cod_grupo_patrimonio']."' ";
-			}
-			if($_POST['cod_filial']!=""){
-				$filtro.=" and cad_itens.cod_filial='".$_POST['cod_filial']."' ";
-			}
-			
-		//////////////////////////////////	
-					$select="
-									select
-										cad_itens.cod_item as id,
-										cad_filial.descricao as filial,										
-										cad_grupo_patrimonio.descricao as grupo,
-										cad_itens.descricao as Item,
-										date_format(cad_itens.data_aquisicao,'%d/%m/%Y') as DtAquis,
-										cad_itens.valor_aquisicao as VlAquis,
-										cad_itens.valor_atual VlAtual,
-										cad_status_patrimonio.descricao as status
-										
-									from
-										".$schema.".cad_itens,
-										".$schema.".cad_status_patrimonio,
-										".$schema.".cad_grupo_patrimonio,
-										".$schema.".cad_filial
-									where
-										cad_itens.cod_status_patrimonio=cad_status_patrimonio.cod_status_patrimonio	and
-										cad_itens.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio and
-										cad_itens.cod_filial=cad_filial.cod_filial 
-									".$filtro." ";
-
-					$pesquisa=new pesquisa;
-					$json=$pesquisa->json($select);
-		echo "
-		<style>
-			.tr_selecionada{
-				background-color: #D32C46;
-				background-image: linear-gradient(to bottom, #EE465A, #C11A39);
-				color: #fff;
-			}
-		</style>
-		<script>
-        $(function(){
-            $('.uk-table tr').click( function(){
-				var id_tr=$(this).attr('id');
-				var class_name=document.getElementById(id_tr).className;
-				if(class_name=='tr_selecionada'){
-					document.getElementById(id_tr).className='';
-				}else{
-					document.getElementById(id_tr).className ='tr_selecionada';
-				}
-            });
-        })
-		$(function(){
-			$('#confirmar_baixas').click(function(){
-
-			ids=document.getElementsByClassName('tr_selecionada');
-			var n=ids.length;
-			ids_='';
-			for(var i=0;i<n;i++){
-				ids_+='{'+ids[i].getElementsByTagName('td')[0].innerHTML+'}';
-				document.getElementById('textarea_cod_item').value=ids_;		
-			}
-
-		});
-		});
-		
-		</script>	
-		";					
-					
-					echo "<div id='grid' class='uk-width-1-1'>";
-
-				echo $html->tabela($json,'');
-					echo "</div>";
-			
-		//////////////////////////////////	
-			
-			
-			
-			
-			
-			}
-
-			
-	}
-	function reavaliar(){
-			$html=new html;
-			$lancamento=new lancamento;	
-
-
-
-		if(
-				isset($_POST) and 
-				$_POST!=null and 
-				
-				isset($_POST['data_inicio']) and 
-				isset($_POST['data_fim']) and 
-				isset($_POST['cod_item']) and 
-				isset($_POST['cod_grupo_patrimonio']) and 
-				isset($_POST['cod_filial']) 	
-				
-			){
-		
-		
-			$data_inicio= DateTime::createFromFormat('d/m/Y', $_POST['data_inicio'])->format('Y-m-d');
-			$data_fim= DateTime::createFromFormat('d/m/Y', $_POST['data_fim'])->format('Y-m-d');
-			$filtro="";
-			
-			if($_POST['data_inicio']!="00/00/0000"){
-				$filtro.="and cad_itens.data_aquisicao >= '".$data_inicio."'  ";
-			}
-			if($_POST['data_fim']!="00/00/0000"){
-				$filtro.="and cad_itens.data_aquisicao <= '".$data_fim."'  ";
-			}
-			if($_POST['cod_item']!=""){
-				$filtro.=" and cad_itens.cod_item='".$_POST['cod_item']."' ";
-			}
-			if($_POST['cod_grupo_patrimonio']!=""){
-				$filtro.=" and cad_itens.cod_grupo_patrimonio='".$_POST['cod_grupo_patrimonio']."' ";
-			}
-			if($_POST['cod_filial']!=""){
-				$filtro.=" and cad_itens.cod_filial='".$_POST['cod_filial']."' ";
-			}
-			
-		//////////////////////////////////	
-					$select="
-									select
-										cad_itens.cod_item as id,
-										cad_filial.descricao as filial,										
-										cad_grupo_patrimonio.descricao as grupo,
-										cad_itens.descricao as item,
-										date_format(cad_itens.data_aquisicao,'%d/%m/%Y') as data_aquisicao,
-										date_format(cad_itens.data_inicio_depreciacao,'%d/%m/%Y') as data_inicio_depreciacao,
-										cad_itens.valor_aquisicao as valor_aquisicao,
-										cad_itens.valor_atual valor_atual,
-										cad_status_patrimonio.descricao as status,
-										cad_itens.vida_util,
-										cad_itens.taxa_depreciacao_anual
-										
-									from
-										".$schema.".cad_itens,
-										".$schema.".cad_status_patrimonio,
-										".$schema.".cad_grupo_patrimonio,
-										".$schema.".cad_filial
-									where
-										cad_itens.cod_status_patrimonio=cad_status_patrimonio.cod_status_patrimonio	and
-										cad_itens.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio and
-										cad_itens.cod_filial=cad_filial.cod_filial and
-										cad_itens.cod_status_patrimonio=1 
-									".$filtro." ";
-
-					
-					echo "<div id='grid_msg'></div>";
-					echo "<div id='grid_relatorio'></div>";
-					$pesquisa=new pesquisa;
-					$json=$pesquisa->json($select);
-					
-					
-					$column= "{headerText: 'ID', key: 'id', width: '50px', dataType: 'string'},";
-					$column.="{headerText: 'Status', key: 'status',width: '100px', dataType: 'string'},";						
-					$column.="{headerText: 'Filial', key: 'filial', width: '100px', dataType: 'string'},";
-					$column.="{headerText: 'Grupo', key: 'grupo', width: '100px', dataType: 'string'},";
-					$column.="{headerText: 'Descrição do Item', key: 'item', dataType: 'string'},";
-					$column.= "{
-								headerText: 'Aquisição',
-								group: [
-										{headerText: 'Data', key: 'data_aquisicao', width: '80px', dataType: 'string'},
-										{headerText: 'Valor', key: 'valor_aquisicao', width: '80px', dataType: 'string'}
-								]
-							},";
-					$column.= " {
-								headerText: 'Reavaliação',
-								group: [
-										{headerText: 'Data', key: 'data_inicio_depreciacao', width: '70px', dataType: 'string'},
-										{headerText: '% Depr. aa', key: 'taxa_depreciacao_anual', width: '70px', dataType: 'string'},
-										{headerText: 'Vida útil', key: 'vida_util', width: '70px', dataType: 'string'},
-										{headerText: 'Valor', key: 'valor_atual', width: '70px', dataType: 'string'}
-								]
-							}";
-
-					$column_editavel="
-                        {
-                            columnKey: 'id',
-                            readOnly: true
-                        },
-                        {
-                            columnKey: 'filial',
-                            readOnly: true
-                        },
-                        {
-                            columnKey: 'grupo',
-                            readOnly: true
-                        },
-                        {
-                            columnKey: 'item',
-                            readOnly: true
-                        },
-                        {
-                            columnKey: 'status',
-                            readOnly: true
-                        },
-                        {
-                            columnKey: 'data_aquisicao',
-                            readOnly: true
-                        },
-                        {
-                            columnKey: 'valor_aquisicao',
-                            readOnly: true
-                        },
-
-                        {
-                            columnKey: 'data_inicio_depreciacao',
-							editorType: 'string'
-                        },
-						{
-							columnKey: 'valor_atual',
-							editorType: 'number'
-						}";
-					
-					$igniteui=new igniteui;
-					$igniteui->igrid_editavel($json,$column,$column_editavel);
-			
-			
-		echo "
-		<script>
-        $(function(){
-            $('.uk-table tr').click( function(){
-				var id_tr=$(this).attr('id');
-				var class_name=document.getElementById(id_tr).className;
-				if(class_name=='tr_selecionada'){
-					document.getElementById(id_tr).className='';
-				}else{
-					document.getElementById(id_tr).className ='tr_selecionada';
-				}
-            });
-        })
-		$(function(){
-			$('#confirmar_reavaliacao').click(function(){
-
-						$('#grid_relatorio').igGrid('commit');
-						var formData = new FormData();
-							formData.append('json', JSON.stringify($('#grid_relatorio').data('igGrid').dataSource.data()));
-							formData.append('tabela', 'reavaliacao');
-						var xhr = new XMLHttpRequest();
-							xhr.onreadystatechange = function()
-							{
-								if(xhr.readyState == 4 && xhr.status == 200)
-								{
-									document.getElementById('grid_msg').innerHTML=xhr.responseText;
-								}
-							}						
-							xhr.open('POST', 'php/salvar_reavaliacao.php',true);
-							xhr.send(formData);				
-
-
-		});
-		});
-		
-		</script>	
-		";					
-
-			
-			
-			
-			}
-
-			
-	}
-	
-	
 }
 
 class relatorios{
@@ -2455,387 +2076,6 @@ class relatorios{
 		}
 
 	
-	}
-	function mapa_ativo(){
-
-
-			echo "<div id='grid_relatorio' class='uk-width-1-1'></div>";
-			
-		if(isset($_POST) and $_POST!=null and $_POST['data_inicio']!="00/00/0000" and $_POST['data_fim']!="00/00/0000"){
-			
-			$data_inicio= DateTime::createFromFormat('d/m/Y', $_POST['data_inicio'])->format('Y-m-d');
-			$data_fim= DateTime::createFromFormat('d/m/Y', $_POST['data_fim'])->format('Y-m-d');
-
-		$select="
-				SELECT 
-					cad_grupo_patrimonio.cod_grupo_patrimonio,
-					cad_grupo_patrimonio.numero,
-					cad_grupo_patrimonio.descricao,
-					ROUND(ifnull(tb_saldo_inicial.valor_aquisicao,0),2) as valor_aquisicao,
-					ROUND(ifnull(tb_depreciacao_anterior.valor,0),2) as depreciacao_anterior,
-					ROUND(ifnull(tb_saldo_inicial.total,0),2) as saldo_inicial,
-					ROUND(ifnull(tb_aquisicoes.total,0),2) as aquisicoes,
-					ROUND(ifnull(-tb_baixas.total,0),2) as baixas,
-					ROUND(ifnull(tb_saldo_atual.total,0),2) as saldo_atual,
-					ROUND(ifnull(tb_depreciacao_acumulada.valor,0)-ifnull(tb_depreciacao_periodo.valor,0),2) as depreciacao_acumulada_inicial,					
-					ROUND(ifnull(tb_depreciacao_periodo.valor,0),2) as depreciacao_periodo,
-					ROUND(ifnull(tb_depreciacao_acumulada.valor,0),2) as depreciacao_acumulada_final,
-					ROUND((ifnull(tb_saldo_atual.total,0)+ifnull(tb_depreciacao_acumulada.valor,0)-ifnull(tb_depreciacao_periodo.valor,0)),2) as saldo_liquido_anterior,
-					ROUND((ifnull(tb_saldo_atual.total,0)+ifnull(tb_depreciacao_acumulada.valor,0)),2) as saldo_liquido_atual
-
-				 FROM 
-					".$schema.".cad_grupo_patrimonio
-
-				left join (
-					SELECT 
-						sum(valor_aquisicao) as total,
-						cod_grupo_patrimonio
-					FROM 
-						".$schema.".cad_itens
-					where
-						(data_aquisicao between '".$data_inicio."' and '".$data_fim."')
-					group by
-						cod_grupo_patrimonio
-				) as tb_aquisicoes on tb_aquisicoes.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio
-
-				left join (
-					SELECT 
-						cad_itens.valor_aquisicao as valor_aquisicao,
-						sum(cad_movimento.valor) as total,
-						cad_itens.cod_grupo_patrimonio
-					FROM 
-						".$schema.".cad_itens,
-						".$schema.".cad_movimento
-					where
-						cad_itens.cod_item=cad_movimento.cod_item and
-						(cad_itens.data_aquisicao < '".$data_inicio."') and
-						(cad_movimento.data < '".$data_inicio."') 
-					group by
-						cad_itens.cod_grupo_patrimonio
-						
-				) as tb_saldo_inicial on tb_saldo_inicial.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio
-
-				left join (
-					SELECT 
-						sum(valor_aquisicao) as total,
-						cod_grupo_patrimonio
-					FROM 
-						".$schema.".cad_itens
-					where
-						(data_baixa between '".$data_inicio."' and '".$data_fim."')
-					group by
-						cod_grupo_patrimonio
-
-				) as tb_baixas on tb_baixas.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio
-
-				left join (
-					SELECT 
-						sum(valor_aquisicao) as total,
-						cod_grupo_patrimonio
-					FROM 
-						".$schema.".cad_itens
-					where
-						(data_aquisicao <= '".$data_fim."') and
-						(data_baixa > '".$data_fim."' or data_baixa='0000-00-00' )
-					group by
-						cod_grupo_patrimonio
-
-				) as tb_saldo_atual on tb_saldo_atual.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio
-
-				left join(
-					SELECT 
-						cad_itens.cod_grupo_patrimonio,
-						sum(cad_movimento.valor) as valor 
-					FROM 
-						".$schema.".cad_movimento,
-						".$schema.".cad_itens
-					where
-						cad_movimento.cod_item=cad_itens.cod_item and
-						(cad_movimento.data between '".$data_inicio."' and '".$data_fim."') and
-						cad_movimento.cod_tipo_movimento=6
-					group by
-						cad_itens.cod_grupo_patrimonio
-
-				) as tb_depreciacao_periodo on tb_depreciacao_periodo.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio
-
-				left join(
-					SELECT 
-						cad_itens.cod_grupo_patrimonio,
-						sum(cad_movimento.valor) as valor 
-					FROM 
-						".$schema.".cad_movimento,
-						".$schema.".cad_itens
-					where
-						cad_movimento.cod_item=cad_itens.cod_item and
-						cad_movimento.data < '".$data_inicio."' and
-						cad_movimento.cod_tipo_movimento=6
-					group by
-						cad_itens.cod_grupo_patrimonio
-
-				) as tb_depreciacao_anterior on tb_depreciacao_anterior.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio
-
-				left join(
-					SELECT 
-						cad_itens.cod_grupo_patrimonio,
-						sum(cad_movimento.valor) as valor 
-					FROM 
-						".$schema.".cad_movimento,
-						".$schema.".cad_itens
-					where
-						cad_movimento.cod_item=cad_itens.cod_item and
-						(cad_movimento.data <= '".$data_fim."') and
-						(cad_itens.data_aquisicao <= '".$data_fim."') and
-						(cad_itens.data_baixa > '".$data_fim."' or data_baixa='0000-00-00' ) and
-						cad_movimento.cod_tipo_movimento=6
-					group by
-						cad_itens.cod_grupo_patrimonio
-
-				) as tb_depreciacao_acumulada on tb_depreciacao_acumulada.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio
-				;
-		";
-			$pesquisa=new pesquisa;
-			$base=	$pesquisa->json($select);
-			
-			$column= "{headerText: 'ID', key: 'cod_grupo_patrimonio', width: '50px', dataType: 'string'},";
-			$column.="{headerText: 'numero', key: 'numero', width: '150px', dataType: 'string'},";
-			$column.="{headerText: 'descricao', key: 'descricao',  dataType: 'string'},";
-			
-			$column.= " {
-                        headerText: 'Movimentoação do Período',
-                        group: [
-								{headerText: 'Valor de <br/>aquisição', key: 'valor_aquisicao', width: '90px', dataType: 'number', format: '0.00'},
-								{headerText: 'Valor<br/> depreciado', key: 'depreciacao_anterior', width: '90px', dataType: 'number', format: '0.00'},
-								{headerText: 'Saldo<br/>inicial', key: 'saldo_inicial', width: '90px', dataType: 'number', format: '0.00'},
-								{headerText: 'Aquisições', key: 'aquisicoes', width: '90px', dataType: 'number', format: '0.00'},
-								{headerText: 'Baixas', key: 'baixas', width: '90px', dataType: 'number', format: '0.00'},
-								{headerText: 'Depreciação <br/>do período', key: 'depreciacao_periodo', width: '90px', dataType: 'number', format: '0.00'},
-								{headerText: 'Saldo liquido <br/>final', key: 'saldo_liquido_atual', width: '90px', dataType: 'number', format: '0.00'}
-                        ]
-                    },";
-
-
-					
-	
-
-
-			$igniteui=new igniteui;
-			$igniteui->igrid_relatorios($base,$column,'');			
-		}
-
-	}
-	function aquisicoes_baixas(){
-			echo "<div id='grid_relatorio' class='uk-width-1-1'></div>";
-	
-		if(isset($_POST) and $_POST!=null and $_POST['data_inicio']!="00/00/0000" and $_POST['data_fim']!="00/00/0000" and $_POST['aquisicao_baixa']!=""){
-			$data_inicio= DateTime::createFromFormat('d/m/Y', $_POST['data_inicio'])->format('Y-m-d');
-			$data_fim= DateTime::createFromFormat('d/m/Y', $_POST['data_fim'])->format('Y-m-d');
-			$filtro="";
-			
-			if($_POST['aquisicao_baixa']=="aquisicao"){
-				$filtro.=" where (cad_itens.data_aquisicao between '".$data_inicio."' and '".$data_fim."') ";
-			}
-			if($_POST['aquisicao_baixa']=="baixa"){
-				$filtro.=" where (cad_itens.data_baixa between '".$data_inicio."' and '".$data_fim."') ";
-			}
-			
-			if($_POST['cod_grupo_patrimonio']!=""){
-				$filtro.=" and cad_itens.cod_grupo_patrimonio='".$_POST['cod_grupo_patrimonio']."' ";
-			}
-			if($_POST['cod_filial']!=""){
-				$filtro.=" and cad_itens.cod_filial='".$_POST['cod_filial']."' ";
-			}
-			if($_POST['cod_tipo_patrimonio']!=""){
-				$filtro.=" and cad_itens.cod_tipo_patrimonio='".$_POST['cod_tipo_patrimonio']."' ";
-			}
-			if($_POST['cod_tipo_aquisicao']!=""){
-				$filtro.=" and cad_itens.cod_tipo_aquisicao='".$_POST['cod_tipo_aquisicao']."' ";
-			}
-			if($_POST['cod_motivo_baixa']!=""){
-				$filtro.=" and cad_itens.cod_motivo_baixa='".$_POST['cod_motivo_baixa']."' ";
-			}
-		$select="
-				SELECT 
-					cad_itens.*,
-					cad_grupo_patrimonio.descricao as grupo,
-					cad_filial.descricao as filial,
-					cad_fornecedor.nome_razao_social as fornecedor,
-					cad_motivo_baixa.descricao as motivo_baixa
-					
-				FROM 
-					".$schema.".cad_itens
-
-				left join ".$schema.".cad_grupo_patrimonio  on cad_itens.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio
-				left join ".$schema.".cad_filial on cad_itens.cod_filial=cad_filial.cod_filial
-				left join ".$schema.".cad_fornecedor on cad_itens.cod_fornecedor=cad_fornecedor.cod_fornecedor
-				left join ".$schema.".cad_motivo_baixa on cad_itens.cod_motivo_baixa=cad_motivo_baixa.cod_motivo_baixa
-			".$filtro."
-		";
-		
-		//echo $select;
-			$pesquisa=new pesquisa;
-			$base=	$pesquisa->json($select);
-
-			
-			$column= "{headerText: 'ID', key: 'cod_item', width: '50px', dataType: 'string'},";
-			$column.="{headerText: 'Plaqueta', key: 'codigo_patrimonio', width: '50px', dataType: 'string'},";
-			$column.="{headerText: 'Grupo', key: 'grupo', width:'100px',  dataType: 'string'},";
-			$column.="{headerText: 'Filial', key: 'filial', width:'100px',  dataType: 'string'},";
-			$column.="{headerText: 'Descrição do Item', key: 'descricao',  dataType: 'string'},";
-			$column.="{headerText: 'Fornecedor', key: 'fornecedor', width:'100px',  dataType: 'string'},";
-			$column.="{headerText: 'Documento', key: 'numero_documento', width:'70px',  dataType: 'string'},";
-			$column.="{headerText: 'Aquisição', key: 'data_aquisicao', width:'70px',  dataType: 'date', format:'d/MM/yyyy'},";
-			$column.="{headerText: 'Baixa', key: 'data_baixa', width:'70px', dataType: 'date', format:'d/MM/yyyy'},";
-			$column.="{headerText: 'Motivo de baixa', key: 'motivo_baixa', width:'70px', dataType: 'string'},";
-			$column.="{headerText: 'Vl.Aquisição', key: 'valor_aquisicao', width:'70px',  dataType: 'number', format:'0.00'}";
-
-			$groupby="{columnKey: 'grupo',isGroupBy: true},";
-			//$groupby.="{columnKey: 'filial',isGroupBy: true},";
-			
-		$xxx="	cod_filial
-			cod_fornecedor
-			cod_grupo_patrimonio
-
-			cod_item_pai
-			cod_status_patrimonio
-			cod_tipo_aquisicao
-			cod_tipo_documento
-			cod_tipo_patrimonio
-			codigo_barras
-
-
-			data_baixa
-			data_inclusao
-
-
-
-
-
-			quantidade
-			serie
-			taxa_depreciacao_anual
-			unidade
-
-			valor_atual
-			valor_residual
-			vida_util";
-
-
-					
-
-
-			$igniteui=new igniteui;
-			$igniteui->igrid_relatorios($base,$column,$groupby);			
-		}
-	
-	
-
-
-	}
-	function depreciacao(){
-
-			echo "<div id='grid_relatorio' class='uk-width-1-1'></div>";		
-	
-		if(isset($_POST) and $_POST!=null and $_POST['data_inicio']!="00/00/0000" and $_POST['data_fim']!="00/00/0000" ){
-			$data_inicio= DateTime::createFromFormat('d/m/Y', $_POST['data_inicio'])->format('Y-m-d');
-			$data_fim= DateTime::createFromFormat('d/m/Y', $_POST['data_fim'])->format('Y-m-d');
-			$filtro="";
-			
-			if($_POST['cod_grupo_patrimonio']!=""){
-				$filtro.=" and cad_itens.cod_grupo_patrimonio='".$_POST['cod_grupo_patrimonio']."' ";
-			}
-			if($_POST['cod_filial']!=""){
-				$filtro.=" and cad_itens.cod_filial='".$_POST['cod_filial']."' ";
-			}
-		$select="
-				SELECT 
-					cad_itens.cod_item,
-					cad_grupo_patrimonio.descricao as nome_grupo,
-					cad_itens.descricao,
-					cad_itens.data_aquisicao,
-					ROUND(cad_itens.valor_aquisicao,2) as valor_aquisicao,
-					cad_itens.vida_util as vida_util_item,
-					cad_itens.taxa_depreciacao_anual as taxa_depreciacao_anual_item,
-
-					cad_grupo_patrimonio.vida_util as vida_util_grupo,
-					cad_grupo_patrimonio.taxa_depreciacao_anual as taxa_depreciacao_anual_grupo,
-
-					ROUND(ifnull(tb_saldo_inicial.valor, cad_itens.valor_aquisicao),2) as saldo_inicial,
-					ROUND(tb_depreciacao.valor,2) as depreciacao,
-					ROUND(ifnull(tb_saldo_inicial.valor, cad_itens.valor_aquisicao)+ tb_depreciacao.valor,2) as saldo_final
-					
-				FROM 
-					".$schema.".cad_itens
-
-				left join ".$schema.".cad_grupo_patrimonio  on cad_itens.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio
-				left join ( select cod_item,data,sum(valor) as valor from ".$schema.".cad_movimento where (data between '".$data_inicio."' and '".$data_fim."') and cod_tipo_movimento=6 group by cod_item) as tb_depreciacao  on cad_itens.cod_item=tb_depreciacao.cod_item
-				left join ( select cod_item,sum(valor) as valor from ".$schema.".cad_movimento where (data < '".$data_inicio."' )  group by cod_item) as tb_saldo_inicial  on cad_itens.cod_item=tb_saldo_inicial.cod_item
-				
-				where 
-					cad_itens.data_aquisicao<'".$data_fim."'
-					".$filtro."
-
-				group by
-					cad_itens.cod_item
-					
-
-		";
-		
-		//echo $select;
-			$pesquisa=new pesquisa;
-			$base=	$pesquisa->json($select);
-			//echo $base;
-			
-			$column= "{headerText: 'ID', key: 'cod_item', width: '50px', dataType: 'string'},";
-			$column.="{headerText: 'Grupo', key: 'nome_grupo',  dataType: 'string'},";
-			$column.="{headerText: 'Descrição do Item', key: 'descricao',  dataType: 'string'},";
-			
-			$column.="{
-                        headerText: 'Aquisição',
-                        group: [
-								{headerText: 'Data', key: 'data_aquisicao', width:'80px',  dataType: 'date', format:'d/MM/yyyy'},
-								{headerText: 'Valor', key: 'valor_aquisicao', width:'80px',  dataType: 'number', format:'0.00'},
-						]
-						},";
-			$column.="{
-                        headerText: 'Vida útil',
-                        group: [
-								{
-								headerText: 'Item',
-								group: [
-										{headerText: 'V.U.', key: 'vida_util_item', width:'50px',  dataType: 'number', format:'int'},
-										{headerText: 'Taxa Anual', key: 'taxa_depreciacao_anual_item', width:'50px',  dataType: 'number', format:'0.00'},
-									]
-								},
-								{
-								headerText: 'Grupo',
-								group: [
-										{headerText: 'V.U.', key: 'vida_util_grupo', width:'50px',  dataType: 'number', format:'int'},
-										{headerText: 'Taxa Anual', key: 'taxa_depreciacao_anual_grupo', width:'50px',  dataType: 'number', format:'0.00'},
-									]
-								},
-						
-						]
-						},";
-			$column.="{
-                        headerText: 'Saldos',
-                        group: [
-								{headerText: 'Inicial', key: 'saldo_inicial', width:'80px',  dataType: 'number', format:'0.00'},
-								{headerText: 'Depreciação', key: 'depreciacao', width:'80px',  dataType: 'number', format:'0.00'},
-								{headerText: 'Final', key: 'saldo_final', width:'80px',  dataType: 'number', format:'0.00'}
-						]
-						},";
-
-			
-
-			$groupby="";
-	
-			$igniteui=new igniteui;
-			$igniteui->igrid_relatorios($base,$column,$groupby);			
-		}
-	
-	
-
-
 	}
 
 }
@@ -3152,5 +2392,28 @@ class layout{
 
 
 }
+
+
+	function data($data){
+
+		if(strpos($data,"-")!==false){
+			$dat = explode ("-",$data,3);
+			return $dat[2]."/".$dat[1]."/".$dat[0];
+		}else{
+			$dat = explode ("/",$data,3);
+			return $dat[2]."-".$dat[1]."-".$dat[0];
+		}
+
+	}
+	function decimal($valor){
+		if(strpos($valor,",")!== false){
+			$valor=str_replace(".","",$valor);
+			return str_replace(',','.',$valor);
+		}else{
+			return str_replace('.',',',$valor);
+		}
+	}
+
+
 
 ?>
