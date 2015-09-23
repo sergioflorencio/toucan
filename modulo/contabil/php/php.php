@@ -2096,512 +2096,392 @@ class relatorios{
 	
 	}
 	function razao_conta(){
-			//var_dump($_POST);
+		
+			if(isset($_POST) and isset($_POST['data_inicio']) and isset($_POST['data_fim']) and isset($_POST['conta_inicio']) and isset($_POST['conta_fim']) and isset($_POST['ctr_custo_inicio']) and isset($_POST['ctr_custo_fim'])){			
 			
-			function numero_conta_limpo($numero_conta){
-				
-								$numero_conta = explode (" ",$numero_conta,2);
-								$numero_conta = $numero_conta[0];
-								include "config.php";
-								$select="SELECT cod_conta,1*concat(replace(numero_conta,'.',''),REPEAT('0',tb_lr_max.lr_max-length(replace(numero_conta,'.','')))) as novo_numero_conta FROM ".$schema.".cad_conta, (SELECT max(length(replace(numero_conta,'.',''))) as lr_max FROM ".$schema.".cad_conta where cod_empresa='".$_SESSION['cod_empresa']."') as tb_lr_max where cod_empresa='".$_SESSION['cod_empresa']."' and numero_conta='".$numero_conta."'; ";
-								$resultado=mysql_query($select,$conexao) or die (mysql_error());
-								$cod_conta = mysql_fetch_array($resultado);
-								$cod_conta=$cod_conta[1];
-								return $cod_conta;
-				
-			
-			}
-			function numero_centro_custo_limpo($numero_centro_custo){
-								$numero_centro_custo = explode (" ",$numero_centro_custo,2);
-								$numero_centro_custo = $numero_centro_custo[0];
-								include "config.php";
-								$select="SELECT cod_centro_custo,1*concat(replace(numero_centro_custo,'.',''),REPEAT('0',tb_lr_max.lr_max-length(replace(numero_centro_custo,'.','')))) as novo_numero_centro_custo FROM ".$schema.".cad_centro_custo, (SELECT max(length(replace(numero_centro_custo,'.',''))) as lr_max FROM ".$schema.".cad_centro_custo where cod_empresa='".$_SESSION['cod_empresa']."') as tb_lr_max where cod_empresa='".$_SESSION['cod_empresa']."'; ";
-								$resultado=mysql_query($select,$conexao) or die (mysql_error());
-								$cod_centro_custo = mysql_fetch_array($resultado);
-								$cod_centro_custo=$cod_centro_custo[1];
-								return $cod_centro_custo;
-				
-			}
-			function tbody($data,$historico,$lancamento,$documento,$debito,$credito,$saldo,$DC){
-				return "
-						<tbody>
-							<tr>
-								<td>".$data."</td>
-								<td>".$historico."</td>
-								<td>".$lancamento."</td>
-								<td>".$documento."</td>
-								<td style='text-align: right !important;'>".$debito."</td>
-								<td style='text-align: right !important;'>".$credito."</td>
-								<td style='text-align: right !important;'>".$saldo."</td>
-								<td style='text-align: left !important;'>".$DC."</td>
-							</tr>
-						</tbody>			
-				";
-			}
-			function tbody_($nome_conta,$saldo_ini){
-				return "
-						<tbody>
-							<tr >
-								<td colspan='6'><b>".$nome_conta."</b></td><td><b>".$saldo_ini."</b></td>
-							</tr>
-						</tbody>			
-				";
-			}
-			
-			$tbody="";
-			$conta="";
-			
-			if(isset($_POST) and isset($_POST['data_inicio']) and isset($_POST['data_fim']) and isset($_POST['conta_inicio']) and isset($_POST['conta_fim']) and isset($_POST['ctr_custo_inicio']) and isset($_POST['ctr_custo_fim'])){
-		
-			$filtro="";
-			if($_POST['data_inicio']!="00/00/0000" or $_POST['data_fim']!="00/00/0000"){
-				$filtro.="  and ( cad_documento.data_base between '".data($_POST['data_inicio'])."' and '".data($_POST['data_fim'])."' )";
-			}
-			if($_POST['conta_inicio']!="" or $_POST['conta_fim']!=""){
-				$filtro.="  and ( novo_numero_conta between '".numero_conta_limpo($_POST['conta_inicio'])."' and '".numero_conta_limpo($_POST['conta_fim'])."' )";
-			}
-			if($_POST['ctr_custo_inicio']!="" or $_POST['ctr_custo_fim']!=""){
-				$filtro.="  and ( novo_numero_centro_custo between '".numero_centro_custo_limpo($_POST['ctr_custo_inicio'])."' and '".numero_centro_custo_limpo($_POST['ctr_custo_fim'])."' )";
-			}
-			if($_POST['relatorio']!="" and $_POST['relatorio']=="conta"){
-				$group_by="conta";
-
-			}else{
-				$group_by="centro_custo";
-
-			}
-		
-		
-			include "config.php";
-			$select="
-					SELECT 
-						cod_documento_item,
-						cad_documento.data_base as data,
-						cad_documento_item.historico,
-						cad_documento.cod_documento as lancamento,
-						cad_documento.referencia as documento,
-						cad_documento_item.cod_conta,
-						cad_documento_item.montante,
-						cad_documento_item.codigo_lancamento,
-
-						concat(cad_conta.numero_conta,' - ',cad_conta.descricao) as conta,
-						concat(cad_centro_custo.numero_centro_custo,' - ',cad_centro_custo.descricao) as centro_custo,
-
-						cad_conta.numero_conta,
-						tb_novo_numero_conta.novo_numero_conta,
-
-						cad_centro_custo.numero_centro_custo,
-						tb_novo_numero_centro_custo.novo_numero_centro_custo,
-
-						tb_saldo_inicial.saldo_ini
-
-
-					FROM 
-						".$schema.".cad_documento_item,
-						".$schema.".cad_documento,
-						".$schema.".cad_conta,
-						".$schema.".cad_centro_custo,
-						(SELECT cod_conta,1*concat(replace(numero_conta,'.',''),REPEAT('0',tb_lr_max.lr_max-length(replace(numero_conta,'.','')))) as novo_numero_conta FROM ".$schema.".cad_conta, (SELECT max(length(replace(numero_conta,'.',''))) as lr_max FROM ".$schema.".cad_conta where cod_empresa='".$_SESSION['cod_empresa']."') as tb_lr_max where cod_empresa='".$_SESSION['cod_empresa']."') as tb_novo_numero_conta,
-						(SELECT cod_centro_custo,1*concat(replace(numero_centro_custo,'.',''),REPEAT('0',tb_lr_max.lr_max-length(replace(numero_centro_custo,'.','')))) as novo_numero_centro_custo FROM ".$schema.".cad_centro_custo, (SELECT max(length(replace(numero_centro_custo,'.',''))) as lr_max FROM ".$schema.".cad_centro_custo where cod_empresa='".$_SESSION['cod_empresa']."') as tb_lr_max where cod_empresa='".$_SESSION['cod_empresa']."') as tb_novo_numero_centro_custo,
-						(
-									SELECT 
-										cad_conta.cod_conta,
-										(saldo_inicial+if (total>0,total,0)) as saldo_ini
-									 FROM 
-										".$schema.".cad_conta
-									left join
-										(
-											SELECT 
-												cod_conta,
-												sum(montante*if(cad_documento_item.codigo_lancamento='D',1,-1)) as total
-											FROM 
-												".$schema.".cad_documento_item,
-												".$schema.".cad_documento
-											where
-												cad_documento.cod_documento=cad_documento_item.cod_documento and
-												cad_documento.cod_empresa='".$_SESSION['cod_empresa']."' and
-												cad_documento.data_base<'".data($_POST['data_inicio'])."'												
-											group by 
-												cod_conta
-										) as tb_movimento on cad_conta.cod_conta=tb_movimento.cod_conta
-						) as tb_saldo_inicial						
-						
-
-					where
-						cad_documento_item.cod_documento=cad_documento.cod_documento and
-						cad_documento_item.cod_conta=cad_conta.cod_conta and
-						cad_documento_item.cod_conta=tb_novo_numero_conta.cod_conta and
-						cad_documento_item.cod_ctr_custo=cad_centro_custo.cod_centro_custo and
-						cad_documento_item.cod_ctr_custo=tb_novo_numero_centro_custo.cod_centro_custo and
-						cad_documento_item.cod_conta=tb_saldo_inicial.cod_conta
-						".$filtro."
-						
-
-					order by
-						".$group_by.", data,cad_documento.cod_documento,codigo_lancamento
-
-			";
-			
-			//echo $select; 
-			$saldo=0;
-			$resultado=mysql_query($select,$conexao) or die (mysql_error());
-			while($row = mysql_fetch_array($resultado))
-			{
-				if($row['codigo_lancamento']=='D'){
-					$debito=$row['montante'];
-					$credito="";
-					$sinal=1;
-					
-					
-				}else{
-					$debito="";
-					$credito=$row['montante'];
-					$sinal=-1;
-
-					
-				}
-
-				
-				if($row[$group_by]!=$conta){
-					$conta=$row[$group_by];					
-					$tbody.=tbody_($row[$group_by],$row['saldo_ini']);
-					$saldo=$row['saldo_ini']+$row['montante']*$sinal;
-				}else{
-					$saldo=$saldo+$row['montante']*$sinal;
-					
-				}
-				if($_POST['relatorio']!="" and $_POST['relatorio']=="centro_custo"){
-					$saldo=0;
-
-				}				
-				
-				if($saldo>=0){
-					$DC="D";
-					
-				}else{
-					$DC="C";
-				}
-				
-
-				$tbody.=tbody(data($row['data']),$row['historico'],$row['lancamento'],$row['documento'],decimal_($debito),decimal_($credito),decimal_($saldo),$DC);
-			}	
-			
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-			//$data_inicio,$data_fim,$conta_inicio,$conta_fim,$ctr_custo_inicio,$ctr_custo_fim
-			$titulo="Livro Razão de 01/01/2000 a 31/12/2000, agrupado por ".$_POST['relatorio']." ";
-
-			
-			$thead="
-					<thead>
-						<tr>
-							<th style='width: 1.5cm;'>Data</th>
-							<th style=''>Histórico</th>
-							<th style='width: 2.0cm;'>Lançamento</th>
-							<th style='width: 2.0cm; text-align: center !important;'>Documento</th>
-							<th style='width: 2.0cm; text-align: right !important;'>Débito</th>
-							<th style='width: 2.0cm; text-align: right !important;'>Crédito</th>
-							<th style='width: 2.0cm; text-align: right !important;'>Saldo</th>
-							<th style='width: 0.5cm; text-align: left !important;'></th>
-						</tr>
-					</thead>			
-			";
-			$caption="
-					<caption style='font-size: 12px ! important; font-family: times ! important; color: rgb(0, 0, 0) ! important;'>
-						<div class='uk-grid'>
-							<div class='uk-width-1-1'>".$_SESSION['razao_social']."</div>
-							<div class='uk-width-1-1'>".$_SESSION['cnpj']."</div>
-							<div class='uk-width-1-1'>
-								<div class='uk-grid'>
-									<div class='uk-width-3-5'>".$titulo."</div>
-									<div class='uk-width-1-5'>Livro:xxx</div>
-									<div class='uk-width-1-5'>Folha:xxx</div>
-								</div>
-							</div>
-						</div>
-
-					</caption>";			
-			$tfoot="
-					<tfoot>
-						<tr>
-							<td>...</td>
-							<td>...</td>
-							<td>...</td>
-							<td>...</td>
-							<td>...</td>
-							<td>...</td>
-							<td>...</td>
-							<td>...</td>
-						</tr>
-					</tfoot>			
-			";
-
-			
-			
-			
-
-			
-		//background-color: #E36A43;
-		
-			echo "
-					<div style='width: 21.0cm;height:29.7cm; padding: 1.5cm 0.5cm;'>
-						<table class='uk-table uk-table-condensed' style='font-size: 12px ! important; font-family: times ! important; color: rgb(0, 0, 0) ! important;'>
-							".$caption."
-							<thead>".$thead."</thead>	
-							<tbody>".$tbody."</tbody>
-							<tfoot>".$tfoot."</tfoot>								
-						</table>
-					</div>
-					
-					";
-		
-			echo "";
-				
-				
-				
+				//set variables 
+				$table=new table;
+				$table->select=$this->razao_conta_consulta_sql();
+				$table->group_by=$_POST['relatorio'];
+				$table->caption=array(
+					'titulo'=>"Livro Razão de ".$_POST['data_inicio']." a ".$_POST['data_fim'].", agrupado por ".$_POST['relatorio']." ",
+					'razao_social'=>$_SESSION['razao_social'],
+					'cnpj'=>$_SESSION['cnpj']
+				);
+				$table->thead=array(
+					1=>array('style'=>'width: 1.5cm;','label'=>'Data'),
+					2=>array('style'=>'','label'=>'Histórico'),
+					3=>array('style'=>'width: 2.0cm;','label'=>'Lançamento'),
+					4=>array('style'=>'width: 2.0cm; text-align: center !important;','label'=>'Documento'),
+					5=>array('style'=>'width: 2.0cm; text-align: right !important;','label'=>'Débito'),
+					6=>array('style'=>'width: 2.0cm; text-align: right !important;','label'=>'Crédito'),
+					7=>array('style'=>'width: 2.0cm; text-align: right !important;','label'=>'Saldo'),
+					8=>array('style'=>'width: 0.5cm; text-align: left !important;','label'=>'')
+				);
+				$table->tbody=array(
+					1=>array('formato'=>'data','style'=>'','campo'=>'data'),
+					2=>array('formato'=>'','style'=>'','campo'=>'historico'),
+					3=>array('formato'=>'','style'=>'text-align: center !important;','campo'=>'lancamento'),
+					4=>array('formato'=>'','style'=>'text-align: center !important;','campo'=>'documento'),
+					5=>array('formato'=>'decimal','style'=>'text-align: right !important;','campo'=>'debito'),
+					6=>array('formato'=>'decimal','style'=>'text-align: right !important;','campo'=>'credito'),
+					7=>array('formato'=>'decimal','style'=>'text-align: right !important;','campo'=>'saldo'),
+					8=>array('formato'=>'','style'=>'','campo'=>'DC')
+				);
+				echo $table->criar();
 			}
 			else{
-				
-				//	var_dump($_POST);
-				
-				$relatorios=new relatorios;
-				$relatorios->filtros(2);
-				
-				
-			}
-		
+				//	carregar filtro
+				$this->filtros(2);
+			}			
 
+		
+	}
+	function razao_conta_consulta_sql(){
+				include "config.php";
+				
+				//Construir filtro para o select
+				$filtro="";
+					
+				if($_POST['data_inicio']!="00/00/0000" or $_POST['data_fim']!="00/00/0000"){
+					$filtro.="  and ( cad_documento.data_base between '".data($_POST['data_inicio'])."' and '".data($_POST['data_fim'])."' )";
+				}
+				if($_POST['conta_inicio']!="" or $_POST['conta_fim']!=""){
+					$filtro.="  and ( novo_numero_conta between '".numero_conta_limpo($_POST['conta_inicio'])."' and '".numero_conta_limpo($_POST['conta_fim'])."' )";
+				}
+				if($_POST['ctr_custo_inicio']!="" or $_POST['ctr_custo_fim']!=""){
+					$filtro.="  and ( novo_numero_centro_custo between '".numero_centro_custo_limpo($_POST['ctr_custo_inicio'])."' and '".numero_centro_custo_limpo($_POST['ctr_custo_fim'])."' )";
+				}
+				if($_POST['relatorio']!="" and $_POST['relatorio']=="conta"){
+					$group_by="conta";
+
+				}else{
+					$group_by="centro_custo";
+
+				}
+				
+				//select mysql
+				$select="
+						SELECT 
+							cod_documento_item,
+							cad_documento.data_base as data,
+							cad_documento_item.historico,
+							cad_documento.cod_documento as lancamento,
+							cad_documento.referencia as documento,
+							cad_documento_item.cod_conta,
+							cad_documento_item.cod_ctr_custo,
+							cad_documento_item.montante,
+							
+							if(cad_documento_item.codigo_lancamento='D',cad_documento_item.montante,0) as debito,
+							if(cad_documento_item.codigo_lancamento='C',cad_documento_item.montante,0) as credito,
+
+							cad_documento_item.codigo_lancamento,
+							cad_documento_item.codigo_lancamento as DC,
+							'0' as saldo,
+
+							concat(cad_conta.numero_conta,' - ',cad_conta.descricao) as conta,
+							concat(cad_centro_custo.numero_centro_custo,' - ',cad_centro_custo.descricao) as centro_custo,
+
+							cad_conta.numero_conta,
+							tb_novo_numero_conta.novo_numero_conta,
+
+							cad_centro_custo.numero_centro_custo,
+							tb_novo_numero_centro_custo.novo_numero_centro_custo,
+
+							tb_saldo_inicial_conta.saldo_ini_conta as saldo_inicial_conta,
+							tb_saldo_inicial_centro_custo.saldo_ini_centro_custo as saldo_inicial_centro_custo
+
+
+						FROM 
+							".$schema.".cad_documento_item,
+							".$schema.".cad_documento,
+							".$schema.".cad_conta,
+							".$schema.".cad_centro_custo,
+							(SELECT cod_conta,1*concat(replace(numero_conta,'.',''),REPEAT('0',tb_lr_max.lr_max-length(replace(numero_conta,'.','')))) as novo_numero_conta FROM ".$schema.".cad_conta, (SELECT max(length(replace(numero_conta,'.',''))) as lr_max FROM ".$schema.".cad_conta where cod_empresa='".$_SESSION['cod_empresa']."') as tb_lr_max where cod_empresa='".$_SESSION['cod_empresa']."') as tb_novo_numero_conta,
+							(SELECT cod_centro_custo,1*concat(replace(numero_centro_custo,'.',''),REPEAT('0',tb_lr_max.lr_max-length(replace(numero_centro_custo,'.','')))) as novo_numero_centro_custo FROM ".$schema.".cad_centro_custo, (SELECT max(length(replace(numero_centro_custo,'.',''))) as lr_max FROM ".$schema.".cad_centro_custo where cod_empresa='".$_SESSION['cod_empresa']."') as tb_lr_max where cod_empresa='".$_SESSION['cod_empresa']."') as tb_novo_numero_centro_custo,
+							(
+										SELECT 
+											cad_conta.cod_conta,
+											(saldo_inicial+if (total>0,total,0)) as saldo_ini_conta
+										 FROM 
+											".$schema.".cad_conta
+										left join
+											(
+												SELECT 
+													cod_conta,
+													sum(montante*if(cad_documento_item.codigo_lancamento='D',1,-1)) as total
+												FROM 
+													".$schema.".cad_documento_item,
+													".$schema.".cad_documento
+												where
+													cad_documento.cod_documento=cad_documento_item.cod_documento and
+													cad_documento.cod_empresa='".$_SESSION['cod_empresa']."' and
+													cad_documento.data_base<'".data($_POST['data_inicio'])."'												
+												group by 
+													cod_conta
+											) as tb_movimento_conta on cad_conta.cod_conta=tb_movimento_conta.cod_conta
+							) as tb_saldo_inicial_conta,						
+							(
+										SELECT 
+											cad_centro_custo.cod_centro_custo,
+											if (total>0,total,0) as saldo_ini_centro_custo
+										 FROM 
+											".$schema.".cad_centro_custo
+										left join
+											(
+												SELECT 
+													cod_ctr_custo as cod_centro_custo,
+													sum(montante*if(cad_documento_item.codigo_lancamento='D',1,-1)) as total
+												FROM 
+													".$schema.".cad_documento_item,
+													".$schema.".cad_documento
+												where
+													cad_documento.cod_documento=cad_documento_item.cod_documento and
+													cad_documento.cod_empresa='".$_SESSION['cod_empresa']."' and
+													cad_documento.data_base<'".data($_POST['data_inicio'])."'												
+												group by 
+													cod_centro_custo
+											) as tb_movimento_centro_custo on cad_centro_custo.cod_centro_custo=tb_movimento_centro_custo.cod_centro_custo
+							) as tb_saldo_inicial_centro_custo						
+							
+
+						where
+							cad_documento_item.cod_documento=cad_documento.cod_documento and
+							cad_documento_item.cod_conta=cad_conta.cod_conta and
+							cad_documento_item.cod_conta=tb_novo_numero_conta.cod_conta and
+							cad_documento_item.cod_ctr_custo=cad_centro_custo.cod_centro_custo and
+							cad_documento_item.cod_ctr_custo=tb_novo_numero_centro_custo.cod_centro_custo and
+							cad_documento_item.cod_conta=tb_saldo_inicial_conta.cod_conta and
+							cad_documento_item.cod_ctr_custo=tb_saldo_inicial_centro_custo.cod_centro_custo
+							".$filtro."
+							
+
+						order by
+							".$group_by.", data,cad_documento.cod_documento,codigo_lancamento
+
+				";
+				
+				return $select;
 		
 	}
 	function livro_diario(){
-			//var_dump($_POST);
-			
-			function numero_conta_limpo($numero_conta){
-				
-								$numero_conta = explode (" ",$numero_conta,2);
-								$numero_conta = $numero_conta[0];
-								include "config.php";
-								$select="SELECT cod_conta,1*concat(replace(numero_conta,'.',''),REPEAT('0',tb_lr_max.lr_max-length(replace(numero_conta,'.','')))) as novo_numero_conta FROM ".$schema.".cad_conta, (SELECT max(length(replace(numero_conta,'.',''))) as lr_max FROM ".$schema.".cad_conta where cod_empresa='".$_SESSION['cod_empresa']."') as tb_lr_max where cod_empresa='".$_SESSION['cod_empresa']."' and numero_conta='".$numero_conta."'; ";
-								$resultado=mysql_query($select,$conexao) or die (mysql_error());
-								$cod_conta = mysql_fetch_array($resultado);
-								$cod_conta=$cod_conta[1];
-								return $cod_conta;
-				
-			
-			}
-			function numero_centro_custo_limpo($numero_centro_custo){
-								$numero_centro_custo = explode (" ",$numero_centro_custo,2);
-								$numero_centro_custo = $numero_centro_custo[0];
-								include "config.php";
-								$select="SELECT cod_centro_custo,1*concat(replace(numero_centro_custo,'.',''),REPEAT('0',tb_lr_max.lr_max-length(replace(numero_centro_custo,'.','')))) as novo_numero_centro_custo FROM ".$schema.".cad_centro_custo, (SELECT max(length(replace(numero_centro_custo,'.',''))) as lr_max FROM ".$schema.".cad_centro_custo where cod_empresa='".$_SESSION['cod_empresa']."') as tb_lr_max where cod_empresa='".$_SESSION['cod_empresa']."'; ";
-								$resultado=mysql_query($select,$conexao) or die (mysql_error());
-								$cod_centro_custo = mysql_fetch_array($resultado);
-								$cod_centro_custo=$cod_centro_custo[1];
-								return $cod_centro_custo;
-				
-			}
-			function tbody($conta,$historico,$documento,$debito,$credito){
-				return "
-						<tbody>
-							<tr>
-								<td>".$conta."</td>
-								<td>".$historico."</td>
-								<td>".$documento."</td>
-								<td style='text-align: right !important;'>".$debito."</td>
-								<td style='text-align: right !important;'>".$credito."</td>
-							</tr>
-						</tbody>			
-				";
-			}
-			function tbody_($nome_conta){
-				return "
-						<tbody>
-							<tr >
-								<td colspan='7'><b>".$nome_conta."</b></td>
-							</tr>
-						</tbody>			
-				";
-			}
-			
-			$tbody="";
-			$conta="";
-			
-			if(isset($_POST) and isset($_POST['data_inicio']) and isset($_POST['data_fim']) and isset($_POST['conta_inicio']) and isset($_POST['conta_fim']) and isset($_POST['ctr_custo_inicio']) and isset($_POST['ctr_custo_fim'])){
 		
-			$filtro="";
-			if($_POST['data_inicio']!="00/00/0000" or $_POST['data_fim']!="00/00/0000"){
-				$filtro.="  and ( cad_documento.data_base between '".$_POST['data_inicio']."' and '".$_POST['data_fim']."' )";
+			if(isset($_POST) and isset($_POST['data_inicio']) and isset($_POST['data_fim']) and isset($_POST['conta_inicio']) and isset($_POST['conta_fim']) and isset($_POST['ctr_custo_inicio']) and isset($_POST['ctr_custo_fim'])){			
+			
+				//set variables 
+				$table=new table;
+				$table->select=$this->livro_diario_consulta_sql();
+				$table->group_by='data';
+				$table->caption=array(
+					'titulo'=>"Livro Diário de ".$_POST['data_inicio']." a ".$_POST['data_fim']." ",
+					'razao_social'=>$_SESSION['razao_social'],
+					'cnpj'=>$_SESSION['cnpj']
+				);
+				$table->thead=array(
+					1=>array('style'=>'','label'=>'Conta'),
+					2=>array('style'=>'','label'=>'Histórico'),
+					3=>array('style'=>'width: 2.0cm; text-align: center !important;','label'=>'Documento'),
+					4=>array('style'=>'width: 2.0cm; text-align: right !important;','label'=>'Débito'),
+					5=>array('style'=>'width: 2.0cm; text-align: right !important;','label'=>'Crédito')
+
+				);
+				$table->tbody=array(
+					1=>array('formato'=>'','style'=>'','campo'=>'conta'),
+					2=>array('formato'=>'','style'=>'','campo'=>'historico'),
+					3=>array('formato'=>'','style'=>'text-align: center !important;','campo'=>'documento'),
+					4=>array('formato'=>'decimal','style'=>'text-align: right !important;','campo'=>'debito'),
+					5=>array('formato'=>'decimal','style'=>'text-align: right !important;','campo'=>'credito')
+				);
+				echo $table->criar();
 			}
-			if($_POST['conta_inicio']!="" or $_POST['conta_fim']!=""){
-				$filtro.="  and ( novo_numero_conta between '".numero_conta_limpo($_POST['conta_inicio'])."' and '".numero_conta_limpo($_POST['conta_fim'])."' )";
-			}
-			if($_POST['ctr_custo_inicio']!="" or $_POST['ctr_custo_fim']!=""){
-				$filtro.="  and ( novo_numero_centro_custo between '".numero_centro_custo_limpo($_POST['ctr_custo_inicio'])."' and '".numero_centro_custo_limpo($_POST['ctr_custo_fim'])."' )";
-			}
+			else{
+				//	carregar filtro
+				$this->filtros(3);
+			}			
+
 		
-		
+	}
+	function livro_diario_consulta_sql(){
 			include "config.php";
-			$select="
-					SELECT 
-						cad_documento.data_base as data,
-						cad_documento_item.historico,
-						cad_documento.cod_documento as lancamento,
-						cad_documento.referencia as documento,
-						cad_documento_item.montante,
-						cad_documento_item.codigo_lancamento,
-
-						concat(cad_conta.numero_conta,' - ',cad_conta.descricao) as conta,
-						concat(cad_centro_custo.numero_centro_custo,' - ',cad_centro_custo.descricao) as centro_custo,
-
-						cad_conta.numero_conta,
-						tb_novo_numero_conta.novo_numero_conta,
-
-						cad_centro_custo.numero_centro_custo,
-						tb_novo_numero_centro_custo.novo_numero_centro_custo
-
-
-					FROM 
-						".$schema.".cad_documento_item,
-						".$schema.".cad_documento,
-						".$schema.".cad_conta,
-						".$schema.".cad_centro_custo,
-						(SELECT cod_conta,1*concat(replace(numero_conta,'.',''),REPEAT('0',tb_lr_max.lr_max-length(replace(numero_conta,'.','')))) as novo_numero_conta FROM ".$schema.".cad_conta, (SELECT max(length(replace(numero_conta,'.',''))) as lr_max FROM ".$schema.".cad_conta where cod_empresa='".$_SESSION['cod_empresa']."') as tb_lr_max where cod_empresa='".$_SESSION['cod_empresa']."') as tb_novo_numero_conta,
-						(SELECT cod_centro_custo,1*concat(replace(numero_centro_custo,'.',''),REPEAT('0',tb_lr_max.lr_max-length(replace(numero_centro_custo,'.','')))) as novo_numero_centro_custo FROM ".$schema.".cad_centro_custo, (SELECT max(length(replace(numero_centro_custo,'.',''))) as lr_max FROM ".$schema.".cad_centro_custo where cod_empresa='".$_SESSION['cod_empresa']."') as tb_lr_max where cod_empresa='".$_SESSION['cod_empresa']."') as tb_novo_numero_centro_custo
-
-
-					where
-						cad_documento_item.cod_documento=cad_documento.cod_documento and
-						cad_documento_item.cod_conta=cad_conta.cod_conta and
-						cad_documento_item.cod_conta=tb_novo_numero_conta.cod_conta and
-						cad_documento_item.cod_ctr_custo=cad_centro_custo.cod_centro_custo and
-						cad_documento_item.cod_ctr_custo=tb_novo_numero_centro_custo.cod_centro_custo 
-						".$filtro."
-						
-						
-					order by
-						data,cad_documento.cod_documento,codigo_lancamento
-			";
-			$resultado=mysql_query($select,$conexao) or die (mysql_error());
-			while($row = mysql_fetch_array($resultado))
-			{
-				if($row['codigo_lancamento']=='D'){
-					$debito=$row['montante'];
-					$credito="";
 					
-					
-				}else{
-					$debito="";
-					$credito=$row['montante'];
-
-					
+				//Construir filtro para o select
+				$filtro="";
+				if($_POST['data_inicio']!="00/00/0000" or $_POST['data_fim']!="00/00/0000"){
+					$filtro.="  and ( cad_documento.data_base between '".$_POST['data_inicio']."' and '".$_POST['data_fim']."' )";
 				}
-
-				$saldo="";
-				if($row['data']!=$conta){
-					$conta=$row['data'];					
-					$tbody.=tbody_(data($row['data']));
+				if($_POST['conta_inicio']!="" or $_POST['conta_fim']!=""){
+					$filtro.="  and ( novo_numero_conta between '".numero_conta_limpo($_POST['conta_inicio'])."' and '".numero_conta_limpo($_POST['conta_fim'])."' )";
 				}
-
-				$tbody.=tbody($row['conta'],"Lançamento: ".$row['lancamento'].", ".$row['historico'],$row['documento'],decimal_($debito),decimal_($credito));
-			}	
+				if($_POST['ctr_custo_inicio']!="" or $_POST['ctr_custo_fim']!=""){
+					$filtro.="  and ( novo_numero_centro_custo between '".numero_centro_custo_limpo($_POST['ctr_custo_inicio'])."' and '".numero_centro_custo_limpo($_POST['ctr_custo_fim'])."' )";
+				}
 			
+			
+				include "config.php";
+				$select="
+						SELECT 
+							DATE_FORMAT(cad_documento.data_base,'%d/%m/%Y') as data,
+							cad_documento_item.historico,
+							cad_documento.cod_documento as lancamento,
+							cad_documento.referencia as documento,
+							cad_documento_item.montante,
+							
+							if(cad_documento_item.codigo_lancamento='D',cad_documento_item.montante,0) as debito,
+							if(cad_documento_item.codigo_lancamento='C',cad_documento_item.montante,0) as credito,
+							
+							cad_documento_item.codigo_lancamento,
+
+							concat(cad_conta.numero_conta,' - ',cad_conta.descricao) as conta,
+							concat(cad_centro_custo.numero_centro_custo,' - ',cad_centro_custo.descricao) as centro_custo,
+
+							cad_conta.numero_conta,
+							tb_novo_numero_conta.novo_numero_conta,
+
+							cad_centro_custo.numero_centro_custo,
+							tb_novo_numero_centro_custo.novo_numero_centro_custo
+
+
+						FROM 
+							".$schema.".cad_documento_item,
+							".$schema.".cad_documento,
+							".$schema.".cad_conta,
+							".$schema.".cad_centro_custo,
+							(SELECT cod_conta,1*concat(replace(numero_conta,'.',''),REPEAT('0',tb_lr_max.lr_max-length(replace(numero_conta,'.','')))) as novo_numero_conta FROM ".$schema.".cad_conta, (SELECT max(length(replace(numero_conta,'.',''))) as lr_max FROM ".$schema.".cad_conta where cod_empresa='".$_SESSION['cod_empresa']."') as tb_lr_max where cod_empresa='".$_SESSION['cod_empresa']."') as tb_novo_numero_conta,
+							(SELECT cod_centro_custo,1*concat(replace(numero_centro_custo,'.',''),REPEAT('0',tb_lr_max.lr_max-length(replace(numero_centro_custo,'.','')))) as novo_numero_centro_custo FROM ".$schema.".cad_centro_custo, (SELECT max(length(replace(numero_centro_custo,'.',''))) as lr_max FROM ".$schema.".cad_centro_custo where cod_empresa='".$_SESSION['cod_empresa']."') as tb_lr_max where cod_empresa='".$_SESSION['cod_empresa']."') as tb_novo_numero_centro_custo
+
+
+						where
+							cad_documento_item.cod_documento=cad_documento.cod_documento and
+							cad_documento_item.cod_conta=cad_conta.cod_conta and
+							cad_documento_item.cod_conta=tb_novo_numero_conta.cod_conta and
+							cad_documento_item.cod_ctr_custo=cad_centro_custo.cod_centro_custo and
+							cad_documento_item.cod_ctr_custo=tb_novo_numero_centro_custo.cod_centro_custo 
+							".$filtro."
+							
+							
+						order by
+							data,cad_documento.cod_documento,codigo_lancamento
+				";
+					
+				return $select;
 		
-			$titulo="Livro Diário de 01/01/2000 a 31/12/2000";
+	}
+	
+}
+
+class table{
+		public $thead;
+		public $tbody;
+		public $tfoot;
+		public $select;
+		public $group_by;
+		public $caption;
+
+		
+		
+		function tabela(){
+			//variáveis da função
+				$saldo=0;
+				$table="";
 			
-			$thead="
-					<thead>
-						<tr>
-							<th style='width: 5cm;'>Conta</th>
-							<th style=''>Histórico</th>
-							<th style='width: 2.0cm; text-align: center !important;'>Documento</th>
-							<th style='width: 2.0cm; text-align: right !important;'>Débito</th>
-							<th style='width: 2.0cm; text-align: right !important;'>Crédito</th>
-						</tr>
-					</thead>			
-			";
-			$caption="
+			//executar select mysql
+				include "config.php";
+				$resultado=mysql_query($this->select,$conexao) or die (mysql_error());
+				
+			
+			//montar caption
+				$caption="
 					<caption style='font-size: 12px ! important; font-family: times ! important; color: rgb(0, 0, 0) ! important;'>
 						<div class='uk-grid'>
-							<div class='uk-width-1-1'>".$_SESSION['razao_social']."</div>
-							<div class='uk-width-1-1'>".$_SESSION['cnpj']."</div>
+							<div class='uk-width-1-1'>".$this->caption['razao_social']."</div>
+							<div class='uk-width-1-1'>".$this->caption['cnpj']."</div>
 							<div class='uk-width-1-1'>
 								<div class='uk-grid'>
-									<div class='uk-width-3-5'>".$titulo."</div>
+									<div class='uk-width-3-5'>".$this->caption['titulo']."</div>
 									<div class='uk-width-1-5'>Livro:xxx</div>
 									<div class='uk-width-1-5'>Folha:xxx</div>
 								</div>
 							</div>
 						</div>
 
-					</caption>";			
-			$tfoot="
-					<tfoot>
-						<tr>
-							<td>...</td>
-							<td>...</td>
-							<td>...</td>
-							<td>...</td>
-							<td>...</td>
-						</tr>
-					</tfoot>			
-			";
+					</caption>					
+				";
+			
+			//montar thead
+				$table.="<thead><tr>";
+				for($n=1;$n<=count($this->thead);$n++){
+					$l=$this->thead[$n];
+					$table.="<th style='".$l['style']."'>".$l['label']."</th>";
+				}
+				$table.="</tr></thead>";	
 
-			
-			
-			
-
-			
-		//background-color: #E36A43;
-		
-			echo "
-					<div style='width: 21.0cm;height:29.7cm; padding: 1.5cm 0.5cm;'>
-						<table class='uk-table uk-table-condensed' style='font-size: 12px ! important; font-family: times ! important; color: rgb(0, 0, 0) ! important;'>
-							".$caption."
-							<thead>".$thead."</thead>	
-							<tbody>".$tbody."</tbody>
-							<tfoot>".$tfoot."</tfoot>								
-						</table>
-					</div>
+				
+			//montar tbody
+				$conta="";
+				$saldo=0;
+				$table.="<tbody>";
+				while($row = mysql_fetch_array($resultado))
+				{
+					//linhas de agrupamento
+						if($row[$this->group_by]!=$conta){
+							$conta=$row[$this->group_by];					
+							if(isset($row['saldo_inicial_'.$this->group_by])){
+								if($row['saldo_inicial_'.$this->group_by]>=0){$DC='D';}else{$DC='C';}
+								$table.="<tr ><td colspan='".(count($this->tbody)-2)."'><b>".$conta."</b></td><td style='text-align: right !important;'><b>".number_format(abs((float)$row['saldo_inicial_'.$this->group_by]), 2, ',', '.')."</b></td><td>".$DC."</td></tr>";
+							}else{
+								$table.="<tr ><td colspan='".count($this->tbody)."'><b>".$conta."</b></td></tr>";
+							}
+							if(isset($row['saldo_inicial_'.$this->group_by])){
+								$saldo=$row['saldo_inicial_'.$this->group_by]+$row['debito']-$row['credito'];
+							}
+							
+						}else{
+							$saldo=$saldo+$row['debito']-$row['credito'];
+						}
 					
-					";
-		
-			echo "";
-				
-				
-				
-			}
-			else{
-				
-				//	var_dump($_POST);
-				
-				$relatorios=new relatorios;
-				$relatorios->filtros(3);
-				
-				
-			}
-		
+					//linhas normais
+						$table.="<tr>";
+						for($n=1;$n<=count($this->tbody);$n++){
+							$l=$this->tbody[$n];
+							if($l['formato']=='decimal'){$row[$l['campo']]=number_format((float)$row[$l['campo']], 2, ',', '.');}
+							if($l['formato']=='data'){$row[$l['campo']]=data($row[$l['campo']]);}
+							if($l['campo']=='saldo'){$table.="<td style='".$l['style']."'>".number_format(abs((float)$saldo), 2, ',', '.')."</td>";}
+							else{$table.="<td style='".$l['style']."'>".$row[$l['campo']]."</td>";}
+							
+						}
+						$table.="</tr>";
 
-		
-	}
+					
+				}
+				$table.="<tbody>";
 
+				
+			//montar tfoot
+				$table.="<tfoot><tr>";
+				for($n=1;$n<=count($this->thead);$n++){
+					$table.="<td>..</td>";
+				}
+				$table.="</tr></tfoot>";				
+			
+			
+			//finalizar tabela
+				$table="<div style='width: 21.0cm;height:29.7cm; padding: 1.5cm 0.5cm;'>
+							<table class='uk-table uk-table-condensed' style='font-size: 12px ! important; font-family: times ! important; color: rgb(0, 0, 0) ! important;'>
+								".$caption.$table."								
+							</table>
+						</div>";
+				
+				return $table;
+		}
+		function criar(){
+			return $this->tabela();
+			//return $this->select;
+		}
+	
 	
 	
 }
+
 class imprimir{
 	function ficha_ativo($id){
 		include "config.php";
