@@ -67,7 +67,7 @@ class selects{
 	}
 	function ctrcusto_autocomplete($id_orcamento){
 		include "config.php";
-		$select = "SELECT ".$schema.".cad_centro_custo.numero_centro_custo as 'text', concat(".$schema.".cad_centro_custo.numero_centro_custo,' - ',".$schema.".cad_centro_custo.descricao) as 'value'  FROM ".$schema.".cad_centro_custo where cod_empresa=".$_SESSION['cod_empresa'].";";
+		$select = "SELECT ".$schema.".cad_centro_custo.numero_centro_custo as 'text', concat(".$schema.".cad_centro_custo.numero_centro_custo,' - ',".$schema.".cad_centro_custo.descricao) as 'value'  FROM ".$schema.".cad_centro_custo where status='ativa' and cod_empresa='".$_SESSION['cod_empresa']."';";
 		$resultado=mysql_query($select,$conexao) or die (mysql_error());
 		$bs_ctrcusto="";
 		while($row = mysql_fetch_array($resultado))
@@ -84,7 +84,7 @@ class selects{
 	}
 	function conta_autocomplete($id_orcamento){
 		include "config.php";
-		$select = "SELECT ".$schema.".cad_conta.numero_conta as 'text', concat(".$schema.".cad_conta.numero_conta,' - ',".$schema.".cad_conta.descricao) as 'value'   FROM ".$schema.".cad_conta  where cod_empresa=".$_SESSION['cod_empresa']." ;";
+		$select = "SELECT ".$schema.".cad_conta.numero_conta as 'text', concat(".$schema.".cad_conta.numero_conta,' - ',".$schema.".cad_conta.descricao) as 'value'   FROM ".$schema.".cad_conta  where  status='ativa' and cod_empresa='".$_SESSION['cod_empresa']."' ;";
 		$resultado=mysql_query($select,$conexao) or die (mysql_error());
 		$bs_conta="";
 		while($row = mysql_fetch_array($resultado))
@@ -128,6 +128,28 @@ class menus{
 
 		";
 	}
+	function submenu_cad_documento($valores,$id){
+		if($_GET['id']>0 or $_GET['id']!=""){$disabled=" disabled ";}else{$disabled="  ";}
+		echo $id;
+		echo "
+				<li>
+					<div class='uk-button-group'>
+						<a class='uk-button uk-button-mini uk-button-primary' href='?act=pesquisa&mod=".$_GET['mod']."&id=' class='uk-button-link '  style=''><i class='uk-icon-binoculars'></i> Pesquisar</a> 
+						<a class='uk-button uk-button-mini uk-button-primary' href='?act=cadastros&mod=".$_GET['mod']."&id=' class='uk-button-link ' style=''><i class='uk-icon-file'></i> Novo documento</a> 
+						<button class='uk-button uk-button-mini uk-button-primary' type='button' onclick='salvar_documento()' ".$disabled."><i class='uk-icon-check'></i> Salvar</button>
+					</div>
+					<div class='uk-button-group'>
+						<button class='uk-button uk-button-mini uk-button-success' data-uk-modal=".'"'."{target:'#div_importar_lancamentos'}".'"'."  ".$disabled."><i class='uk-icon-sign-in'></i>  Importar lançamentos</button>
+					</div>
+					
+					<div class='uk-button-group'>
+						<button class='uk-button uk-button-mini uk-button-danger' type='button' onclick='cloneRow()'  ".$disabled." ><i class='uk-icon-plus-circle'></i> Nova linha</button>
+						<button class='uk-button uk-button-mini uk-button-danger' type='button' onclick='delAllRow()'  ".$disabled."><i class='uk-icon-times'></i> Excluir linhas</button>
+					</div>
+				</li>
+		";
+	}
+
 	function submenu_cad_itens($valores,$id){
 		echo "
 
@@ -169,8 +191,10 @@ class menus{
 		echo "
 				<li>
 					<label>Exportar para: </label>
-					<a href='#' onclick=exportar('xls','".$id_grid."','json'); ><i class='uk-icon-file-excel-o'></i> .xls </a>
-					<a href='#' onclick=exportar('doc','".$id_grid."','json'); ><i class='uk-icon-file-word-o'></i> .doc </a>
+					<div class='uk-button-group'>
+						<a class='uk-button uk-button-mini uk-button-primary' href='#' onclick=exportar('xls','".$id_grid."','json'); ><i class='uk-icon-file-excel-o'></i> .xls </a>
+						<a class='uk-button uk-button-mini uk-button-primary' href='#' onclick=exportar('doc','".$id_grid."','json'); ><i class='uk-icon-file-word-o'></i> .doc </a>
+					</div>
 				</li>
 				<li id='arquivo_gerado'>
 				</li>
@@ -291,7 +315,7 @@ class menus{
 	function menu(){
 		$menus=new menus;
 		$sql=new sql;
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id'])  and $_GET['act']=="cadastros"){
+		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id'])  and $_GET['act']=="cadastros" and $_GET['mod']!="cad_documento"){
 			//elementos de pesquisa
 				//var_dump($_GET);
 			$tabela=$_GET['mod'];
@@ -307,6 +331,24 @@ class menus{
 				$id=str_replace("cad_","cod_",$_GET['mod']);
 				$valores=$sql->min_max($tabela, $id);
 				$menus->submenu($valores,$id);
+			}							
+		 }
+		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id'])  and $_GET['act']=="cadastros"  and $_GET['mod']=="cad_documento"){
+			//elementos de pesquisa
+				//var_dump($_GET);
+			$tabela=$_GET['mod'];
+
+
+
+			//include esqueleto cadastro
+			if($tabela=='cad_itens'){
+				$id="cod_item";
+				$valores=$sql->min_max($tabela, $id);
+				$menus->submenu_cad_itens($valores,$id);
+			}else{
+				$id=str_replace("cad_","cod_",$_GET['mod']);
+				$valores=$sql->min_max($tabela, $id);
+				$menus->submenu_cad_documento($valores,$id);
 			}							
 		 }
 		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="pesquisa"){
@@ -1727,22 +1769,23 @@ class lancamento{
 				}
 
 		return "<tr id='rowToClone'>
-						<td class='uk-form-row' style='width: 20px;'><input ".$disabled." id='' placeholder='' class=' codigo_lancamento uk-form-small' type='text' style='width: 100%;' value='".$codigo_lancamento."'></td>
+						<td class='uk-form-row' style='width: 20px;'>
+							<input ".$disabled." coluna='codigo_lancamento' id='codigo_lancamento' placeholder='' onchange='calcular_total_debito_credito();' onkeyup='calcular_total_debito_credito();' class='uk-form-small' type='text' style='width: 100%;' value='".$codigo_lancamento."'></td>
 						<td class='uk-form-row' style='width: 150px;'>
 							<div class='uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_ctrcusto}' style='width: 100%;'>
-								<input ".$disabled." id='' placeholder='' class='cod_ctr_custo uk-form-small' type='text' style='width: 100%;' value='".$cod_ctr_custo."'>
+								<input ".$disabled." coluna='cod_ctr_custo' id='cod_ctr_custo' placeholder='' class='uk-form-small' type='text' style='width: 100%;' value='".$cod_ctr_custo."'>
 							</div>
 						</td>
 						<td class='uk-form-row' style='width: 150px;'>
 							<div class='uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_conta}' style='width: 100%;'>
-								<input ".$disabled." id='' placeholder='' class='cod_conta uk-form-small' type='text' style='width: 100%;' value='".$cod_conta."'>
+								<input ".$disabled." coluna='cod_conta' id='cod_conta' placeholder='' class='uk-form-small' type='text' style='width: 100%;' value='".$cod_conta."'>
 							</div>
 						</td>
-						<td class='uk-form-row' style='min-width: 100px; '><input ".$disabled." id='' placeholder='' class='historico uk-form-small' type='text' style='width: 100%;' value='".$historico."'></td>
-						<td class='uk-form-row' style='width: 100px;'><input ".$disabled." id='' placeholder='' class='montante uk-form-small' type='text' style='width: 100%;' onchange='formatar_numero(this);' onkeyup='formatar_numero(this);' value='".$montante."'></td>
-						<td class='uk-form-row' style='width: 100px;'><input ".$disabled." id='' placeholder='' class='data_vencimento_liquidacao uk-form-small' type='text' style='width: 100%;' onchange='formatar_data(this);' onkeyup='formatar_data(this);' value='".$data_vencimento_liquidacao."'></td>
+						<td class='uk-form-row' style='min-width: 100px; '><input ".$disabled." coluna='historico_' id='historico_' placeholder='' class='uk-form-small' type='text' style='width: 100%;' value='".$historico."'></td>
+						<td class='uk-form-row' style='width: 100px;'><input ".$disabled." coluna='montante' id='montante' placeholder='' class='uk-form-small' type='text' style='width: 100%;text-align: right;' onchange='formatar_numero(this);calcular_total_debito_credito();' onkeyup='formatar_numero(this);calcular_total_debito_credito();' value='".$montante."'></td>
+						<td class='uk-form-row' style='width: 100px;'><input ".$disabled." coluna='data_vencimento_liquidacao' id='data_vencimento_liquidacao' placeholder='' class='uk-form-small' type='text' style='width: 100%;' onchange='formatar_data(this);' onkeyup='formatar_data(this);' value='".$data_vencimento_liquidacao."'></td>
 						<td class='uk-form-row' style='width: 10px;'>
-							<button ".$disabled." class='uk-button uk-button-mini uk-button-primary' type='button' onclick='delRow(this)' data-uk-tooltip title='Excluir linha'><i class='uk-icon-trash-o'></i></button>
+							<button ".$disabled." class='uk-button uk-button-mini uk-button-danger' type='button' onclick='delRow(this)' data-uk-tooltip title='Excluir linha'><i class='uk-icon-trash-o'></i></button>
 						</td>
 					</tr>";
 		}
