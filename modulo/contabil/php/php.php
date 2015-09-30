@@ -608,13 +608,15 @@ class igniteui{
 		
 " 
 <script>
-            $( '#grid' ).igGrid( {
+           var tabela= new Grid( {
+				idGrid:'grid',
                 autoGenerateColumns: false,
+                tableId: '".$tabela."',
                 dataSource: ".$base.",
                 dataSourceType: 'json',
 				columns:[".$column."],
                 width: '100%',
-                height: '100%',
+                height: '300px',
                 virtualizationMode: 'fixed',
                 avgRowHeight: '30px',
                 tabIndex: 1,
@@ -643,70 +645,38 @@ class igniteui{
 
                 ]
             } );
-	//Initialize
-	$('#grid').igGrid({
-		cellClick: function(evt, ui) { window.location.assign('?act=cadastros&mod=".$tabela."&id='+$('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));}
-	});			
+			
+		
+	//$('#grid').igGrid({
+	//	cellClick: function(evt, ui) { window.location.assign('?act=cadastros&mod=".$tabela."&id='+$('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));}
+	//});	
 </script>
 ";
+		//Initialize
+	//$('#grid').igGrid({
+	//	cellClick: function(evt, ui) { window.location.assign('?act=cadastros&mod=".$tabela."&id='+$('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));}
+	//});	
+
 	///alert($('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	}
 	function TreeGrid($base,$column,$tabela,$combo,$plano_conta){
 	echo 
-		"<script>
-					$('#grid').igTreeGrid({
-						width: '100%',
+		"
+		<style>
+
+		</style>
+		
+		<script>
+					var tabela= new TreeGrid({
+						idGrid:'grid',
+						width:'100%',
+						height:'100%',
+						ID:'ID',
+						PID:'PID',					
 						dataSource: ".$base.",
-						autoGenerateColumns: false,
-						hierarchicalDataSource: false,
-						primaryKey: 'ID',
-						Key: 'ID',
-						foreignKey: 'PID',
-						initialExpandDepth: 3,
-						dataSourceLayoutKey: 'PID',
-						startEditTriggers: 'dblclick,F2',
-						columns: [".$column."],
-						features: [
-							{
-								name: 'MultiColumnHeaders'
-							},
-							{
-								name: 'Resizing'
-							},			
-							{
-								name: 'Selection',
-								mode: 'row',
-								multipleSelection: true
-							},					
-							{
-								name: 'Hiding'
-							},
-							{
-								name: 'Filtering',
-								type: 'local'
-
-							},	
-
-							{
-								name: 'Updating',
-								editMode: 'rowedittemplate',
-							   generatePrimaryKeyValue: function (evt, ui) {
-								  // setting a temporary key for the new row          
-								  ui.value = 0;
-							   },
-								addRowLabel: 'Adcionar nova linha',
-								cancelLabel: 'Cancelar',
-								doneLabel: 'Confirmar',
-								enableDeleteRow: false,
-								showReadonlyEditors: false,						 
-								editRowEnded:function(){salvar_cadastro('".$tabela."','".$plano_conta."');$('#grid').igGrid('commit');$('#grid').igTreeGrid('dataBind');},
-								rowEditDialogContainment: 'window',
-								columnSettings: [".$combo."]
-							}
-
-						]				
+						columns: [".$column."]				
 					});
 
 		</script>";
@@ -1107,9 +1077,10 @@ class cadastros{
 					cod_conta_mae,
 					cad_conta.cod_tipo_conta,
 					concat('#',numero_conta) as numero_conta,
+					concat('#',numero_conta,' - ',cad_conta.descricao) as conta,					
 					cad_conta.descricao,
-					`saldo_inicial`,
-					`saldo_atual`,
+					REPLACE(REPLACE(REPLACE(FORMAT(`saldo_inicial`,2),'.','|'),',','.'),'|',',') as saldo_inicial,
+					REPLACE(REPLACE(REPLACE(FORMAT(`saldo_atual`,2),'.','|'),',','.'),'|',',') as saldo_atual,
 					`status`,
 					cad_tipo_conta.descricao as tipo_conta
 				FROM 
@@ -1155,15 +1126,14 @@ class cadastros{
 					
 		$tipo_conta=$pesquisa->json($select);
 		
-			$column ="{headerText: 'ID', key: 'ID', width: '200px', dataType: 'number'},";
-			$column.="{headerText: 'Conta mãe', key: 'cod_conta_mae', width: '1px', dataType: 'number'},";
-			$column.="{headerText: 'Número da conta', key: 'numero_conta', width: '150px',  dataType: 'string'},";
-			$column.="{headerText: 'Descrição', key: 'descricao',  dataType: 'string'},";
-			$column.="{headerText: 'Tipo de conta', key: 'cod_tipo_conta', width: '1px',  dataType: 'number'},";			
-			$column.="{headerText: 'Tipo de conta', key: 'tipo_conta', width: '150px',  dataType: 'string'},";			
-			$column.="{headerText: 'Saldo inicial', key: 'saldo_inicial',width: '100px',  dataType: 'decimal'},";
-			$column.="{headerText: 'Saldo atual', key: 'saldo_atual',width: '100px',  dataType: 'decimal'},";
-			$column.="{headerText: 'Status', key: 'status',width: '50px',  dataType: 'string'}";
+
+
+
+			$column="{headerText: 'conta', key: 'conta', width: '350px', dataType: 'string'},";
+			$column.="{headerText: 'Tipo de conta', key: 'tipo_conta', width: '200px',  dataType: 'string'},";			
+			$column.="{headerText: 'Saldo inicial', key: 'saldo_inicial',width: '100px',  dataType: 'number'},";
+			$column.="{headerText: 'Saldo atual', key: 'saldo_atual',width: '100px',  dataType: 'number'},";
+			$column.="{headerText: 'Status', key: 'status',width: '150px',  dataType: 'string'}";
 
 			$tabela="cad_conta";
 			$combo="
@@ -1235,9 +1205,10 @@ class cadastros{
 					if(cod_centro_custo_mae=0,-1,cod_centro_custo_mae) as PID,
 					cod_centro_custo_mae,
 					concat('#',numero_centro_custo) as numero_centro_custo,
+					concat('#',numero_centro_custo,' - ',cad_centro_custo.descricao) as centro_custo,						
 					cad_centro_custo.descricao,
-					`saldo_inicial`,
-					`saldo_atual`,
+					REPLACE(REPLACE(REPLACE(FORMAT(`saldo_inicial`,2),'.','|'),',','.'),'|',',') as saldo_inicial,					
+					REPLACE(REPLACE(REPLACE(FORMAT(`saldo_atual`,2),'.','|'),',','.'),'|',',') as saldo_atual,					
 					`status`
 				FROM 
 					".$schema.".cad_centro_custo 
@@ -1269,13 +1240,10 @@ class cadastros{
 					
 		$centro_custos=$pesquisa->json($select);
 		
-	
-			$column ="{headerText: 'ID', key: 'ID', width: '200px', dataType: 'number'},";
-			$column.="{headerText: 'Centro de custos mãe', key: 'cod_centro_custo_mae', width: '1px', dataType: 'number'},";
-			$column.="{headerText: 'Número centro de custos', key: 'numero_centro_custo', width: '150px',  dataType: 'string'},";
-			$column.="{headerText: 'Descrição', key: 'descricao',  dataType: 'string'},";
-			$column.="{headerText: 'Saldo inicial', key: 'saldo_inicial',width: '100px',  dataType: 'decimal'},";
-			$column.="{headerText: 'Saldo atual', key: 'saldo_atual',width: '100px',  dataType: 'decimal'},";
+			
+			$column ="{headerText: 'Centro de Custo', key: 'centro_custo', width: '200px', dataType: 'string'},";
+			$column.="{headerText: 'Saldo inicial', key: 'saldo_inicial',width: '100px',  dataType: 'number'},";
+			$column.="{headerText: 'Saldo atual', key: 'saldo_atual',width: '100px',  dataType: 'number'},";
 			$column.="{headerText: 'Status', key: 'status',width: '50px',  dataType: 'string'}";
 
 			$tabela="cad_centro_custo";
@@ -1649,7 +1617,22 @@ class pesquisa{
 			$select= "
 					SELECT 
 						cod_documento as id,
-						cad_documento.* 
+						cod_documento, 
+						cod_empresa, 
+						cod_tipo_documento, 
+						referencia, 
+						texto_cabecalho_documento, 
+						DATE_FORMAT(data_lancamento,'%d/%m/%Y') as data_lancamento,
+						DATE_FORMAT(data_base,'%d/%m/%Y') as data_base,
+						DATE_FORMAT(data_estorno,'%d/%m/%Y') as data_estorno,
+						DATE_FORMAT(data_alteracao,'%d/%m/%Y') as data_alteracao,
+						exercicio, 
+						periodo, 
+						historico, 
+						DATE_FORMAT(data_inclusao,'%d/%m/%Y') as data_inclusao,
+						DATE_FORMAT(data_ultima_alteracao,'%d/%m/%Y') as data_ultima_alteracao,
+						usuario_inclusao, 
+						usuario_ultima_alteracao 
 					FROM 
 						".$schema.".cad_documento 
 						
@@ -1687,20 +1670,18 @@ class pesquisa{
 
 
 	
-				$column ="{headerText: 'ID', key: 'id', width: '150px',  dataType: 'string'},";
-				$column.="{headerText: 'cod_documento', key: 'cod_documento', width: '150px',  dataType: 'string'},";
-				$column.="{headerText: 'cod_empresa', key: 'cod_empresa', width: '150px',  dataType: 'string'},";
-				$column.="{headerText: 'cod_tipo_documento', key: 'cod_tipo_documento', width: '150px',  dataType: 'string'},";
+				$column ="{headerText: 'ID', key: 'id', width: '50px',  dataType: 'string'},";
+				$column.="{headerText: 'cod_documento', key: 'cod_documento', width: '100px',  dataType: 'string'},";
+				$column.="{headerText: 'cod_tipo_documento', key: 'cod_tipo_documento', width: '50px',  dataType: 'string'},";
 				$column.="{headerText: 'referencia', key: 'referencia', width: '150px',  dataType: 'string'},";
 				$column.="{headerText: 'texto_cabecalho_documento', key: 'texto_cabecalho_documento', width: '150px',  dataType: 'string'},";
 				$column.="{headerText: 'data_lancamento', key: 'data_lancamento', width: '150px',  dataType: 'string'},";
 				$column.="{headerText: 'data_inclusao', key: 'data_inclusao', width: '150px',  dataType: 'string'},";				
 				$column.="{headerText: 'data_base', key: 'data_base', width: '150px',  dataType: 'string'},";
 				$column.="{headerText: 'data_estorno', key: 'data_estorno', width: '150px',  dataType: 'string'},";
-				$column.="{headerText: 'data_alteracao', key: 'data_alteracao', width: '150px',  dataType: 'string'},";
-				$column.="{headerText: 'exercicio', key: 'exercicio', width: '150px',  dataType: 'string'},";
-				$column.="{headerText: 'periodo', key: 'periodo', width: '150px',  dataType: 'string'},";
-				$column.="{headerText: 'historico', key: 'historico', width: '150px',  dataType: 'string'}";
+				$column.="{headerText: 'exercicio', key: 'exercicio', width: '100px',  dataType: 'string'},";
+				$column.="{headerText: 'periodo', key: 'periodo', width: '50px',  dataType: 'string'},";
+
 
 
 

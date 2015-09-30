@@ -1,6 +1,6 @@
 ﻿
 <body style="margin-bottom: 0px;">
-
+		<script src="js/grids_js.js"></script>
 
 	<?php 
 		$navbar=new navbar;
@@ -82,3 +82,4 @@
 </body>
 
 		<script src="js/script.js"></script>
+
