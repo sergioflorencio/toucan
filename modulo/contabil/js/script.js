@@ -18,7 +18,8 @@ function ajax(id_responseText, metodo, url,formData,reload){
 			xhr.send(formData);
 }
 function exportar(formato,id_grid,base){
-		document.getElementById("arquivo_gerado").innerHTML="";
+		//document.getElementById("arquivo_gerado").innerHTML="";
+		
 		var formData = new FormData();
 		formData.append('formato', formato);
 		formData.append('base', base);
@@ -28,11 +29,9 @@ function exportar(formato,id_grid,base){
 		_table_headers=id_grid+"_table_headers";
 		_table=id_grid+"_table";
 		_table_footers=id_grid+"_table_footers";
-			var tabela="<table>"+document.getElementById(_table_headers).innerHTML+"</table>";
-				tabela+="<table>"+document.getElementById(_table).innerHTML+"</table>";
-				tabela+="<table>"+document.getElementById(_table_footers).innerHTML+"</table>";
+			var tabela="<meta http-equiv='Content-type' content='text/html; charset=utf-8' />"+document.getElementById(id_grid).innerHTML;
 			formData.append('json', tabela);
-		}		
+		}	
 		if(base=='json'){
 			formData.append('json', JSON.stringify($( "#"+id_grid ).igGrid("option", "dataSource")));
 		}		
@@ -576,7 +575,40 @@ function salvar_cadastro(tabela,plano_conta){
 		
 	}
 
+function pesquisar_conta_mae(a){
+		var valor=a.value.split(".");
+			valor=a.value.split(".",valor.length-1);
+			if(valor.length==0){valor[0]=-1}
+			console.log(valor);
+			document.getElementById("numero_conta_mae").value=valor.join(".");
+			
+			function ajax_pesquisa_conta(id_responseText, metodo, url,formData,reload){
+					var xhr = new XMLHttpRequest();
+					xhr.onreadystatechange = function()
+					{
+						if(xhr.readyState == 4 && xhr.status == 200)
+						{
+							document.getElementById(id_responseText).value=xhr.responseText;
+							//alert(xhr.responseText);
+						}
+					}			
+					xhr.open(metodo, url);
+					xhr.overrideMimeType('text/xml; charset=utf-8');			
+					xhr.send(formData);
+			}
 
+			id_responseText="descricao_conta_mae";
+			metodo="POST";
+			url="php/pesquisa_conta_mae.php";
+			
+			var formData = new FormData();
+				formData.append("valor", valor.join("."));
+				formData.append("cadastro", "cod_conta");
+			ajax_pesquisa_conta(id_responseText, metodo, url,formData,'');
+
+
+		
+}
 
 
 

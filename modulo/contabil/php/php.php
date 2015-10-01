@@ -27,14 +27,14 @@ class selects{
 							$options.= "<option value='sintetico'>sintetico</option>";
 						echo "<label class='uk-form-label' for='analitico_sintetico'>".$label."</label><select class='uk-form-small' id='analitico_sintetico' name='analitico_sintetico' style='width: 100%;'>".$options."</select>";
 	}
-	function status($bloqueado_ativo,$label){
+	function status($bloqueada_ativa,$label){
 						$options="";
-						if($bloqueado_ativo=='bloqueado' or $bloqueado_ativo=='ativo'){
-							$options.= "<option value='".$bloqueado_ativo."' selected >".$bloqueado_ativo."</option>";
+						if($bloqueada_ativa=='bloqueada' or $bloqueada_ativa=='ativa'){
+							$options.= "<option value='".$bloqueada_ativa."' selected >".$bloqueada_ativa."</option>";
 						}
 							$options.= "<option value=''></option>";
-							$options.= "<option value='bloqueado'>bloqueado</option>";
-							$options.= "<option value='ativo'>ativo</option>";
+							$options.= "<option value='bloqueada'>bloqueada</option>";
+							$options.= "<option value='ativa'>ativa</option>";
 						echo "<label class='uk-form-label' for='status'>".$label."</label><select class='uk-form-small' id='status' name='status' style='width: 100%;'>".$options."</select>";
 	}
 	function aquisicao_baixa($aquisicao_baixa,$label){
@@ -60,6 +60,15 @@ class selects{
 		include "config.php";		
 		$sql_select="SELECT * FROM ".$schema.".cad_tipo_documento";
 		$campo_id="cod_tipo_documento";
+		$campo_descricao="descricao";
+		
+		$select=new selects;
+		$select->_____modelo____($sql_select,$campo_id,$id,$campo_descricao,$label);
+	}
+	function cod_tipo_conta($id,$label){
+		include "config.php";		
+		$sql_select="SELECT * FROM ".$schema.".cad_tipo_conta";
+		$campo_id="cod_tipo_conta";
 		$campo_descricao="descricao";
 		
 		$select=new selects;
@@ -128,6 +137,15 @@ class menus{
 
 		";
 	}
+	function submenu_editar(){
+		echo "
+			<li  data-uk-tooltip={pos:'right'} title='Pesquisar'><a href='?act=pesquisa&mod=".$_GET['mod']."&id=' class='uk-button-link '  style=''><i class='uk-icon-binoculars'></i></a> </li>
+			<li  data-uk-tooltip={pos:'right'} title='Novo'><a href='?act=".$_GET['act']."&mod=".$_GET['mod']."&id=' class='uk-button-link ' style=''><i class='uk-icon-file-o'></i></a> </li>
+			<li  data-uk-tooltip={pos:'right'} title='Salvar'><a href='#' class=' uk-button-link  '  id='bt_salvar'  style=''><i class='uk-icon-save '></i></a> </li>
+			<script>$('#bt_salvar').click(function(){document.getElementById('form_cadastro').submit();});</script>	
+
+		";
+	}
 	function submenu_cad_documento($valores,$id){
 		if($_GET['id']>0 or $_GET['id']!=""){$disabled=" disabled ";}else{$disabled="  ";}
 		echo $id;
@@ -149,14 +167,13 @@ class menus{
 				</li>
 		";
 	}
-
 	function submenu_cad_itens($valores,$id){
 		echo "
 
 					<li  data-uk-tooltip={pos:'right'} title='Pesquisar'><a href='?act=pesquisa&mod=".$_GET['mod']."&id=' class='uk-button-link '  style=''><i class='uk-icon-binoculars'></i></a> </li>
 					<li  data-uk-tooltip={pos:'right'} title='Novo'><a href='?act=cadastros&mod=".$_GET['mod']."&id=' class='uk-button-link ' style=''><i class='uk-icon-file-o'></i></a> </li>
 					<li  data-uk-tooltip={pos:'right'} title='Salvar'><a href='#' class=' uk-button-link  '  id='bt_salvar'  style=''><i class='uk-icon-save '></i></a> </li>
-					<li  data-uk-tooltip={pos:'right'} title='Imprimir ficha de ativo'><a href='?act=imprimir&mod=ficha_ativo&id=".$_GET['id']."' target='_blank'><i class='uk-icon-print'></i></a> </li>
+					<li  data-uk-tooltip={pos:'right'} title='Imprimir ficha de ativa'><a href='?act=imprimir&mod=ficha_ativa&id=".$_GET['id']."' target='_blank'><i class='uk-icon-print'></i></a> </li>
 					
 					<li data-uk-tooltip={pos:'right'} title='Primeiro'><a href='?act=cadastros&mod=".$_GET['mod']."&id=".$valores['min']."' class='uk-button-link '  style=''><i class='uk-icon-fast-backward'></i> </a></li>
 					<li data-uk-tooltip={pos:'right'} title='Anterior'><a href='?act=cadastros&mod=".$_GET['mod']."&id=".max($id-1,$valores['min']) ."' class='uk-button-link '  style=''><i class='uk-icon-backward'></i> </a></li>
@@ -190,10 +207,9 @@ class menus{
 				
 		echo "
 				<li>
-					<label>Exportar para: </label>
 					<div class='uk-button-group'>
-						<a class='uk-button uk-button-mini uk-button-primary' href='#' onclick=exportar('xls','".$id_grid."','json'); ><i class='uk-icon-file-excel-o'></i> .xls </a>
-						<a class='uk-button uk-button-mini uk-button-primary' href='#' onclick=exportar('doc','".$id_grid."','json'); ><i class='uk-icon-file-word-o'></i> .doc </a>
+						<a class='uk-button uk-button-mini uk-button-primary' href='#' onclick=exportar('xls','".$id_grid."','html'); ><i class='uk-icon-file-excel-o'></i> .xls </a>
+						<a class='uk-button uk-button-mini uk-button-primary' href='#' onclick=exportar('doc','".$id_grid."','html'); ><i class='uk-icon-file-word-o'></i> .doc </a>
 					</div>
 				</li>
 				<li id='arquivo_gerado'>
@@ -351,40 +367,30 @@ class menus{
 				$menus->submenu_cad_documento($valores,$id);
 			}							
 		 }
+		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id'])  and $_GET['act']=="editar"  and ($_GET['mod']=="cad_conta" or $_GET['mod']=="cad_centro_custo")){
+			$filtro=1;
+			$menus=new menus;
+			//$relatorios=new relatorios;
+			//$relatorios->filtros('');
+			//$menus->menu_exportar('relatorio','');
+				$id=str_replace("cad_","cod_",$_GET['mod']);
+				$valores=$sql->min_max($_GET['mod'], $id);
+				$menus->submenu_editar();
+
+		
+		 }
 		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="pesquisa"){
-				echo "<li  data-uk-tooltip={pos:'right'} title='Novo'><a href='?act=cadastros&mod=".$_GET['mod']."&id=' class='uk-button-link ' style=''><i class='uk-icon-file-o'></i> Incluir novo cadastro</a> </li>";
+				echo "<li  data-uk-tooltip={pos:'right'} title='Novo'><div class='uk-button-group'><a href='?act=cadastros&mod=".$_GET['mod']."&id=' class='uk-button uk-button-mini uk-button-primary ' style=''><i class='uk-icon-file'></i> Incluir novo cadastro</a></div></li>";
 				$menus->menu_exportar('grid',0);
 		 }
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="lancamento" and $_GET['mod']=="gerar_depreciacao"){
-			$menus->menu_gerar_depreciacao(4);
-		 }
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="lancamento" and $_GET['mod']=="baixar"){
-			$menus->menu_baixa(4);
-		 }
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="lancamento" and $_GET['mod']=="reavaliar"){
-			$menus->menu_reavaliar(4);
-		 }
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="relatorios" and $_GET['mod']=="mapa_ativo"){
+		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="relatorios"){
 			$filtro=1;
 			$menus=new menus;
 			$relatorios=new relatorios;
-			$relatorios->filtros($filtro);
-			$menus->menu_exportar('grid_relatorio','');
+			$relatorios->filtros('');
+			$menus->menu_exportar('relatorio','');
 		 }
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="relatorios" and $_GET['mod']=="aquisicoes_baixas"){
-			$filtro=2;
-			$menus=new menus;
-			$relatorios=new relatorios;
-			$relatorios->filtros($filtro);
-			$menus->menu_exportar('grid_relatorio','');
-		 }
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="relatorios" and $_GET['mod']=="depreciacao"){
-			$filtro=3;
-			$menus=new menus;
-			$relatorios=new relatorios;
-			$relatorios->filtros($filtro);
-			$menus->menu_exportar('grid_relatorio','');
-		 }
+
 	
 	
 	
@@ -594,7 +600,6 @@ class imagens{
 	}
 }
 
-
 class listas{
 	
 }
@@ -607,50 +612,57 @@ class igniteui{
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 " 
-<script>
-           var tabela= new Grid( {
-				idGrid:'grid',
-                autoGenerateColumns: false,
-                tableId: '".$tabela."',
-                dataSource: ".$base.",
-                dataSourceType: 'json',
-				columns:[".$column."],
-                width: '100%',
-                height: '300px',
-                virtualizationMode: 'fixed',
-                avgRowHeight: '30px',
-                tabIndex: 1,
-                features: [
-                    {
-                        name: 'Selection',
-                        mode: 'row'
-                    },
-					{
-						name: 'Hiding'
-					},
-                    {
-                        name: 'Paging',
-                        type: 'local',
-                        pageSize: 15
-                    },					
-                    {
-                        name: 'Filtering',
-                        type: 'local'
+		<div id='grid' style=''></div>
+		<style>
+			tr{
+				cursor:pointer;
+				
+			}
+		</style>
+		<script>
+				   var tabela= new Grid( {
+						idGrid:'grid',
+						autoGenerateColumns: false,
+						tableId: '".$tabela."',
+						dataSource: ".$base.",
+						dataSourceType: 'json',
+						columns:[".$column."],
+						width: '100%',
+						height: '300px',
+						virtualizationMode: 'fixed',
+						avgRowHeight: '30px',
+						tabIndex: 1,
+						features: [
+							{
+								name: 'Selection',
+								mode: 'row'
+							},
+							{
+								name: 'Hiding'
+							},
+							{
+								name: 'Paging',
+								type: 'local',
+								pageSize: 15
+							},					
+							{
+								name: 'Filtering',
+								type: 'local'
 
-                    },	
-					{
-						name: 'Resizing'
-					},						
-                   
+							},	
+							{
+								name: 'Resizing'
+							},						
+						   
 
-                ]
-            } );
-			
-		
-	//$('#grid').igGrid({
-	//	cellClick: function(evt, ui) { window.location.assign('?act=cadastros&mod=".$tabela."&id='+$('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));}
-	//});	
-</script>
+						]
+					} );
+					
+				
+			//$('#grid').igGrid({
+			//	cellClick: function(evt, ui) { window.location.assign('?act=cadastros&mod=".$tabela."&id='+$('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));}
+			//});	
+		</script>
 ";
 		//Initialize
 	//$('#grid').igGrid({
@@ -664,8 +676,12 @@ class igniteui{
 	function TreeGrid($base,$column,$tabela,$combo,$plano_conta){
 	echo 
 		"
+		<div id='grid' style=''></div>
 		<style>
-
+			tr{
+				cursor:pointer;
+				
+			}
 		</style>
 		
 		<script>
@@ -674,7 +690,8 @@ class igniteui{
 						width:'100%',
 						height:'100%',
 						ID:'ID',
-						PID:'PID',					
+						PID:'PID',	
+						tableId:'".$tabela."',
 						dataSource: ".$base.",
 						columns: [".$column."]				
 					});
@@ -1064,9 +1081,6 @@ class cadastros{
 		$base=$pesquisa->json($select);
 			include "includes/cad_documento_item.php";		
 	}
-
-
-
 	function cad_conta($id){
 		
 		include "config.php";		
@@ -1074,7 +1088,6 @@ class cadastros{
 				SELECT 
 					cod_conta as ID,
 					if(cod_conta_mae=0,-1,cod_conta_mae) as PID,
-					cod_conta_mae,
 					cad_conta.cod_tipo_conta,
 					concat('#',numero_conta) as numero_conta,
 					concat('#',numero_conta,' - ',cad_conta.descricao) as conta,					
@@ -1162,7 +1175,7 @@ class cadastros{
                             editorType: 'combo',
 							required: true,
                             editorOptions: {
-                                dataSource: [{'status':'ativa'},{'status':'bloquada'}]							
+                                dataSource: [{'status':'ativa'},{'status':'bloqueada'}]							
                             }
                         },{
 							columnKey: 'tipo_conta',
@@ -1242,8 +1255,6 @@ class cadastros{
 		
 			
 			$column ="{headerText: 'Centro de Custo', key: 'centro_custo', width: '200px', dataType: 'string'},";
-			$column.="{headerText: 'Saldo inicial', key: 'saldo_inicial',width: '100px',  dataType: 'number'},";
-			$column.="{headerText: 'Saldo atual', key: 'saldo_atual',width: '100px',  dataType: 'number'},";
 			$column.="{headerText: 'Status', key: 'status',width: '50px',  dataType: 'string'}";
 
 			$tabela="cad_centro_custo";
@@ -1263,7 +1274,7 @@ class cadastros{
                             editorType: 'combo',
 							required: true,
                             editorOptions: {
-                                dataSource: [{'status':'ativa'},{'status':'bloquada'}]							
+                                dataSource: [{'status':'ativa'},{'status':'bloqueada'}]							
                             }
                         },{
 							columnKey: 'tipo_centro_custo',
@@ -1297,10 +1308,42 @@ class cadastros{
 	
 	
 	}
-
-
 }
 
+class editar{
+	function cad_conta($id){
+		include "config.php";
+		
+		//var_dump($_POST);
+		//var_dump($_GET);
+		
+		include "salvar_cadastro.php";		
+		
+		$select="
+				SELECT 
+					cad_conta.* ,
+					tb_conta_mae.numero_conta as numero_conta_mae,
+					tb_conta_mae.descricao as descricao_conta_mae
+				FROM 
+					".$schema.".cad_conta,
+					(select cod_conta,numero_conta,descricao from ".$schema.".cad_conta  ) as tb_conta_mae
+					
+				where 
+					cad_conta.cod_conta='".$id."' and 
+					cad_conta.cod_conta_mae=tb_conta_mae.cod_conta and
+					cad_conta.cod_empresa='".$_SESSION['cod_empresa']."' 
+					
+					
+					;";
+
+		$cadastro=new cadastros;
+		$cadastro->pesquisa($select,'cad_conta','cod_conta');
+		
+
+	}
+	
+	
+}
 class pesquisa{
 	function json($consulta_sql){
 				include "config.php";
@@ -1393,7 +1436,7 @@ class pesquisa{
 					$json=$pesquisa->json($select);
 
 					$column= "{headerText: 'ID', key: 'id', width: '50px', dataType: 'string'},";
-					$column.="{headerText: 'Razão Social', key: 'razao_social', dataType: 'string'},";
+					$column.="{headerText: 'Razão Social', width: '350px',key: 'razao_social', dataType: 'string'},";
 					$column.="{headerText: 'CNPJ', key: 'cnpj', width: '150px', dataType: 'string'}";
 	
 
@@ -1428,9 +1471,9 @@ class pesquisa{
 					$json=$pesquisa->json($select);
 
 					$column= "{headerText: 'ID', key: 'id', width: '50px', dataType: 'string'},";
-					$column.="{headerText: 'Inicio', key: 'data_inicio',width: '100px', dataType: 'string'},";
-					$column.="{headerText: 'Fim', key: 'data_fim', width: '100px', dataType: 'string'},";
-					$column.="{headerText: 'Status', key: 'status', dataType: 'string'}";
+					$column.="{headerText: 'Inicio', key: 'data_inicio',width: '150px', dataType: 'string'},";
+					$column.="{headerText: 'Fim', key: 'data_fim', width: '150px', dataType: 'string'},";
+					$column.="{headerText: 'Status', key: 'status', width: '100px', dataType: 'string'}";
 
 
 	
@@ -1464,7 +1507,7 @@ class pesquisa{
 					$json=$pesquisa->json($select);
 
 					$column= "{headerText: 'ID', key: 'id', width: '50px', dataType: 'string'},";
-					$column.="{headerText: 'Razão Social', key: 'razao_social',  dataType: 'string'},";
+					$column.="{headerText: 'Razão Social', key: 'razao_social', width: '350px', dataType: 'string'},";
 					$column.="{headerText: 'CNPJ', key: 'cnpj', width: '150px', dataType: 'string'}";
 	
 
@@ -1497,7 +1540,7 @@ class pesquisa{
 					$json=$pesquisa->json($select);
 
 					$column= "{headerText: 'ID', key: 'id', width: '50px', dataType: 'string'},";
-					$column.="{headerText: 'Descrição', key: 'descricao', dataType: 'string'},";
+					$column.="{headerText: 'Descrição', key: 'descricao', width: '350px', dataType: 'string'},";
 					$column.="{headerText: 'Status', key: 'status', width: '150px', dataType: 'string'}";
 
 	
@@ -1531,7 +1574,7 @@ class pesquisa{
 					$json=$pesquisa->json($select);
 
 					$column= "{headerText: 'ID', key: 'id', width: '50px', dataType: 'string'},";
-					$column.="{headerText: 'Descrição', key: 'descricao', dataType: 'string'},";
+					$column.="{headerText: 'Descrição', key: 'descricao', width: '350px',dataType: 'string'},";
 					$column.="{headerText: 'Status', key: 'status', width: '150px', dataType: 'string'}";
 
 	
@@ -1565,7 +1608,7 @@ class pesquisa{
 					$json=$pesquisa->json($select);
 
 					$column= "{headerText: 'ID', key: 'id', width: '50px', dataType: 'string'},";
-					$column.="{headerText: 'Descrição', key: 'descricao', dataType: 'string'},";
+					$column.="{headerText: 'Descrição', key: 'descricao',width: '350px', dataType: 'string'},";
 					$column.="{headerText: 'Status', key: 'status', width: '150px', dataType: 'string'}";
 
 	
@@ -1599,7 +1642,7 @@ class pesquisa{
 					$json=$pesquisa->json($select);
 
 					$column= "{headerText: 'ID', key: 'id', width: '50px', dataType: 'string'},";
-					$column.="{headerText: 'Descrição', key: 'descricao', dataType: 'string'},";
+					$column.="{headerText: 'Descrição', key: 'descricao',width: '350px', dataType: 'string'},";
 					$column.="{headerText: 'Status', key: 'status', width: '150px', dataType: 'string'}";
 
 	
@@ -1722,11 +1765,11 @@ class pesquisa{
 					FROM 
 						".$schema.".cad_periodo 
 					where 
-						cod_empresa=".$_SESSION['cod_empresa']." and status='ativo'
+						cod_empresa=".$_SESSION['cod_empresa']." and status='ativa'
 				) as tb_max
 			where 
 					cod_empresa=".$_SESSION['cod_empresa']." 
-				and status='ativo'
+				and status='ativa'
 				and tb_max.data_fim=cad_periodo.data_fim;";
 		$resultado=mysql_query($select,$conexao) or die (mysql_error());
 		$valores = mysql_fetch_array($resultado);
@@ -2116,6 +2159,40 @@ class relatorios{
 				</div>";
 		
 		}
+		if($tipo==4){
+			echo "<div class=' uk-width-1-1 uk-container-center uk-text-center'>
+					<div class=' uk-width-small-1-1 uk-width-medium-1-3 uk-width-large-1-4       uk-panel uk-panel-box uk-panel-box-primary uk-container-center uk-text-center' style='margin-bottom: 30px;'>
+						<h3>Filtro</h3>
+						<form class='uk-form uk-width-1-1' action='#' method='post' style='text-align: left;'>
+							<ul class='uk-list'>
+								<li>
+									<div class='uk-grid'>
+										<div class='uk-width-1-2'>
+										";
+											$inputs->input_form_row('00/00/0000','data_inicio','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+						echo "
+										</div>
+										<div class='uk-width-1-2'>
+							";
+											$inputs->input_form_row('00/00/0000','data_fim','até',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+						echo	 	"
+										</div>
+								</div>
+								</li>
+								<li>
+								</li>
+
+								<li>
+									</br>
+									<button class='uk-button uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
+								</li>
+							</ul>
+						</form>
+						<hr class='uk-article-divider'>
+					</div>
+				</div>";
+		
+		}
 
 	
 	}
@@ -2390,6 +2467,207 @@ class relatorios{
 				return $select;
 		
 	}
+	function balancete(){
+		
+			if(isset($_POST) and isset($_POST['data_inicio']) and isset($_POST['data_fim']) ){			
+			
+				//set variables 
+				$table=new table;
+				$table->select=$this->balancete_consulta_sql();
+				$table->caption=array(
+					'titulo'=>"Balancete Analítico ".$_POST['data_inicio']." a ".$_POST['data_fim']." ",
+					'razao_social'=>$_SESSION['razao_social'],
+					'cnpj'=>$_SESSION['cnpj']
+				);
+				
+			$pesquisa=new pesquisa;
+
+
+			$column="{headerText: 'conta', key: 'conta', width: '350px', dataType: 'string'},";
+			$column.="{headerText: 'Saldo inicial', key: 'saldo_inicial',width: '100px',  dataType: 'number'},";
+			$column.="{headerText: 'Débito', key: 'debito',width: '100px',  dataType: 'number'},";
+			$column.="{headerText: 'Crédito', key: 'credito',width: '100px',  dataType: 'number'},";
+			$column.="{headerText: 'Saldo Final', key: 'saldo_final',width: '100px',  dataType: 'number'}";
+
+
+			$table->column=$column;
+			
+			$table->tabela="cad_conta";
+				
+
+
+				
+				///////////////////////////////////
+				
+		//montar caption
+				$caption="
+					<div style=''>
+						<div class='uk-grid'>
+							<div class='uk-width-1-1'>".$table->caption['razao_social']."</div>
+							<div class='uk-width-1-1'>".$table->caption['cnpj']."</div>
+							<div class='uk-width-1-1'>
+								<div class='uk-grid'>
+									<div class='uk-width-3-5'>".$table->caption['titulo']."</div>
+									<div class='uk-width-1-5'>Livro:xxx</div>
+									<div class='uk-width-1-5'>Folha:xxx</div>
+								</div>
+							</div>
+						</div>
+					</div>					
+				";			
+			
+			//finalizar tabela
+				echo "<div id='relatorio' style='width: 21.0cm;height:29.7cm; padding: 1.5cm 0.5cm;  font-family: times ! important; color: rgb(0, 0, 0) ! important;'>";
+				echo $caption;
+				echo $table->TreeGrid();
+				echo "</div>";					
+				
+				///////////////////////////////////
+				
+				
+				
+				
+			}
+			else{
+				//	carregar filtro
+				$this->filtros(4);
+			}			
+			
+			//echo $table->select;
+		
+	}
+	function balancete_consulta_sql(){
+				include "config.php";
+				
+				//select mysql
+				$select="
+					select 
+						tb_grid.*,
+						REPLACE(REPLACE(REPLACE(FORMAT(sum(tb_grid2.saldo_inicial),2),'.','|'),',','.'),'|',',') as saldo_inicial,
+						REPLACE(REPLACE(REPLACE(FORMAT(sum(tb_grid2.debito),2),'.','|'),',','.'),'|',',') as debito,
+						REPLACE(REPLACE(REPLACE(FORMAT(sum(tb_grid2.credito),2),'.','|'),',','.'),'|',',') as credito,
+						REPLACE(REPLACE(REPLACE(FORMAT(sum(tb_grid2.saldo_final),2),'.','|'),',','.'),'|',',') as saldo_final
+						
+
+					 from
+
+					 (
+									SELECT 
+										cad_conta.cod_conta as ID,
+										if(cad_conta.cod_conta_mae=0,-1,cad_conta.cod_conta_mae) as PID,
+										concat('#',cad_conta.numero_conta,' - ',cad_conta.descricao) as conta,
+										concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(0,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_ini,
+										concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(9,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_fim
+
+									FROM 
+										".$schema.".cad_conta
+
+									WHERE
+										cod_plano_conta='1' 
+
+									ORDER BY
+										cad_conta.cod_conta
+
+
+
+
+					) as tb_grid
+
+
+					,(
+									SELECT 
+										cad_conta.cod_conta as ID,
+										if(cad_conta.cod_conta_mae=0,-1,cad_conta.cod_conta_mae) as PID,
+										concat('#',cad_conta.numero_conta,' - ',cad_conta.descricao) as conta,
+
+
+										concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(0,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_ini,
+										concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(9,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_fim,
+
+
+										IFNULL(cad_conta.saldo_inicial,0) + IFNULL(tb_saldo_inicial.saldo_inicial,0) as saldo_inicial,
+										IFNULL(tb_movimento.debito,0) as debito,
+										IFNULL(tb_movimento.credito,0) as credito,
+										IFNULL(cad_conta.saldo_inicial,0) + IFNULL(tb_saldo_inicial.saldo_inicial,0)+IFNULL(tb_movimento.debito,0)-IFNULL(tb_movimento.credito,0) as saldo_final
+
+									FROM 
+										".$schema.".cad_conta,
+										(
+													SELECT 
+														cad_conta.cod_conta,
+														tb_saldo.saldo_inicial
+
+													FROM 
+														".$schema.".cad_conta
+													left join (
+														SELECT 
+															cod_conta,
+															sum(montante*if(codigo_lancamento='D',1,-1)) as saldo_inicial
+														FROM 
+															".$schema.".cad_documento_item,
+															".$schema.".cad_documento
+														where 
+															cad_documento_item.cod_empresa='".$_SESSION['cod_empresa']."' and
+															cad_documento.data_base<'".data($_POST['data_inicio'])."' and
+															cad_documento.cod_empresa='".$_SESSION['cod_empresa']."'
+														group by 
+															cod_conta
+													) as tb_saldo on tb_saldo.cod_conta=cad_conta.cod_conta
+
+												) as tb_saldo_inicial,
+										(
+													SELECT 
+														cad_conta.cod_conta,
+														tb_mov.debito,
+														tb_mov.credito
+
+													FROM 
+														".$schema.".cad_conta
+													left join (
+																SELECT 
+																	cod_conta,
+																	sum(if(codigo_lancamento='D',montante,0)) as debito,
+																	sum(if(codigo_lancamento='C',montante,0)) as credito
+																FROM 
+																	".$schema.".cad_documento_item,
+																	".$schema.".cad_documento
+																where 
+																	cad_documento_item.cod_documento=cad_documento.cod_documento and
+																	cad_documento_item.cod_empresa='".$_SESSION['cod_empresa']."' and															
+																	cad_documento.data_base>='".data($_POST['data_inicio'])."' and
+																	cad_documento.data_base<='".data($_POST['data_fim'])."' and
+																	cad_documento.cod_empresa='".$_SESSION['cod_empresa']."'
+																group by 
+																	cod_conta
+													) as tb_mov on tb_mov.cod_conta=cad_conta.cod_conta
+
+												) as tb_movimento
+
+
+									WHERE
+										cod_plano_conta='".$_SESSION['cod_empresa']."' and
+										tb_saldo_inicial.cod_conta=cad_conta.cod_conta and
+										tb_movimento.cod_conta=cad_conta.cod_conta
+
+									ORDER BY
+										cad_conta.cod_conta
+
+
+
+
+					) as tb_grid2
+
+					where tb_grid2.conta_ini>=tb_grid.conta_ini and tb_grid2.conta_fim<=tb_grid.conta_fim
+
+					group by tb_grid.ID		
+
+				";
+				
+				return $select;
+		
+	}
+
+	
 	
 }
 
@@ -2400,6 +2678,7 @@ class table{
 		public $select;
 		public $group_by;
 		public $caption;
+		public $json;
 
 		
 		
@@ -2489,7 +2768,7 @@ class table{
 			
 			
 			//finalizar tabela
-				$table="<div style='width: 21.0cm;height:29.7cm; padding: 1.5cm 0.5cm;'>
+				$table="<div id='relatorio' style='width: 21.0cm;height:29.7cm; padding: 1.5cm 0.5cm;'>
 							<table class='uk-table uk-table-condensed' style='font-size: 12px ! important; font-family: times ! important; color: rgb(0, 0, 0) ! important;'>
 								".$caption.$table."								
 							</table>
@@ -2501,13 +2780,18 @@ class table{
 			return $this->tabela();
 			//return $this->select;
 		}
-	
+		function TreeGrid(){
+			$pesquisa=new pesquisa;
+			$this->json=$pesquisa->json($this->select);
+			$igniteui=new igniteui;
+			$igniteui->TreeGrid($this->json,$this->column,$this->tabela,'','');
+		}
 	
 	
 }
 
 class imprimir{
-	function ficha_ativo($id){
+	function ficha_ativa($id){
 		include "config.php";
 
 	
@@ -2593,7 +2877,7 @@ class imprimir{
 
 
 				<hr class='uk-article-divider'>	
-				<h3 class='tm-article-subtitle'>Ficha de ativo</h3>			
+				<h3 class='tm-article-subtitle'>Ficha de ativa</h3>			
 
 						<div class='uk-grid'>
 							<div class='uk-width-1-2'>

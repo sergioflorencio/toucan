@@ -46,8 +46,7 @@
 
 		<div class="uk-width-1-1 " style="text-align: left;">
 			<div id='cadastro'></div>
-			<div id='div_msg'></div>
-			<div id='grid' style=""></div>
+			<div id='div_msg'></div>			
 			<div id='principal' style=''></div>
 		</div>
 		<div class="uk-width-1-1 " style="text-align: left;">
