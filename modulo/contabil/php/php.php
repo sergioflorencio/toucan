@@ -379,8 +379,12 @@ class menus{
 
 		
 		 }
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="pesquisa"){
+		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="pesquisa" and $_GET['mod']=="cad_documento"){
 				echo "<li  data-uk-tooltip={pos:'right'} title='Novo'><div class='uk-button-group'><a href='?act=cadastros&mod=".$_GET['mod']."&id=' class='uk-button uk-button-mini uk-button-primary ' style=''><i class='uk-icon-file'></i> Incluir novo cadastro</a></div></li>";
+				$menus->menu_exportar('grid',0);
+		 }
+		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="pesquisa" and $_GET['mod']=="razao"){
+				//echo "<li  data-uk-tooltip={pos:'right'} title='Novo'><div class='uk-button-group'><a href='?act=cadastros&mod=".$_GET['mod']."&id=' class='uk-button uk-button-mini uk-button-primary ' style=''><i class='uk-icon-file'></i> Incluir novo cadastro</a></div></li>";
 				$menus->menu_exportar('grid',0);
 		 }
 		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="relatorios"){
@@ -612,7 +616,7 @@ class igniteui{
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 " 
-		<div id='grid' style=''></div>
+		<div id='grid' style='border: 1px solid #ccc; bottom: 10px ! important; position: absolute; top: 60px; left: 10px; right: 10px; overflow: auto;'></div>
 		<style>
 			tr{
 				cursor:pointer;
@@ -1656,68 +1660,56 @@ class pesquisa{
 
 		
 		if(isset($_POST)==true and $_POST!=null){
-			include "config.php";		
-			$select= "
-					SELECT 
-						cod_documento as id,
-						cod_documento, 
-						cod_empresa, 
-						cod_tipo_documento, 
-						referencia, 
-						texto_cabecalho_documento, 
-						DATE_FORMAT(data_lancamento,'%d/%m/%Y') as data_lancamento,
-						DATE_FORMAT(data_base,'%d/%m/%Y') as data_base,
-						DATE_FORMAT(data_estorno,'%d/%m/%Y') as data_estorno,
-						DATE_FORMAT(data_alteracao,'%d/%m/%Y') as data_alteracao,
-						exercicio, 
-						periodo, 
-						historico, 
-						DATE_FORMAT(data_inclusao,'%d/%m/%Y') as data_inclusao,
-						DATE_FORMAT(data_ultima_alteracao,'%d/%m/%Y') as data_ultima_alteracao,
-						usuario_inclusao, 
-						usuario_ultima_alteracao 
-					FROM 
-						".$schema.".cad_documento 
+				include "config.php";		
+				$select= "
+						SELECT 
+							cod_documento as id,
+							cod_documento, 
+							cod_empresa, 
+							cod_tipo_documento, 
+							referencia, 
+							texto_cabecalho_documento, 
+							DATE_FORMAT(data_lancamento,'%d/%m/%Y') as data_lancamento,
+							DATE_FORMAT(data_base,'%d/%m/%Y') as data_base,
+							DATE_FORMAT(data_estorno,'%d/%m/%Y') as data_estorno,
+							DATE_FORMAT(data_alteracao,'%d/%m/%Y') as data_alteracao,
+							exercicio, 
+							periodo, 
+							historico, 
+							DATE_FORMAT(data_inclusao,'%d/%m/%Y') as data_inclusao,
+							DATE_FORMAT(data_ultima_alteracao,'%d/%m/%Y') as data_ultima_alteracao,
+							usuario_inclusao, 
+							usuario_ultima_alteracao 
+						FROM 
+							".$schema.".cad_documento 
+							
+						WHERE
+							cod_empresa='".$_SESSION['cod_empresa']."' ";
 						
-					WHERE
-						cod_empresa='".$_SESSION['cod_empresa']."' ";
-						
-			if ($_POST['cod_documento']!=""){ $select=$select. "and `cod_documento` = '".$_POST['cod_documento']."'";}
-			if ($_POST['referencia']!=""){ $select=$select. "and `referencia` = '".$_POST['referencia']."'";}
-			if ($_POST['texto_cabecalho_documento']!=""){ $select=$select. "and `texto_cabecalho_documento` = '".$_POST['texto_cabecalho_documento']."'";}
-			if ($_POST['historico']!=""){ $select=$select. "and `historico` = '".$_POST['historico']."'";}
-			if ($_POST['exercicio']!=""){ $select=$select. "and `exercicio` = '".$_POST['exercicio']."'";}
-			if ($_POST['periodo']!=""){ $select=$select. "and `periodo` = '".$_POST['periodo']."'";}
-			if ($_POST['data_lancamento_de']!="01/01/1900" || $_POST['data_lancamento_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_lancamento_de'])."' and '".data($_POST['data_lancamento_ate'])."')";}
-			if ($_POST['data_inclusao_de']!="01/01/1900" || $_POST['data_inclusao_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_inclusao_de'])."' and '".data($_POST['data_inclusao_ate'])."')";}
-			if ($_POST['data_base_de']!="01/01/1900" || $_POST['data_base_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_base_de'])."' and '".data($_POST['data_base_ate'])."')";}
-			if ($_POST['data_estorno_de']!="01/01/1900" || $_POST['data_estorno_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_estorno_de'])."' and '".data($_POST['data_estorno_ate'])."')";}
-			if ($_POST['data_alteracao_de']!="01/01/1900" || $_POST['data_alteracao_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_alteracao_de'])."' and '".data($_POST['data_alteracao_ate'])."')";}
+				if ($_POST['cod_documento']!=""){ $select=$select. "and `cod_documento` = '".$_POST['cod_documento']."'";}
+				if ($_POST['referencia']!=""){ $select=$select. "and `referencia` = '".$_POST['referencia']."'";}
+				if ($_POST['texto_cabecalho_documento']!=""){ $select=$select. "and `texto_cabecalho_documento` = '".$_POST['texto_cabecalho_documento']."'";}
+				if ($_POST['historico']!=""){ $select=$select. "and `historico` = '".$_POST['historico']."'";}
+				if ($_POST['exercicio']!=""){ $select=$select. "and `exercicio` = '".$_POST['exercicio']."'";}
+				if ($_POST['periodo']!=""){ $select=$select. "and `periodo` = '".$_POST['periodo']."'";}
+				if ($_POST['data_lancamento_de']!="01/01/1900" || $_POST['data_lancamento_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_lancamento_de'])."' and '".data($_POST['data_lancamento_ate'])."')";}
+				if ($_POST['data_inclusao_de']!="01/01/1900" || $_POST['data_inclusao_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_inclusao_de'])."' and '".data($_POST['data_inclusao_ate'])."')";}
+				if ($_POST['data_base_de']!="01/01/1900" || $_POST['data_base_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_base_de'])."' and '".data($_POST['data_base_ate'])."')";}
+				if ($_POST['data_estorno_de']!="01/01/1900" || $_POST['data_estorno_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_estorno_de'])."' and '".data($_POST['data_estorno_ate'])."')";}
+				if ($_POST['data_alteracao_de']!="01/01/1900" || $_POST['data_alteracao_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_alteracao_de'])."' and '".data($_POST['data_alteracao_ate'])."')";}
 
-						
-			$select.= ";";
-				
-			$pesquisa=new pesquisa;
-			$json=$pesquisa->json($select);
+							
+				$select.= ";";
+					
+				$pesquisa=new pesquisa;
+				$json=$pesquisa->json($select);
 			
 
-
-
-
-
-
-
-
-
-
-
-
-	
 				$column ="{headerText: 'ID', key: 'id', width: '50px',  dataType: 'string'},";
 				$column.="{headerText: 'cod_documento', key: 'cod_documento', width: '100px',  dataType: 'string'},";
 				$column.="{headerText: 'cod_tipo_documento', key: 'cod_tipo_documento', width: '50px',  dataType: 'string'},";
 				$column.="{headerText: 'referencia', key: 'referencia', width: '150px',  dataType: 'string'},";
-				$column.="{headerText: 'texto_cabecalho_documento', key: 'texto_cabecalho_documento', width: '150px',  dataType: 'string'},";
+				$column.="{headerText: 'texto_cabecalho_documento', key: 'texto_cabecalho_documento',  dataType: 'string'},";
 				$column.="{headerText: 'data_lancamento', key: 'data_lancamento', width: '150px',  dataType: 'string'},";
 				$column.="{headerText: 'data_inclusao', key: 'data_inclusao', width: '150px',  dataType: 'string'},";				
 				$column.="{headerText: 'data_base', key: 'data_base', width: '150px',  dataType: 'string'},";
@@ -1775,6 +1767,107 @@ class pesquisa{
 		$valores = mysql_fetch_array($resultado);
 		 return $valores;
 		
+	}
+	function razao($id){
+
+		
+		if(isset($_POST)==true and $_POST!=null){
+			include "config.php";		
+				
+			$select= "
+					SELECT 
+						cad_documento.cod_documento as id, 
+						cad_documento.cod_documento, 
+						cad_documento.referencia, 
+						cad_documento.texto_cabecalho_documento, 
+						DATE_FORMAT(cad_documento.data_lancamento,'%d/%m/%Y') as data_lancamento, 
+						DATE_FORMAT(cad_documento.data_base,'%d/%m/%Y') as data_base, 
+						DATE_FORMAT(cad_documento.data_estorno,'%d/%m/%Y') as data_estorno, 
+						cad_documento.exercicio,
+						cad_documento.periodo, 
+						cad_documento.historico, 
+						DATE_FORMAT(cad_documento.data_inclusao,'%d/%m/%Y') as data_inclusao, 
+						cad_documento_item.codigo_lancamento,
+						if(cad_documento_item.codigo_lancamento='D',replace(cad_documento_item.montante,'.',','),0) as debito,
+						if(cad_documento_item.codigo_lancamento='C',replace(cad_documento_item.montante,'.',','),0) as credito,
+						cad_documento_item.cod_conta,
+						concat('#',cad_conta.numero_conta) as numero_conta,
+						cad_conta.descricao as conta,
+						cad_documento_item.cod_ctr_custo,
+						concat('#',cad_centro_custo.numero_centro_custo) as numero_centro_custo,
+						cad_centro_custo.descricao as centro_custo
+					
+					FROM 
+						".$schema.".cad_documento,
+						".$schema.".cad_documento_item,
+						".$schema.".cad_conta,
+						".$schema.".cad_centro_custo
+					
+					WHERE 
+						cad_documento.cod_documento=cad_documento_item.cod_documento and 
+						cad_documento_item.cod_conta=cad_conta.cod_conta and
+						cad_documento_item.cod_ctr_custo=cad_centro_custo.cod_centro_custo and
+						cad_documento.cod_empresa='".$_SESSION['cod_empresa']."' ";					
+						
+						
+			if ($_POST['cod_documento']!=""){ $select=$select. "and ".$schema.".cad_documento.`cod_documento` = '".$_POST['cod_documento']."'";}
+			if ($_POST['referencia']!=""){ $select=$select. "and ".$schema.".cad_documento.`referencia` = '".$_POST['referencia']."'";}
+			if ($_POST['texto_cabecalho_documento']!=""){ $select=$select. "and ".$schema.".cad_documento.`texto_cabecalho_documento` = '".$_POST['texto_cabecalho_documento']."'";}
+			if ($_POST['historico']!=""){ $select=$select. "and ".$schema.".cad_documento.`historico` = '".$_POST['historico']."'";}
+			if ($_POST['exercicio']!=""){ $select=$select. "and ".$schema.".cad_documento.`exercicio` = ".$_POST['exercicio']." ";}
+			if ($_POST['periodo']!=""){ $select=$select. "and ".$schema.".cad_documento.`periodo` = ".$_POST['periodo']." ";}
+			if ($_POST['data_lancamento_de']!="01/01/1900" || $_POST['data_lancamento_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.cad_documento.`data_cancelamento` between '".data($_POST['data_lancamento_de'])."' and '".data($_POST['data_lancamento_ate'])."')";}
+			if ($_POST['data_inclusao_de']!="01/01/1900" || $_POST['data_inclusao_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.cad_documento.`data_cancelamento` between '".data($_POST['data_inclusao_de'])."' and '".data($_POST['data_inclusao_ate'])."')";}
+			if ($_POST['data_base_de']!="01/01/1900" || $_POST['data_base_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.cad_documento.`data_cancelamento` between '".data($_POST['data_base_de'])."' and '".data($_POST['data_base_ate'])."')";}
+			if ($_POST['data_estorno_de']!="01/01/1900" || $_POST['data_estorno_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.cad_documento.`data_cancelamento` between '".data($_POST['data_estorno_de'])."' and '".data($_POST['data_estorno_ate'])."')";}
+			if ($_POST['data_alteracao_de']!="01/01/1900" || $_POST['data_alteracao_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.cad_documento.`data_cancelamento` between '".data($_POST['data_alteracao_de'])."' and '".data($_POST['data_alteracao_ate'])."')";}
+
+						
+			$select.= ";";
+				
+			$pesquisa=new pesquisa;
+			$json=$pesquisa->json($select);
+			
+			//echo $select;
+
+
+
+
+
+
+
+
+
+
+
+	
+				$column ="{headerText: 'ID', key: 'id', width: '50px',  dataType: 'string'},";
+				$column.="{headerText: 'referencia', key: 'referencia', width: '150px',  dataType: 'string'},";
+				$column.="{headerText: 'texto_cabecalho_documento', key: 'texto_cabecalho_documento', width: '150px',  dataType: 'string'},";
+				$column.="{headerText: 'data_base', key: 'data_base', width: '120px',  dataType: 'string'},";
+				$column.="{headerText: 'data_estorno', key: 'data_estorno', width: '120px',  dataType: 'string'},";
+				$column.="{headerText: 'exercicio', key: 'exercicio', width: '80px',  dataType: 'string'},";
+				$column.="{headerText: 'periodo', key: 'periodo', width: '50px',  dataType: 'string'},";
+				$column.="{headerText: 'debito', key: 'debito', width: '150px',  dataType: 'number'},";
+				$column.="{headerText: 'credito', key: 'credito', width: '150px',  dataType: 'number'},";
+				$column.="{headerText: 'numero_conta', key: 'numero_conta', width: '150px',  dataType: 'string'},";
+				$column.="{headerText: 'conta', key: 'conta', width: '250px',  dataType: 'string'},";
+				$column.="{headerText: 'numero_centro_custo', key: 'numero_centro_custo', width: '150px',  dataType: 'string'},";
+				$column.="{headerText: 'centro_custo', key: 'centro_custo', width: '250px',  dataType: 'string'},";
+
+				$tabela="cad_documento";
+				$combo="";
+				
+				
+				$igniteui=new igniteui;
+				echo $igniteui->igrid($json,$column,$tabela,$combo,$_GET['id']);
+
+		}else{
+			$relatorios= new relatorios;
+			$relatorios->filtros('1');
+		}
+		
+		//var_dump($_POST);
 	}
 	
 }

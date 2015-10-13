@@ -37,8 +37,8 @@
 						"</th>";
 				}
 				 thead+="<th></th></tr></thead>";			
-				 tbody="<tbody id='tbody_"+a.idGrid+"' style=' overflow-y: auto ! important; overflow-x: hidden;'><tbody>"
-				document.getElementById(a.idGrid).innerHTML="<div style='width:"+a.width+"; ' ><table class='uk-table uk-table-condensed uk-table-hover' style=' '>"+thead+tbody+"</table></div>";
+				 tbody="<tbody id='tbody_"+a.idGrid+"' style=' overflow-y: auto ! important; overflow-x: hidden; position: absolute; top: 69px; bottom: 15px;'><tbody>"
+				document.getElementById(a.idGrid).innerHTML="<div style='width:"+a.width+"; ' ><table class='uk-table uk-table-condensed uk-table-hover' style=' border-top: 0px none ! important;'>"+thead+tbody+"</table></div>";
 			
 		
 		
@@ -63,10 +63,11 @@
 								if(a.filter_key=="" || a.filter_value==""){
 									incluir=incluir+1;
 								}
-								
+								if(a.columns[y].dataType=='number'){ align="text-align: right !important;"; }
+								else{align="text-align: left !important;";}		
 								tbody_+=
 								"<td style='padding: 0px;width:"+a.columns[y].width+";'>"+
-									"<div class='uk-text-truncate' style='width:"+a.columns[y].width+";padding: 2px; text-align: center; vertical-align: middle;'>"
+									"<div class='uk-text-truncate' style='width:"+a.columns[y].width+";padding: 2px; vertical-align: middle;"+align+"'>"
 										+a.dataSource[x][a.columns[y].key]+
 									"</div>"+						
 								"</td>";
@@ -88,7 +89,7 @@
 		$('.filter_table').keyup(function(){ 
 			tabela.filter(this.id,this.value);
 		});
-		$('tbody tr').click(function(){ 
+		$('tbody tr').dblclick(function(){ 
 		
 			window.location.assign('?act=cadastros&mod='+a.tableId+'&id='+this.id);
 		});
