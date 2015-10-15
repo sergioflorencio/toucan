@@ -37,8 +37,9 @@
 						"</th>";
 				}
 				 thead+="<th></th></tr></thead>";			
-				 tbody="<tbody id='tbody_"+a.idGrid+"' style=' overflow-y: auto ! important; overflow-x: hidden; position: absolute; top: 69px; bottom: 15px;'><tbody>"
-				document.getElementById(a.idGrid).innerHTML="<div style='width:"+a.width+"; ' ><table class='uk-table uk-table-condensed uk-table-hover' style=' border-top: 0px none ! important;'>"+thead+tbody+"</table></div>";
+				 //overflow-y: auto ! important; overflow-x: hidden; position: absolute; top: 69px; bottom: 15px;
+				 tbody="<tbody id='tbody_"+a.idGrid+"' style=' '><tbody>"
+				document.getElementById(a.idGrid).innerHTML="<div style='width:"+a.width+"; ' ><table class='uk-table uk-table-condensed uk-table-hover' style='font-size: 12px; border-top: 0px none ! important;'>"+thead+tbody+"</table></div>";
 			
 		
 		
