@@ -21,10 +21,10 @@
 						if(isset($_GET['act']) and $_GET['act']!='imprimir'){
 			?>
 
-				<div class="uk-width-1-1 " style="margin-bottom: 30px; margin-top: 0px;text-align: left;">
-						<div id='principal' class='' style="" data-uk-sticky>
+				<div class="uk-width-1-1 " style="">
+						<div id='principal' class='' style="margin: -10px 0px 0px; text-align: left; border-bottom: 1px solid rgb(204, 204, 204); padding-bottom: 10px;">
 							<div class='' style='style="text-align: left; margin: 5px 10px;"'>			
-								<ul class='uk-subnav uk-subnav-line'>
+								<ul class='uk-subnav uk-subnav-line' style='margin-bottom: 0px;'>
 
 									<?php 
 									$menus=new menus;

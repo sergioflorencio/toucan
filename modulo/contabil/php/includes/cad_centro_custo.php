@@ -11,7 +11,7 @@
 						<div class="uk-grid">
 							<div class="uk-width-1-2">
 								<?php 
-									$inputs->input_form_row($cod_conta,'cod_conta','Cod. Conta','','readonly');
+									$inputs->input_form_row($cod_centro_custo,'cod_centro_custo','Cod. Conta','','readonly');
 								?>
 							</div>
 						</div>
@@ -20,17 +20,17 @@
 						<div class="uk-grid">	
 							<div class="uk-width-1-4" >
 								<?php 
-									$inputs->input_form_row($numero_conta_mae,'numero_conta_mae','Número Conta Mãe','','readonly');
+									$inputs->input_form_row($numero_centro_custo_mae,'numero_centro_custo_mae','Número Conta Mãe','','readonly');
 								?>
 							</div>						
 							<div class="uk-width-3-4" >
 								<?php 
-									$inputs->input_form_row($descricao_conta_mae,'descricao_conta_mae','Descrição Conta Mãe','','readonly');
+									$inputs->input_form_row($descricao_centro_custo_mae,'descricao_centro_custo_mae','Descrição Conta Mãe','','readonly');
 								?>
 							</div>
 							<div class="uk-width-1-4" >
 								<?php 
-									$inputs->input_form_row($numero_conta,'numero_conta','Número Conta','',' onchange=pesquisar_conta_mae(this); onkeyup=pesquisar_conta_mae(this);');
+									$inputs->input_form_row($numero_centro_custo,'numero_centro_custo','Número Conta','',' onchange=pesquisar_centro_custo_mae(this); onkeyup=pesquisar_centro_custo_mae(this);');
 								?>
 							</div>						
 							<div class="uk-width-3-4" >
@@ -48,16 +48,12 @@
 									$inputs->input_form_row($saldo_atual,'saldo_atual','Saldo atual','','style=text-align:right; onchange=formatar_numero(this); onkeyup=formatar_numero(this);');
 								?>
 							</div>
-							<div class="uk-width-1-4" >
+							<div class="uk-width-2-4" >
 								<?php 
 									$selects->status($status,"Status");
 								?>
 							</div>
-							<div class="uk-width-1-4" >
-								<?php 
-									$selects->cod_tipo_conta($cod_tipo_conta,'Tipo de conta');
-								?>
-							</div>							
+					
 						</div>
 					</div>
 

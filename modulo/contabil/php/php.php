@@ -111,6 +111,7 @@ class selects{
 }
 
 class menus{
+	
 	function navegador_($valores,$id){
 		echo "
 			<div class='uk-width-1-4' style=''>
@@ -120,21 +121,38 @@ class menus{
 				<a href='?act=cadastros&mod=".$_GET['mod']."&id=".$valores['max']."' class='uk-button'><i class='uk-icon-fast-forward'></i> útimo</a>
 			</div>";
 	}
-	function submenu($valores,$id){
+	function submenu(){
 		echo "
 					<li>
 						<div class='uk-button-group'>
 							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=pesquisa&mod=".$_GET['mod']."&id='  style=''><i class='uk-icon-binoculars'></i> Pesquisar</a>
-							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=".$_GET['act']."&mod=".$_GET['mod']."&id=' style=''><i class='uk-icon-file-o'></i> Novo</a> 
+							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=cadastros&mod=".$_GET['mod']."&id=' style=''><i class='uk-icon-file-o'></i> Novo</a> 
 							<a class='uk-button uk-button-mini uk-button-primary ' href='#' id='bt_salvar'  style=''><i class='uk-icon-save '></i> Salvar</a>
 						</div>		
 					</li>
+					<script>$('#bt_salvar').click(function(){document.getElementById('form_cadastro').submit();});</script>	
+
+		";
+	}
+	function submenu_1(){
+		echo "
 					<li>
 						<div class='uk-button-group'>
-							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=cadastros&mod=".$_GET['mod']."&id=".$valores['min']."' style=''><i class='uk-icon-fast-backward'></i> Primeiro</a>							
-							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=cadastros&mod=".$_GET['mod']."&id=".max($id-1,$valores['min']) ."' style=''><i class='uk-icon-backward'></i> Anterior</a>
-							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=cadastros&mod=".$_GET['mod']."&id=".min($id+1,$valores['max'])."' style=''><i class='uk-icon-forward'></i> Próximo</a>
-							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=cadastros&mod=".$_GET['mod']."&id=".$valores['max']."' style=''><i class='uk-icon-fast-forward'></i> Último</a>
+							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=pesquisa&mod=".$_GET['mod']."&id='  style=''><i class='uk-icon-binoculars'></i> Pesquisar</a>
+							<a class='uk-button uk-button-mini uk-button-primary ' href='#' id='bt_salvar'  style=''><i class='uk-icon-save '></i> Salvar</a>
+						</div>		
+					</li>
+					<script>$('#bt_salvar').click(function(){document.getElementById('form_cadastro').submit();});</script>	
+
+		";
+	}
+	function submenu_2(){
+		echo "
+					<li>
+						<div class='uk-button-group'>
+							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=pesquisa&mod=".$_GET['mod']."&id='  style=''><i class='uk-icon-binoculars'></i> Pesquisar</a>
+							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=editar&mod=".$_GET['mod']."&id=' style=''><i class='uk-icon-file-o'></i> Novo</a> 
+							<a class='uk-button uk-button-mini uk-button-primary ' href='#' id='bt_salvar' style=''><i class='uk-icon-save '></i> Salvar</a>
 						</div>		
 					</li>
 					<script>$('#bt_salvar').click(function(){document.getElementById('form_cadastro').submit();});</script>	
@@ -147,15 +165,14 @@ class menus{
 			<div class='uk-button-group'>
 				<a class='uk-button uk-button-mini uk-button-primary ' href='?act=pesquisa&mod=".$_GET['mod']."&id='  style=''><i class='uk-icon-binoculars'></i> Pesquisar</a>
 				<a class='uk-button uk-button-mini uk-button-primary ' href='?act=".$_GET['act']."&mod=".$_GET['mod']."&id=' style=''><i class='uk-icon-file-o'></i> Novo</a> 
-				<a class='uk-button uk-button-mini uk-button-primary ' href='#' id='bt_salvar'  style=''><i class='uk-icon-save '></i> Salvar</a>
+				<a class='uk-button uk-button-mini uk-button-primary ' href='#' id='bt_salvar' onclick=salvar_cadastro('".$_GET['mod']."'); style=''><i class='uk-icon-save '></i> Salvar</a>
 			</div>		
 		</li>
 		";
 
 	}
-	function submenu_cad_documento($valores,$id){
-		if($_GET['id']>0 or $_GET['id']!=""){$disabled=" disabled ";}else{$disabled="  ";}
-		echo $id;
+	function submenu_cad_documento(){
+		if($_GET['id']>0 or $_GET['id']!=""){$disabled=" disabled ";$disabled_="  ";}else{$disabled="  ";$disabled_=" disabled ";}
 		echo "
 				<li>
 					<div class='uk-button-group'>
@@ -168,29 +185,14 @@ class menus{
 					</div>
 					
 					<div class='uk-button-group'>
-						<button class='uk-button uk-button-mini uk-button-danger' type='button' onclick='cloneRow()'  ".$disabled." ><i class='uk-icon-plus-circle'></i> Nova linha</button>
-						<button class='uk-button uk-button-mini uk-button-danger' type='button' onclick='delAllRow()'  ".$disabled."><i class='uk-icon-times'></i> Excluir linhas</button>
+						<button class='uk-button uk-button-mini uk-button-danger' type='button' onclick=cloneRow('tableToModify')  ".$disabled." ><i class='uk-icon-plus-circle'></i> Nova linha</button>
+						<button class='uk-button uk-button-mini uk-button-danger' type='button' onclick=delAllRow('tableToModify')  ".$disabled."><i class='uk-icon-times'></i> Excluir linhas</button>
+					</div>
+					
+					<div class='uk-button-group'>
+						<a class='uk-button uk-button-mini uk-button-danger' type='button' href='?act=lancamento&mod=estornar_documento&id=".$_GET['id']."' ".$disabled_." ><i class='uk-icon-eraser'></i> Estornar documento</a>
 					</div>
 				</li>
-		";
-	}
-	function submenu_cad_itens($valores,$id){
-		echo "
-
-					<li  data-uk-tooltip={pos:'right'} title='Pesquisar'><a href='?act=pesquisa&mod=".$_GET['mod']."&id=' class='uk-button-link '  style=''><i class='uk-icon-binoculars'></i></a> </li>
-					<li  data-uk-tooltip={pos:'right'} title='Novo'><a href='?act=cadastros&mod=".$_GET['mod']."&id=' class='uk-button-link ' style=''><i class='uk-icon-file-o'></i></a> </li>
-					<li  data-uk-tooltip={pos:'right'} title='Salvar'><a href='#' class=' uk-button-link  '  id='bt_salvar'  style=''><i class='uk-icon-save '></i></a> </li>
-					<li  data-uk-tooltip={pos:'right'} title='Imprimir ficha de ativa'><a href='?act=imprimir&mod=ficha_ativa&id=".$_GET['id']."' target='_blank'><i class='uk-icon-print'></i></a> </li>
-					
-					<li data-uk-tooltip={pos:'right'} title='Primeiro'><a href='?act=cadastros&mod=".$_GET['mod']."&id=".$valores['min']."' class='uk-button-link '  style=''><i class='uk-icon-fast-backward'></i> </a></li>
-					<li data-uk-tooltip={pos:'right'} title='Anterior'><a href='?act=cadastros&mod=".$_GET['mod']."&id=".max($id-1,$valores['min']) ."' class='uk-button-link '  style=''><i class='uk-icon-backward'></i> </a></li>
-					<li data-uk-tooltip={pos:'right'} title='Próximo'><a href='?act=cadastros&mod=".$_GET['mod']."&id=".min($id+1,$valores['max'])."' class='uk-button-link '  style=''><i class='uk-icon-forward'></i> </a></li>
-					<li data-uk-tooltip={pos:'right'} title='Último'><a href='?act=cadastros&mod=".$_GET['mod']."&id=".$valores['max']."' class='uk-button-link '  style=''><i class='uk-icon-fast-forward'></i> </a></li>
-
-
-					<script>$('#bt_salvar').click(function(){document.getElementById('form_cadastro').submit();});</script>			
-
-
 		";
 	}
 	function menu_exportar($id_grid,$filtro){
@@ -224,186 +226,131 @@ class menus{
 			
 		";
 	}
-	function menu_gerar_depreciacao($filtro){
-		$inputs=new inputs;
-		$selects=new selects;
-		$menus=new menus;
-			
-		$relatorios=new relatorios;
-			
-				
-		echo "<li>";
-		echo "
-			<!-- This is the modal -->
-			<div id='modal' >
-				<form class='uk-form uk-width-1-1' action='#' method='post'>
-				<div class='uk-grid'>
-							<div class='uk-width-1-2'>";
-							$inputs->input_form_row('00/00/0000','data_inicio','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
-				echo	 "</div>
-							<div class='uk-width-1-2'>";
-							$inputs->input_form_row('00/00/0000','data_fim','até',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
-				echo	 "</div>
-							<div class='uk-width-1-2'>";
-							$inputs->input_form_row('','cod_item','Item',"","data-uk-datepicker={format:'DD/MM/YYYY'}");
-				echo	 "</div>
-							<div class='uk-width-1-2'>";
-							$selects->cod_grupo_patrimonio('','Grupo');
-				echo	 "</div>
-							<div class='uk-width-1-2'>
-								<button class='uk-button uk-button-danger' type='submit' id='' style='margin-top: 17px;'><i class='uk-icon-cogs'></i> Gerar depreciações</button>
-							</div>
-				</div>
-				</form>
-			</div>
-		";
-
-		echo"</li>";
-
-		
-	}
-	function menu_baixa($filtro){
-		$inputs=new inputs;
-		$selects=new selects;
-	
-		
-		if($filtro!=""){
-			echo	"<li>
-						<div class='uk-button-dropdown' data-uk-dropdown={justify:'#principal',mode:'click'} >
-							<a href='#'><i class='uk-icon-filter'></i> Filtro <i class='uk-icon-caret-down'></i></a>
-								<div style='' class='uk-dropdown'>		
-								";
-			$relatorios=new relatorios;
-			$filtro=$relatorios->filtros($filtro);					
-		echo "
-								</div>
-						</div>							
-				</li>	";	
-		}				
-				
-		echo "<li>";
-					echo	"
-						<a href='#modal' id='confirmar_baixas' data-uk-modal><i class='uk-icon-exclamation'></i> Confirmar baixas</a>
-						<!-- This is the modal -->
-						<div id='modal' class='uk-modal'>
-							<form action='#' method='post'>
-								<div class='uk-modal-dialog'>
-									<div class='uk-modal-header'>
-										<h3>Confirmar baixas</h3>
-									</div>
-									<div>
-								<div class='uk-grid'>
-									<div class='uk-width-1-3'>";
-									$inputs->input_form_row('00/00/0000','data_baixa','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
-						echo	 	"</div>
-									<div class='uk-width-1-3'>";
-									$selects->cad_motivo_baixa('','Motivo de baixa');
-						echo		 "</div>
-									<div class='uk-width-1-1' id=''>
-										<label class='uk-form-label' for='xxx'>Itens</label>
-										 <textarea  style='width: 100%; height: 100px;' id='textarea_cod_item' name='textarea_cod_item' placeholder='Textarea' readonly></textarea> 
-									</div>
-									</div>
-									<hr class='uk-article-divider'>
-									<div id='div_modal_msg'></div>
-									<div class='uk-modal-footer uk-text-right'>
-										<button type='button' class='uk-button uk-modal-close' id='bt_cancelar'>Cancelar</button>
-										<button type='submit' class='uk-button uk-button-primary' id='tb_salvar'>Salvar</button>
-									</div>
-								</div>
-							</form>
-						</div>
-					";
-		
-		echo"</li>
-			<li></li>
-			<li id='arquivo_gerado'></li>
-
-		";
-	}
-	function menu_reavaliar($filtro){
-		$inputs=new inputs;
-		$selects=new selects;
-		$menus=new menus;
-					$menus->menu_exportar('grid_relatorio',$filtro);					
-				
-		echo "
-				<li>
-					<a href='#modal' id='confirmar_reavaliacao' data-uk-modal><i class='uk-icon-exclamation'></i> Salvar</a>
-				</li>
-				<li id='arquivo_gerado'>
-				</li>
-		";
-	}
 	function menu(){
-		$menus=new menus;
-		$sql=new sql;
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id'])  and $_GET['act']=="cadastros" and $_GET['mod']!="cad_documento"){
-			//elementos de pesquisa
-				//var_dump($_GET);
-			$tabela=$_GET['mod'];
 
-
-
-			//include esqueleto cadastro
-			if($tabela=='cad_itens'){
-				$id="cod_item";
-				$valores=$sql->min_max($tabela, $id);
-				$menus->submenu_cad_itens($valores,$id);
-			}else{
-				$id=str_replace("cad_","cod_",$_GET['mod']);
-				$valores=$sql->min_max($tabela, $id);
-				$menus->submenu($valores,$id);
-			}							
-		 }
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id'])  and $_GET['act']=="cadastros"  and $_GET['mod']=="cad_documento"){
-			//elementos de pesquisa
-				//var_dump($_GET);
-			$tabela=$_GET['mod'];
-
-
-
-			//include esqueleto cadastro
-			if($tabela=='cad_itens'){
-				$id="cod_item";
-				$valores=$sql->min_max($tabela, $id);
-				$menus->submenu_cad_itens($valores,$id);
-			}else{
-				$id=str_replace("cad_","cod_",$_GET['mod']);
-				$valores=$sql->min_max($tabela, $id);
-				$menus->submenu_cad_documento($valores,$id);
-			}							
-		 }
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id'])  and $_GET['act']=="editar"  and ($_GET['mod']=="cad_conta" or $_GET['mod']=="cad_centro_custo")){
-			$filtro=1;
-			$menus=new menus;
-			//$relatorios=new relatorios;
-			//$relatorios->filtros('');
-			//$menus->menu_exportar('relatorio','');
-				$id=str_replace("cad_","cod_",$_GET['mod']);
-				$valores=$sql->min_max($_GET['mod'], $id);
-				$menus->submenu_editar();
-
+		$relatorios=new relatorios;
 		
+		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id'])){
+		
+			switch ($_GET['act']) {
+
+				case "pesquisa":
+					switch ($_GET['mod']) {
+						
+						case "cad_conta":
+							$this->submenu_1();
+						break;
+							
+						case "cad_centro_custo":
+							$this->submenu_1();
+						break;
+							
+						case "cad_documento":
+							$relatorios->filtros(1);
+							echo "<li  data-uk-tooltip={pos:'right'} title='Novo'><div class='uk-button-group'><a href='?act=cadastros&mod=".$_GET['mod']."&id=' class='uk-button uk-button-mini uk-button-primary ' style=''><i class='uk-icon-file'></i> Incluir novo cadastro</a></div></li>";
+							$this->menu_exportar('grid',0);
+						break;
+							
+						case "razao":
+							$relatorios->filtros(5);
+							$this->menu_exportar('grid',0);
+						break;
+							
+						default:
+							$this->submenu();
+						break;
+					}				
+				break;
+				
+				case "cadastros":
+					switch ($_GET['mod']) {
+						case "cad_conta":
+							$this->submenu_2();
+						break;
+						
+						case "cad_centro_custo":
+
+							$this->submenu_2();
+						break;
+						
+						case "cad_documento":
+							$this->submenu_cad_documento();
+						break;
+						
+						default:
+							$this->submenu();
+						break;
+					}
+				break;
+				
+				case "editar":
+					switch ($_GET['mod']) {
+						
+						case "cad_conta":
+							$this->submenu_editar();
+						break;
+						
+						case "cad_centro_custo":
+							$this->submenu_editar();
+						break;
+						
+						default:
+						break;
+					}
+				break;
+				
+				case "relatorios":
+					switch ($_GET['mod']) {
+						case "razao_conta":
+							$relatorios->filtros(2);
+							$this->menu_exportar('relatorio','');
+						break;
+
+						case "livro_diario":
+							$relatorios->filtros(3);
+							$this->menu_exportar('relatorio','');
+						break;
+
+						case "balancete":
+							$relatorios->filtros(4);
+							$this->menu_exportar('relatorio','');
+						break;
+
+						default:
+						break;
+					}				
+				break;
+				
+				case "conciliacao":
+					switch ($_GET['mod']) {
+						case "conciliar":
+							$relatorios->filtros(6);
+							$this->menu_exportar('grid',0);
+						break;
+						case "compensar":
+							$relatorios->filtros(6);
+							echo "<li><span class='uk-form'>Diferença: <input type=text value=0 id=diferenca class='uk-form-small' style='text-align: right; margin-top: -3px;' readonly></span></li>";
+							$this->menu_exportar('grid',0);
+
+						break;
+							
+						default:
+						break;
+					}
+				break;
+			
+				default:	
+				
+				break;
+				
+				
+			}
+		
+		
+					
 		 }
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="pesquisa" and $_GET['mod']=="cad_documento"){
-				echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
-				echo "<li  data-uk-tooltip={pos:'right'} title='Novo'><div class='uk-button-group'><a href='?act=cadastros&mod=".$_GET['mod']."&id=' class='uk-button uk-button-mini uk-button-primary ' style=''><i class='uk-icon-file'></i> Incluir novo cadastro</a></div></li>";
-				$menus->menu_exportar('grid',0);
-		 }
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="pesquisa" and $_GET['mod']=="razao"){
-				echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
-				//echo "<li  data-uk-tooltip={pos:'right'} title='Novo'><div class='uk-button-group'><a href='?act=cadastros&mod=".$_GET['mod']."&id=' class='uk-button uk-button-mini uk-button-primary ' style=''><i class='uk-icon-file'></i> Incluir novo cadastro</a></div></li>";
-				$menus->menu_exportar('grid',0);
-		 }
-		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id']) and $_GET['id']=="" and $_GET['act']=="relatorios"){
-			echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
-			$filtro=1;
-			$menus=new menus;
-			$relatorios=new relatorios;
-			$relatorios->filtros('');
-			$menus->menu_exportar('relatorio','');
-		 }
+
+
 
 	
 	
@@ -525,7 +472,129 @@ class sql{
 			$sql->insert($tabela,$campos_insert,$values,'S');
 		}
 	}
-	
+	public function estorno_documento($cod_documento){
+		include "config.php";
+			$pesquisa=new pesquisa;
+			$documento=$pesquisa->documento($_GET['id']);
+		
+		//estornar
+		$sql=new sql;
+		$key = md5(mt_rand(1,10000).strtotime(date('Y-m-d H:i:s')));
+						$select_cad_documento="
+								INSERT INTO 
+									`".$schema."`.`cad_documento`
+										(
+										`cod_empresa`,
+										`cod_tipo_documento`,
+										`referencia`,
+										`texto_cabecalho_documento`,
+										`data_lancamento`,
+										`data_base`,
+										`data_estorno`,
+										`data_alteracao`,
+										`exercicio`,
+										`periodo`,
+										`historico`,
+										`data_inclusao`,
+										`data_ultima_alteracao`,
+										`usuario_inclusao`,
+										`usuario_ultima_alteracao`)
+
+
+								select 
+
+									`cod_empresa`,
+									'2',
+									'".$key."',
+									concat('ESTORNO - ',`texto_cabecalho_documento`),
+									`data_lancamento`,
+									`data_base`,
+									DATE_FORMAT(now(),'%Y-%m-%d'),
+									DATE_FORMAT(now(),'%Y-%m-%d'),
+									`exercicio`,
+									`periodo`,
+									`historico`,
+									now(),
+									DATE_FORMAT(now(),'%Y-%m-%d'),
+									`usuario_inclusao`,
+									`usuario_ultima_alteracao`
+
+								 from 
+									".$schema.".cad_documento 
+									
+								where 
+									cod_empresa='".$_SESSION['cod_empresa']."' and 
+									cod_documento='".$cod_documento."'	";
+						$resultado=mysql_query($select_cad_documento,$conexao) or die (mysql_error());
+									
+					//2//pesquisar cod_documento
+						$select="SELECT cod_documento FROM ".$schema.".cad_documento WHERE referencia='".$key."' and cod_empresa=".$_SESSION['cod_empresa']."; ";
+						$resultado=mysql_query($select,$conexao) or die (mysql_error());
+						$cod_documento_ = mysql_fetch_array($resultado);
+						$cod_documento_=$cod_documento_[0];
+
+					//3//update referencia
+						$tabela="cad_documento";
+						$campos="referencia='ESTORNO - ".$documento['referencia']."'";
+						$where="referencia='".$key."'";
+						$sql->update($tabela,$campos,$where,'N');
+						
+						$tabela="cad_documento";
+						$campos="data_estorno=DATE_FORMAT(now(),'%Y-%m-%d')";
+						$where="cod_documento='".$cod_documento."'";
+						$sql->update($tabela,$campos,$where,'N');
+						
+						$tabela="cad_documento_item";
+						$campos="cod_documento_compensacao='".$cod_documento_."'";
+						$where="cod_documento='".$cod_documento."'";
+						$sql->update($tabela,$campos,$where,'N');
+
+		
+						$select_cad_documento_item="
+								 INSERT INTO 
+									`".$schema."`.`cad_documento_item`
+										(
+										`cod_empresa`,
+										`cod_documento`,
+										`numero_item`,
+										`codigo_lancamento`,
+										`cod_conta`,
+										`cod_ctr_custo`,
+										`montante`,
+										`historico`,
+										`data_vencimento_liquidacao`,
+										`cod_documento_compensacao`,
+										`data_inclusao`,
+										`data_ultima_alteracao`,
+										`usuario_inclusao`,
+										`usuario_ultima_alteracao`)
+
+								SELECT 
+									`cad_documento_item`.`cod_empresa`,
+									'".$cod_documento_."',
+									`cad_documento_item`.`numero_item`,
+									if(`cad_documento_item`.`codigo_lancamento`='D','C','D'),
+									`cad_documento_item`.`cod_conta`,
+									`cad_documento_item`.`cod_ctr_custo`,
+									`cad_documento_item`.`montante`,
+									`cad_documento_item`.`historico`,
+									`cad_documento_item`.`data_vencimento_liquidacao`,
+									'".$cod_documento."',
+									now(),
+									now(),
+									'".$_SESSION['cod_usuario']."',
+									'".$_SESSION['cod_usuario']."'
+
+									
+								FROM 
+									`".$schema."`.`cad_documento_item`
+									
+								where 
+									cod_empresa='".$_SESSION['cod_empresa']."' and 
+									cod_documento='".$cod_documento."'";	
+						$resultado=mysql_query($select_cad_documento_item,$conexao) or die (mysql_error());		
+		
+	}
 }
 
 class inputs{
@@ -626,7 +695,7 @@ class igniteui{
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		///border: 1px solid #ccc; bottom: 10px ! important; position: absolute; top: 60px; left: 10px; right: 10px; overflow: auto;
 " 
-		<div id='grid' style=''></div>
+		<div id='grid' style='margin-top: -20px;'></div>
 		<style>
 			tr{
 				cursor:pointer;
@@ -700,7 +769,7 @@ class igniteui{
 	function TreeGrid($base,$column,$tabela,$combo,$plano_conta){
 	echo 
 		"
-		<div id='grid' style=''></div>
+		<div id='grid' style='margin-top: -20px;'></div>
 		<style>
 			tr{
 				cursor:pointer;
@@ -1006,7 +1075,34 @@ class html{
 	
 	
 	}
-
+	function mensage($type,$text){
+		switch ($type) {
+			case "success":
+				echo "<div class='uk-alert uk-alert-success' data-uk-alert=''>
+						<a href='' class='uk-alert-close uk-close'></a>
+						<p>".$text."</p>
+					</div>";
+				break;
+			case "warning":
+				echo "<div class='uk-alert uk-alert-warning' data-uk-alert=''>
+						<a href='' class='uk-alert-close uk-close'></a>
+						<p>".$text."</p>
+					</div>";
+				break;
+			case "danger":
+				echo "<div class='uk-alert uk-alert-danger' data-uk-alert=''>
+						<a href='' class='uk-alert-close uk-close'></a>
+						<p>".$text."</p>
+					</div>";
+				break;
+			default:
+				echo "<div class='uk-alert uk-alert-success' data-uk-alert=''>
+						<a href='' class='uk-alert-close uk-close'></a>
+						<p>".$text."</p>
+					</div>";
+		}
+		
+	}
 }
 
 class cadastros{
@@ -1341,7 +1437,6 @@ class editar{
 		//var_dump($_POST);
 		//var_dump($_GET);
 		
-		include "salvar_cadastro.php";		
 		
 		$select="
 				SELECT 
@@ -1362,6 +1457,36 @@ class editar{
 
 		$cadastro=new cadastros;
 		$cadastro->pesquisa($select,'cad_conta','cod_conta');
+		
+
+	}
+	
+	function cad_centro_custo($id){
+		include "config.php";
+		
+		//var_dump($_POST);
+		//var_dump($_GET);
+		
+		
+		$select="
+				SELECT 
+					cad_centro_custo.* ,
+					tb_centro_custo_mae.numero_centro_custo as numero_centro_custo_mae,
+					tb_centro_custo_mae.descricao as descricao_centro_custo_mae
+				FROM 
+					".$schema.".cad_centro_custo,
+					(select cod_centro_custo,numero_centro_custo,descricao from ".$schema.".cad_centro_custo  ) as tb_centro_custo_mae
+					
+				where 
+					cad_centro_custo.cod_centro_custo='".$id."' and 
+					cad_centro_custo.cod_centro_custo_mae=tb_centro_custo_mae.cod_centro_custo and
+					cad_centro_custo.cod_empresa='".$_SESSION['cod_empresa']."' 
+					
+					
+					;";
+
+		$cadastro=new cadastros;
+		$cadastro->pesquisa($select,'cad_centro_custo','cod_centro_custo');
 		
 
 	}
@@ -1407,7 +1532,7 @@ class pesquisa{
 		include "config.php";
 		
 		$menus=new menus;
-		echo "<div id='grid'></div>";
+		
 		
 		$filtro="";
 		if($id!=""){
@@ -1440,7 +1565,7 @@ class pesquisa{
 		include "config.php";
 		
 		$menus=new menus;
-		echo "<div id='grid'></div>";
+		
 		
 		$filtro="";
 		if($id!=""){
@@ -1511,7 +1636,7 @@ class pesquisa{
 		include "config.php";
 		
 		$menus=new menus;
-		echo "<div id='grid'></div>";
+		
 		
 		$filtro="";
 		if($id!=""){
@@ -1544,7 +1669,7 @@ class pesquisa{
 		include "config.php";
 		
 		$menus=new menus;
-		echo "<div id='grid'></div>";
+		
 		
 		$filtro="";
 		if($id!=""){
@@ -1578,7 +1703,7 @@ class pesquisa{
 		include "config.php";
 		
 		$menus=new menus;
-		echo "<div id='grid'></div>";
+		
 		
 		$filtro="";
 		if($id!=""){
@@ -1612,7 +1737,7 @@ class pesquisa{
 		include "config.php";
 		
 		$menus=new menus;
-		echo "<div id='grid'></div>";
+		
 		
 		$filtro="";
 		if($id!=""){
@@ -1646,7 +1771,7 @@ class pesquisa{
 		include "config.php";
 		
 		$menus=new menus;
-		echo "<div id='grid'></div>";
+		
 		
 		$filtro="";
 		if($id!=""){
@@ -1678,15 +1803,9 @@ class pesquisa{
 	}
 	function cad_documento($id){
 
-				echo "<div class='uk-grid ' style=' '>";			
-					echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
-						echo "<div class='uk-offcanvas-bar'>";
-							$relatorios= new relatorios;
-							$relatorios->filtros(1);	
-							
-						echo "</div>";
-					echo "</div>";
-					echo "<div class=' uk-width-1-1    ' style='overflow: auto; padding-left: 10px;'>";						if(isset($_POST)==true and $_POST!=null){
+				echo "<div class='uk-grid ' style=' '>";	
+					echo "<div class=' uk-width-1-1    ' style=''>";						
+					if(isset($_POST)==true and $_POST!=null){
 								include "config.php";		
 								$select= "
 										SELECT 
@@ -1719,11 +1838,11 @@ class pesquisa{
 								if ($_POST['historico']!=""){ $select=$select. "and `historico` = '".$_POST['historico']."'";}
 								if ($_POST['exercicio']!=""){ $select=$select. "and `exercicio` = '".$_POST['exercicio']."'";}
 								if ($_POST['periodo']!=""){ $select=$select. "and `periodo` = '".$_POST['periodo']."'";}
-								if ($_POST['data_lancamento_de']!="01/01/1900" || $_POST['data_lancamento_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_lancamento_de'])."' and '".data($_POST['data_lancamento_ate'])."')";}
+								if ($_POST['data_lancamento_de']!="01/01/1900" || $_POST['data_lancamento_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_documento`.`data_lancamento` between '".data($_POST['data_lancamento_de'])."' and '".data($_POST['data_lancamento_ate'])."')";}
 								if ($_POST['data_inclusao_de']!="01/01/1900" || $_POST['data_inclusao_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.cad_documento.`data_inclusao` between '".data($_POST['data_inclusao_de'])." 00:00:00' and '".data($_POST['data_inclusao_ate'])." 23:59:59')";}
-								if ($_POST['data_base_de']!="01/01/1900" || $_POST['data_base_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_base_de'])."' and '".data($_POST['data_base_ate'])."')";}
-								if ($_POST['data_estorno_de']!="01/01/1900" || $_POST['data_estorno_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_estorno_de'])."' and '".data($_POST['data_estorno_ate'])."')";}
-								if ($_POST['data_alteracao_de']!="01/01/1900" || $_POST['data_alteracao_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_cartas`.`data_cancelamento` between '".data($_POST['data_alteracao_de'])."' and '".data($_POST['data_alteracao_ate'])."')";}
+								if ($_POST['data_base_de']!="01/01/1900" || $_POST['data_base_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_documento`.`data_base` between '".data($_POST['data_base_de'])."' and '".data($_POST['data_base_ate'])."')";}
+								if ($_POST['data_estorno_de']!="01/01/1900" || $_POST['data_estorno_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_documento`.`data_estorno` between '".data($_POST['data_estorno_de'])."' and '".data($_POST['data_estorno_ate'])."')";}
+								if ($_POST['data_alteracao_de']!="01/01/1900" || $_POST['data_alteracao_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_documento`.`data_alteracao` between '".data($_POST['data_alteracao_de'])."' and '".data($_POST['data_alteracao_ate'])."')";}
 
 											
 								$select.= ";";
@@ -1795,17 +1914,18 @@ class pesquisa{
 		 return $valores;
 		
 	}
+	function documento($id){
+		include "config.php";
+		$select="SELECT *  FROM ".$schema.".cad_documento where cod_empresa='".$_SESSION['cod_empresa']."' and cod_documento='".$id."';";
+		$resultado=mysql_query($select,$conexao) or die (mysql_error());
+		$valores = mysql_fetch_array($resultado);
+		 return $valores;
+		
+	}
 	function razao($id){
 
 				echo "<div class='uk-grid ' style=' '>";			
-					echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
-						echo "<div class='uk-offcanvas-bar'>";
-							$relatorios= new relatorios;
-							$relatorios->filtros(5);	
-							
-						echo "</div>";
-					echo "</div>";
-					echo "<div class=' uk-width-1-1    ' style='overflow: auto; padding-left: 10px;'>";
+					echo "<div class=' uk-width-1-1    ' style=''>";
 						if(isset($_POST)==true and $_POST!=null){
 							include "config.php";		
 								
@@ -1902,6 +2022,99 @@ class pesquisa{
 		
 		//var_dump($_POST);
 	}
+	function razao_conciliacao(){
+
+				echo "<div class='uk-grid ' style=' '>";			
+					echo "<div class=' uk-width-1-1    ' style=''>";
+						if(isset($_POST)==true and $_POST!=null){
+							include "config.php";		
+								
+							$select= "
+									SELECT 
+										cad_documento.cod_documento as id, 
+										concat('<input type=checkbox id=',cad_documento_item.cod_documento_item,' value=',if(cad_documento_item.codigo_lancamento='C',-cad_documento_item.montante,cad_documento_item.montante), '>') as checkbox, 
+										cad_documento.cod_documento, 
+										cad_documento.referencia, 
+										cad_documento.texto_cabecalho_documento, 
+										DATE_FORMAT(cad_documento.data_lancamento,'%d/%m/%Y') as data_lancamento, 
+										DATE_FORMAT(cad_documento.data_base,'%d/%m/%Y') as data_base, 
+										DATE_FORMAT(cad_documento.data_estorno,'%d/%m/%Y') as data_estorno, 
+										cad_documento.exercicio,
+										cad_documento.periodo, 
+										cad_documento_item.historico, 
+										DATE_FORMAT(cad_documento.data_inclusao,'%d/%m/%Y') as data_inclusao, 
+										cad_documento_item.codigo_lancamento,
+										if(cad_documento_item.codigo_lancamento='D',replace(cad_documento_item.montante,'.',','),0) as debito,
+										if(cad_documento_item.codigo_lancamento='C',replace(cad_documento_item.montante,'.',','),0) as credito,
+										cad_documento_item.cod_conta,
+										concat('#',cad_conta.numero_conta) as numero_conta,
+										cad_conta.descricao as conta,
+										cad_documento_item.cod_ctr_custo,
+										concat('#',cad_centro_custo.numero_centro_custo) as numero_centro_custo,
+										cad_centro_custo.descricao as centro_custo
+									
+									FROM 
+										".$schema.".cad_documento,
+										".$schema.".cad_documento_item,
+										".$schema.".cad_conta,
+										".$schema.".cad_centro_custo
+									
+									WHERE 
+										cad_documento.cod_documento=cad_documento_item.cod_documento and 
+										cad_documento_item.cod_conta=cad_conta.cod_conta and
+										cad_documento_item.cod_ctr_custo=cad_centro_custo.cod_centro_custo and
+										cad_documento.cod_empresa='".$_SESSION['cod_empresa']."' ";					
+										
+							if ($_POST['data_inicio']!="00/00/0000" || $_POST['data_fim']!="00/00/0000"){ $select=$select. "and (`".$schema."`.cad_documento.`data_base` between '".data($_POST['data_base_de'])."' and '".data($_POST['data_base_ate'])."')";}
+	
+							if ($_POST['conta_inicio']!=""){ $select=$select. " and (concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(0,20-length(REPLACE(cad_conta.numero_conta,'.',''))))>=concat(REPLACE('".$_POST['conta_inicio']."','.',''),repeat(0,20-length(REPLACE('".$_POST['conta_inicio']."','.','')))))";}
+							if ($_POST['conta_fim']!=""){ $select=$select. " and (concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(9,20-length(REPLACE(cad_conta.numero_conta,'.',''))))<=concat(REPLACE('".$_POST['conta_fim']."','.',''),repeat(9,20-length(REPLACE('".$_POST['conta_fim']."','.','')))))";}
+
+							if ($_POST['ctr_custo_inicio']!=""){ $select=$select. " and (concat(REPLACE(cad_centro_custo.numero_centro_custo,'.',''),repeat(0,20-length(REPLACE(cad_centro_custo.numero_centro_custo,'.',''))))>=concat(REPLACE('".$_POST['ctr_custo_inicio']."','.',''),repeat(0,20-length(REPLACE('".$_POST['ctr_custo_inicio']."','.','')))))";}
+							if ($_POST['ctr_custo_fim']!=""){ $select=$select. " and (concat(REPLACE(cad_centro_custo.numero_centro_custo,'.',''),repeat(9,20-length(REPLACE(cad_centro_custo.numero_centro_custo,'.',''))))<=concat(REPLACE('".$_POST['ctr_custo_fim']."','.',''),repeat(9,20-length(REPLACE('".$_POST['ctr_custo_fim']."','.','')))))";}
+
+							//$select.= ";";
+
+							$pesquisa=new pesquisa;
+							$json=$pesquisa->json($select);
+							
+
+
+								$column ="{headerText: 'ID', key: 'id', width: '50px',  dataType: 'string'},";
+								$column.="{headerText: 'check', key: 'checkbox', width: '40px',  dataType: 'string'},";
+								$column.="{headerText: 'data_base', key: 'data_base', width: '80px',  dataType: 'string'},";								
+								$column.="{headerText: 'debito', key: 'debito', width: '100px',  dataType: 'number'},";
+								$column.="{headerText: 'credito', key: 'credito', width: '100px',  dataType: 'number'},";
+								$column.="{headerText: 'numero_conta', key: 'numero_conta', width: '100px',  dataType: 'string'},";
+								$column.="{headerText: 'conta', key: 'conta', width: '250px',  dataType: 'string'},";
+								$column.="{headerText: 'numero_centro_custo', key: 'numero_centro_custo', width: '100px',  dataType: 'string'},";
+								$column.="{headerText: 'centro_custo', key: 'centro_custo', width: '250px',  dataType: 'string'},";
+								$column.="{headerText: 'referencia', key: 'referencia', width: '150px',  dataType: 'string'},";
+								$column.="{headerText: 'Historico', key: 'historico', width: '150px',  dataType: 'string'},";
+
+								$column.="{headerText: 'data_estorno', key: 'data_estorno', width: '80px',  dataType: 'string'},";
+
+
+
+								$tabela="cad_documento";
+								$combo="";
+								
+
+								$igniteui=new igniteui;
+								echo $igniteui->igrid($json,$column,$tabela,$combo,$_GET['id']);
+
+						}
+					echo "</div>";
+				echo "</div>";
+	
+	
+
+		
+
+		
+		
+		//var_dump($_POST);
+	}
 	
 }
 
@@ -1919,23 +2132,23 @@ class lancamento{
 				}
 
 		return "<tr id='rowToClone'>
-						<td class='uk-form-row' style='width: 20px;'>
+						<td class='uk-form-row' style='width: 20px;padding: 0px 6px;'>
 							<input ".$disabled." coluna='codigo_lancamento' id='codigo_lancamento' placeholder='' onchange='calcular_total_debito_credito();' onkeyup='calcular_total_debito_credito();' class='uk-form-small' type='text' style='width: 100%;' value='".$codigo_lancamento."'></td>
-						<td class='uk-form-row' style='width: 150px;'>
+						<td class='uk-form-row' style='width: 150px;padding: 0px 6px;'>
 							<div class='uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_ctrcusto}' style='width: 100%;'>
 								<input ".$disabled." coluna='cod_ctr_custo' id='cod_ctr_custo' placeholder='' class='uk-form-small' type='text' style='width: 100%;' value='".$cod_ctr_custo."'>
 							</div>
 						</td>
-						<td class='uk-form-row' style='width: 150px;'>
+						<td class='uk-form-row' style='width: 150px;padding: 0px 6px;'>
 							<div class='uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_conta}' style='width: 100%;'>
 								<input ".$disabled." coluna='cod_conta' id='cod_conta' placeholder='' class='uk-form-small' type='text' style='width: 100%;' value='".$cod_conta."'>
 							</div>
 						</td>
-						<td class='uk-form-row' style='min-width: 100px; '><input ".$disabled." coluna='historico_' id='historico_' placeholder='' class='uk-form-small' type='text' style='width: 100%;' value='".$historico."'></td>
-						<td class='uk-form-row' style='width: 100px;'><input ".$disabled." coluna='montante' id='montante' placeholder='' class='uk-form-small' type='text' style='width: 100%;text-align: right;' onchange='formatar_numero(this);calcular_total_debito_credito();' onkeyup='formatar_numero(this);calcular_total_debito_credito();' value='".$montante."'></td>
-						<td class='uk-form-row' style='width: 100px;'><input ".$disabled." coluna='data_vencimento_liquidacao' id='data_vencimento_liquidacao' placeholder='' class='uk-form-small' type='text' style='width: 100%;' onchange='formatar_data(this);' onkeyup='formatar_data(this);' value='".$data_vencimento_liquidacao."'></td>
-						<td class='uk-form-row' style='width: 10px;'>
-							<button ".$disabled." class='uk-button uk-button-mini uk-button-danger' type='button' onclick='delRow(this)' data-uk-tooltip title='Excluir linha'><i class='uk-icon-trash-o'></i></button>
+						<td class='uk-form-row' style='width: 200px;padding: 0px 5px; '><input ".$disabled." coluna='historico_' id='historico_' placeholder='' class='uk-form-small' type='text' style='width: 100%;' value='".$historico."'></td>
+						<td class='uk-form-row' style='width: 100px;padding: 0px 5px;'><input ".$disabled." coluna='montante' id='montante' placeholder='' class='uk-form-small' type='text' style='width: 100%;text-align: right;' onchange='formatar_numero(this);calcular_total_debito_credito();' onkeyup='formatar_numero(this);calcular_total_debito_credito();' value='".$montante."'></td>
+						<td class='uk-form-row' style='width: 100px;padding: 0px 5px;'><input ".$disabled." coluna='data_vencimento_liquidacao' id='data_vencimento_liquidacao' placeholder='' class='uk-form-small' type='text' style='width: 100%;' onchange='formatar_data(this);' onkeyup='formatar_data(this);' value='".$data_vencimento_liquidacao."'></td>
+						<td class='uk-form-row' style='width: 10px;padding: 0px 5px;'>
+							<button ".$disabled." class='uk-button uk-button-mini uk-button-danger' type='button' onclick=delRow(this,'tableToModify') data-uk-tooltip title='Excluir linha'><i class='uk-icon-trash-o'></i></button>
 						</td>
 					</tr>";
 		}
@@ -2002,10 +2215,10 @@ class lancamento{
 									<th style='width: 20px;'>CL</th>
 									<th style='width: 150px;'>Ctr. Custo</th>
 									<th style='width: 150px;'>Conta</th>
-									<th style='min-width: 100px;'>Descrição</th>
+									<th style='width: 200px;'>Descrição</th>
 									<th style='width: 100px;'>Valor</th>
 									<th style='width: 100px;'>Vencimento</th>
-									<th style='width: 10px;'></th>
+									<th style='width: 30px;'></th>
 								</tr>
 							</thead>
 				<tbody>
@@ -2035,441 +2248,639 @@ class lancamento{
 		
 		
 	}
+	function estornar_documento($cod_documento){
+		//verificar acesso a empresa
+		//var_dump($_SESSION);
+		$erro=0;
+			$html=new html;
+			$pesquisa=new pesquisa;
+			$periodo_aberto=$pesquisa->periodo_aberto();
+			$documento=$pesquisa->documento($_GET['id']);
 
-
+		//verificar acesso a empresa
+		if($_SESSION['cod_empresa']==$documento['cod_empresa']){
+		
+		}else{
+			$erro++;
+			$html->mensage('danger','Você não tem acesso a esta empresa ou o documento não existe');
+		}
+		
+		//verificar status do documento
+		if($documento['data_estorno']==null){
+	
+		}else{
+			$erro++;
+			$html->mensage('danger','O documento já foi estornado');
+		}
+		//verificar periodo
+		if($documento['data_base']>=$periodo_aberto['data_inicio'] and $documento['data_base']<=$periodo_aberto['data_fim']){
+		
+		}else{
+			$erro++;
+			$html->mensage('danger','Não há período aberto para efetuar o estorno');
+		}
+		//estornar
+		if($erro==0){
+			$sql=new sql;
+			$sql->estorno_documento($cod_documento);
+			$html->mensage('warning','O documento '.$cod_documento.' foi estornado!');
+			
+		}
+	}
 }
+
+class importar{
+	function ofx(){
+
+			echo "
+					<script>";
+							$selects=new selects;
+							$selects-> ctrcusto_autocomplete('');
+
+			echo		"</script>
+						<script>";
+							$selects=new selects;
+							$selects-> conta_autocomplete('');
+
+			echo  "</script>";
+
+		echo 
+		"<div class='uk-grid' id='msg'>
+			<div class='uk-width-small-1-1 uk-width-medium-1-3 uk-width-large-1-4' >
+				<div class='uk-panel uk-panel-box uk-panel-box-primary'>	
+					<form class='uk-form uk-form-horizontal'>
+						<div class='uk-form-row'>
+							<p class='uk-article-meta'><i class='uk-icon-location-arrow'></i>  Suporta apenas formato de arquivo Open Finacial Exchange (OFX).</p>
+						</div>
+						<div class='uk-form-row'>
+							<div class='uk-button-group' style='width:100%'>
+								<input id='input_selecionar_ofx' disabled placeholder='.ofx' class='uk-form-small' style='height: 23px ! important;width: 60%;' type='text'>
+								<button id='bt_selecionar_ofx' class='uk-button uk-button-mini uk-button-primary' style='height: 23px ! important; width: 40%; font-size: 10px; text-transform: lowercase ! important;' type='button'>selecione um arquivo</button>
+							</div>
+						</div>						
+						<div class='uk-form-row'>
+							<div class=' uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_conta}' style='width:100%' id='cod_conta_banco'>
+								<input  coluna='conta_ofx' id='cod_conta' placeholder='Conta Contábil' class='uk-form-small' type='text' style='width:100%' value=''>
+							</div>
+							<script>
+								document.getElementById('cod_conta').addEventListener('click', verificar_ajax_ofx_input);
+								document.getElementById('cod_conta').addEventListener('change', verificar_ajax_ofx_input);
+								document.getElementById('cod_conta').addEventListener('onblur', verificar_ajax_ofx_input);
+								document.getElementById('cod_conta').addEventListener('keyup', verificar_ajax_ofx_input);
+								document.getElementById('cod_conta').addEventListener('keydown', verificar_ajax_ofx_input);							
+							</script>
+						</div>
+						<div class='uk-form-row'>
+							<div class=' uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_conta}' style='width:100%'>
+								<hr class='uk-article-divider'>
+								<button class='uk-button uk-button-mini uk-button-danger' type='button' onclick='importar_transacoes_ofx();' style='width: 100%;'><i class='uk-icon-mail-forward'></i>  Importar transações</button>
+							</div>
+						</div>
+					</form>
+					<div>
+						<input type='file' id='file-input' accept='.ofx' style='visibility: hidden;'/>
+						<script>document.getElementById('file-input').addEventListener('change', readSingleFile, false);</script>
+					</div>
+				</div>
+			</div>
+			<div class='uk-width-small-1-1 uk-width-medium-2-3 uk-width-large-3-4'>
+				<div class='uk-panel uk-panel-box uk-panel-box-primary' style='background: rgb(255, 255, 255) none repeat scroll 0% 0%; padding: 0px;'>
+					<div class='uk-width-1-1'  id='div_preview_' style='visibility: hidden; height: 0px; width: 0px;'></div>					
+					<div class='uk-width-1-1 uk-form'  id='div_preview' style='overflow: auto; min-height: 300px; height: auto;'></div>					
+				</div>			
+			</div>
+
+		</div>"	;
+		
+		
+		
+	}
+	
+}
+
 
 class relatorios{
 	function filtros($tipo){
 		$inputs=new inputs;
 		$selects=new selects;
 		if($tipo==1){
+					echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
+					echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
+						echo "<div class='uk-offcanvas-bar'>";
+								
+								echo "<div class=' uk-width-1-1' style='padding-right: 40px;'>
+											<style>
+												label{
+													font-size: 11px !important;
+												}
+											</style>
+											<h3>Filtro</h3>
+											<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
+												<div class='uk-grid '>
+												<div class=' uk-width-1-1'>
+													<ul class='uk-subnav' style='margin-left: -40px;'>
+														";
+															
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
+																<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_lancamento_de','Data de lançamento','',"value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+															echo"</div>									
+																<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_lancamento_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+															echo"</div>
+														</li>";
+																		
+																		
+																		
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_base_de','Data base',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div>									<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_base_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div></li>";
+																		
+																		
+																		
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_estorno_de','Data de estorno',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div>									<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_estorno_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div></li>";
+																		
+																		
+																		
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_alteracao_de','Data de alteração',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div>									<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_alteracao_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div></li>";
+																		
+																		
+																		
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_inclusao_de','Data de inclusão',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div>									<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_inclusao_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div></li>";
 
-			echo "<div class=' uk-width-1-1' style='padding-right: 40px;'>
-						<style>
-							label{
-								font-size: 11px !important;
-							}
-						</style>
-						<h3>Filtro</h3>
-						<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
-							<div class='uk-grid '>
-							<div class=' uk-width-1-1'>
-								<ul class='uk-subnav' style='margin-left: -40px;'>
+														
+														
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+													$inputs->input_form_row('','cod_documento','Cód. de documento',"","");
+													echo"</div>
+														<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','referencia','Referência',"","");
+													echo"</div></li>";
+													
+
+
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
+														<div class='uk-width-1-1'>";
+													$inputs->input_form_row('','texto_cabecalho_documento','texto de cabeçalho',"","");
+													echo"</div>
+														</li>";
+													
+													
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
+														<div class='uk-width-1-1'>";
+													$inputs->input_form_row('','historico','Histórico',"","");
+													echo"</div>
+														</li>";
+													
+													
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+													$inputs->input_form_row('','exercicio','Exercicio (ano)',"","");
+													echo"</div>
+														<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','periodo','Período (mês)',"","");
+													echo"</div></li>";
+													
+													
+													
+													
+												echo "</ul>
+												</div>
+													<div class='uk-width-1-1'>
+														<li style='text-align: right; padding-right: 0px; margin-right: -30px;'>		
+															<br/>
+															<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
+														</li>
+													</div>
+											</div>
+
+										</form>
+
+									</div>
+
+									
 									";
-										
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
-											<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_lancamento_de','Data de lançamento','',"value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
-										echo"</div>									
-											<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_lancamento_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
-										echo"</div>
-									</li>";
-													
-													
-													
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_base_de','Data base',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div>									<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_base_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div></li>";
-													
-													
-													
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_estorno_de','Data de estorno',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div>									<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_estorno_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div></li>";
-													
-													
-													
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_alteracao_de','Data de alteração',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div>									<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_alteracao_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div></li>";
-													
-													
-													
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_inclusao_de','Data de inclusão',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div>									<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_inclusao_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div></li>";
-
-									
-									
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-								$inputs->input_form_row('','cod_documento','Cód. de documento',"","");
-								echo"</div>
-									<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','referencia','Referência',"","");
-								echo"</div></li>";
-								
-
-
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
-									<div class='uk-width-1-1'>";
-								$inputs->input_form_row('','texto_cabecalho_documento','texto de cabeçalho',"","");
-								echo"</div>
-									</li>";
-								
-								
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
-									<div class='uk-width-1-1'>";
-								$inputs->input_form_row('','historico','Histórico',"","");
-								echo"</div>
-									</li>";
-								
-								
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-								$inputs->input_form_row('','exercicio','Exercicio (ano)',"","");
-								echo"</div>
-									<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','periodo','Período (mês)',"","");
-								echo"</div></li>";
-								
-								
-								
-								
-							echo "</ul>
-							</div>
-								<div class='uk-width-1-1'>
-									<li style='text-align: right; padding-right: 0px; margin-right: -30px;'>		
-										<br/>
-										<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
-									</li>
-								</div>
-						</div>
-
-					</form>
-
-				</div>
-
-				
-				";
+							
+						echo "</div>";
+					echo "</div>";
 
 		}
 		if($tipo==2){
-			echo "<div class=' uk-width-1-1' style='padding-right: 10px; padding-left: 10px;'>
-						<style>
-							label{
-								font-size: 11px !important;
-							}
-						</style>
-						<h3>Filtro</h3>
-						<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
-							<ul class='uk-list'>
-								<li>
-									<div class='uk-grid'>
-										<div class='uk-width-1-2'>
-										";
-											$inputs->input_form_row('00/00/0000','data_inicio','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
-						echo "
+			echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
+			echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
+				echo "<div class='uk-offcanvas-bar'>";
+					echo "<div class=' uk-width-1-1' style='padding-right: 10px; padding-left: 10px;'>
+								<style>
+									label{
+										font-size: 11px !important;
+									}
+								</style>
+								<h3>Filtro</h3>
+								<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
+									<ul class='uk-list'>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-2'>
+												";
+													$inputs->input_form_row('00/00/0000','data_inicio','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+								echo "
+												</div>
+												<div class='uk-width-1-2'>
+									";
+													$inputs->input_form_row('00/00/0000','data_fim','até',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+								echo	 	"
+												</div>
 										</div>
-										<div class='uk-width-1-2'>
+										</li>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-2'>
+												";
+													$inputs->input_form_row('','conta_inicio','Conta contábil',''," ");
+								echo "
+												</div>
+												<div class='uk-width-1-2'>
+									";
+													$inputs->input_form_row('','conta_fim','até',''," ");
+								echo	 	"
+												</div>
+										</div>
+										</li>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-2'>
+												";
+													$inputs->input_form_row('','ctr_custo_inicio','Centro de custo',''," ");
+								echo "
+												</div>
+												<div class='uk-width-1-2'>
+									";
+													$inputs->input_form_row('','ctr_custo_fim','até',''," ");
+								echo	 	"
+												</div>
+										</div>
+										</li>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-1'>
+													</br>
+													<p>Agrupar por:</p>
+												</div>	
+												<div class='uk-width-1-2'>
+													<input type='radio' name='relatorio' value='conta' checked /> Conta Contábil
+												</div>
+												<div class='uk-width-1-2'>
+													<input type='radio' name='relatorio' value='centro_custo' /> Centro de Custo
+												</div>
+										</div>
+										</li>
+										<li>
 							";
-											$inputs->input_form_row('00/00/0000','data_fim','até',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
-						echo	 	"
-										</div>
-								</div>
-								</li>
-								<li>
-									<div class='uk-grid'>
-										<div class='uk-width-1-2'>
-										";
-											$inputs->input_form_row('','conta_inicio','Conta contábil',''," ");
-						echo "
-										</div>
-										<div class='uk-width-1-2'>
-							";
-											$inputs->input_form_row('','conta_fim','até',''," ");
-						echo	 	"
-										</div>
-								</div>
-								</li>
-								<li>
-									<div class='uk-grid'>
-										<div class='uk-width-1-2'>
-										";
-											$inputs->input_form_row('','ctr_custo_inicio','Centro de custo',''," ");
-						echo "
-										</div>
-										<div class='uk-width-1-2'>
-							";
-											$inputs->input_form_row('','ctr_custo_fim','até',''," ");
-						echo	 	"
-										</div>
-								</div>
-								</li>
-								<li>
-									<div class='uk-grid'>
-										<div class='uk-width-1-1'>
-											</br>
-											<p>Agrupar por:</p>
-										</div>	
-										<div class='uk-width-1-2'>
-											<input type='radio' name='relatorio' value='conta' checked> Conta Contábil
-										</div>
-										<div class='uk-width-1-2'>
-											<input type='radio' name='relatorio' value='centro_custo'> Centro de Custo
-										</div>
-								</div>
-								</li>
-								<li>
-					";
-					echo		 "
-								</li>
+							echo		 "
+										</li>
 
-								<li>
-								<div class='uk-width-1-1' style='text-align: right ! important;'>
-	
-										<br/>
-										<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
+										<li>
+										<div class='uk-width-1-1' style='text-align: right ! important;'>
+			
+												<br/>
+												<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
 
-								</div>
-								</li>
-							</ul>
-						
-						</form>
+										</div>
+										</li>
+									</ul>
+								
+								</form>
 
-					
-				</div>";
+							
+						</div>";
+				echo "</div>";
+			echo "</div>";
 		
 		}
 		if($tipo==3){
-			echo "<div class=' uk-width-1-1' style='padding-right: 10px; padding-left: 10px;'>
-						<style>
-							label{
-								font-size: 11px !important;
-							}
-						</style>
-						<h3>Filtro</h3>
-						<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
-							<ul class='uk-list'>
-								<li>
-									<div class='uk-grid'>
-										<div class='uk-width-1-2'>
-										";
-											$inputs->input_form_row('00/00/0000','data_inicio','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
-						echo "
-										</div>
-										<div class='uk-width-1-2'>
-							";
-											$inputs->input_form_row('00/00/0000','data_fim','até',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
-						echo	 	"
-										</div>
-								</div>
-								</li>
-								<li>
-									<div class='uk-grid'>
-										<div class='uk-width-1-2'>
-										";
-											$inputs->input_form_row('','conta_inicio','Conta contábil',''," ");
-						echo "
-										</div>
-										<div class='uk-width-1-2'>
-							";
-											$inputs->input_form_row('','conta_fim','até',''," ");
-						echo	 	"
-										</div>
-								</div>
-								</li>
-								<li>
-									<div class='uk-grid'>
-										<div class='uk-width-1-2'>
-										";
-											$inputs->input_form_row('','ctr_custo_inicio','Centro de custo',''," ");
-						echo "
-										</div>
-										<div class='uk-width-1-2'>
-							";
-											$inputs->input_form_row('','ctr_custo_fim','até',''," ");
-						echo	 	"
-										</div>
-								</div>
-								</li>
-								<li>
-								<div class='uk-width-1-1' style='text-align: right ! important;'>
-	
-										<br/>
-										<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
+			echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
+			echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
+				echo "<div class='uk-offcanvas-bar'>";
+				echo "<div class=' uk-width-1-1' style='padding-right: 10px; padding-left: 10px;'>
+							<style>
+								label{
+									font-size: 11px !important;
+								}
+							</style>
+							<h3>Filtro</h3>
+							<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
+								<ul class='uk-list'>
+									<li>
+										<div class='uk-grid'>
+											<div class='uk-width-1-2'>
+											";
+												$inputs->input_form_row('00/00/0000','data_inicio','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+							echo "
+											</div>
+											<div class='uk-width-1-2'>
+								";
+												$inputs->input_form_row('00/00/0000','data_fim','até',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+							echo	 	"
+											</div>
+									</div>
+									</li>
+									<li>
+										<div class='uk-grid'>
+											<div class='uk-width-1-2'>
+											";
+												$inputs->input_form_row('','conta_inicio','Conta contábil',''," ");
+							echo "
+											</div>
+											<div class='uk-width-1-2'>
+								";
+												$inputs->input_form_row('','conta_fim','até',''," ");
+							echo	 	"
+											</div>
+									</div>
+									</li>
+									<li>
+										<div class='uk-grid'>
+											<div class='uk-width-1-2'>
+											";
+												$inputs->input_form_row('','ctr_custo_inicio','Centro de custo',''," ");
+							echo "
+											</div>
+											<div class='uk-width-1-2'>
+								";
+												$inputs->input_form_row('','ctr_custo_fim','até',''," ");
+							echo	 	"
+											</div>
+									</div>
+									</li>
+									<li>
+									<div class='uk-width-1-1' style='text-align: right ! important;'>
+		
+											<br/>
+											<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
 
-								</div>
-								</li>
-							</ul>
+									</div>
+									</li>
+								</ul>
+							
+							</form>
+
 						
-						</form>
-
-					
-				</div>";
+					</div>";
+				echo "</div>";
+			echo "</div>";
 		
 		}
 		if($tipo==4){
-			echo "<div class=' uk-width-1-1' style='padding-right: 10px; padding-left: 10px;'>
-						<style>
-							label{
-								font-size: 11px !important;
-							}
-						</style>
-						<h3>Filtro</h3>
-						<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
-							<ul class='uk-list'>
-								<li>
-									<div class='uk-grid'>
-										<div class='uk-width-1-2'>
-										";
-											$inputs->input_form_row('00/00/0000','data_inicio','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
-						echo "
+			echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
+			echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
+				echo "<div class='uk-offcanvas-bar'>";
+					echo "<div class=' uk-width-1-1' style='padding-right: 10px; padding-left: 10px;'>
+								<style>
+									label{
+										font-size: 11px !important;
+									}
+								</style>
+								<h3>Filtro</h3>
+								<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
+									<ul class='uk-list'>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-2'>
+												";
+													$inputs->input_form_row('00/00/0000','data_inicio','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+								echo "
+												</div>
+												<div class='uk-width-1-2'>
+									";
+													$inputs->input_form_row('00/00/0000','data_fim','até',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+								echo	 	"
+												</div>
 										</div>
-										<div class='uk-width-1-2'>
-							";
-											$inputs->input_form_row('00/00/0000','data_fim','até',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
-						echo	 	"
+										</li>
+										<li>
+										<div class='uk-width-1-1' style='text-align: right ! important;'>
+											<br/>
+												<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
 										</div>
-								</div>
-								</li>
-								<li>
-								<div class='uk-width-1-1' style='text-align: right ! important;'>
-	
-										<br/>
-										<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
-
-								</div>
-								</li>
-							</ul>
-						
-						</form>
-
-					
-				</div>";
+										</li>
+									</ul>
+								</form>
+						</div>";
+				echo "</div>";
+			echo "</div>";
 		
 		}
 		if($tipo==5){
+					echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
+					echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
+						echo "<div class='uk-offcanvas-bar'>";
 
-			echo "<div class=' uk-width-1-1' style='padding-right: 40px;'>
-						<style>
-							label{
-								font-size: 11px !important;
-							}
-						</style>
-						<h3>Filtro</h3>
-						<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
-							<div class='uk-grid '>
-							<div class=' uk-width-1-1'>
-								<ul class='uk-subnav' style='margin-left: -40px;'>
-									";
-										
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
-											<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_lancamento_de','Data de lançamento','',"value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
-										echo"</div>									
-											<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_lancamento_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
-										echo"</div>
-									</li>";
-													
-													
-													
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_base_de','Data base',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div>									<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_base_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div></li>";
-													
-													
-													
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_estorno_de','Data de estorno',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div>									<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_estorno_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div></li>";
-													
-													
-													
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_alteracao_de','Data de alteração',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div>									<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_alteracao_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div></li>";
-													
-													
-													
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_inclusao_de','Data de inclusão',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div>									<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','data_inclusao_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
-								echo"</div></li>";
+							echo "<div class=' uk-width-1-1' style='padding-right: 40px;'>
+										<style>
+											label{
+												font-size: 11px !important;
+											}
+										</style>
+										<h3>Filtro</h3>
+										<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
+											<div class='uk-grid '>
+											<div class=' uk-width-1-1'>
+												<ul class='uk-subnav' style='margin-left: -40px;'>
+													";
+														
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
+															<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_lancamento_de','Data de lançamento','',"value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+														echo"</div>									
+															<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_lancamento_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+														echo"</div>
+													</li>";
+																	
+																	
+																	
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_base_de','Data base',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div>									<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_base_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div></li>";
+																	
+																	
+																	
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_estorno_de','Data de estorno',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div>									<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_estorno_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div></li>";
+																	
+																	
+																	
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_alteracao_de','Data de alteração',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div>									<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_alteracao_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div></li>";
+																	
+																	
+																	
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_inclusao_de','Data de inclusão',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div>									<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_inclusao_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div></li>";
 
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-								$inputs->input_form_row('','numero_conta','Numero Conta',"","");
-								echo"</div>									<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','numero_ctr_custo','Numero Ctr. Custo',"","");
-								echo"</div></li>";
-							
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-								$inputs->input_form_row('','cod_documento','Cód. de documento',"","");
-								echo"</div>
-									<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','referencia','Referência',"","");
-								echo"</div></li>";
-								
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','numero_conta','Numero Conta',"","");
+												echo"</div>									<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','numero_ctr_custo','Numero Ctr. Custo',"","");
+												echo"</div></li>";
+											
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','cod_documento','Cód. de documento',"","");
+												echo"</div>
+													<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','referencia','Referência',"","");
+												echo"</div></li>";
+												
 
 
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
-									<div class='uk-width-1-1'>";
-								$inputs->input_form_row('','texto_cabecalho_documento','texto de cabeçalho',"","");
-								echo"</div>
-									</li>";
-								
-								
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
-									<div class='uk-width-1-1'>";
-								$inputs->input_form_row('','historico','Histórico',"","");
-								echo"</div>
-									</li>";
-								
-								
-								echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-								$inputs->input_form_row('','exercicio','Exercicio (ano)',"","");
-								echo"</div>
-									<div class='uk-width-1-2'>";
-								$inputs->input_form_row('','periodo','Período (mês)',"","");
-								echo"</div></li>";
-								
-								
-								
-								
-							echo "</ul>
-							</div>
-								<div class='uk-width-1-1'>
-									<li style='text-align: right; padding-right: 0px; margin-right: -30px;'>		
-										<br/>
-										<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
-									</li>
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
+													<div class='uk-width-1-1'>";
+												$inputs->input_form_row('','texto_cabecalho_documento','texto de cabeçalho',"","");
+												echo"</div>
+													</li>";
+												
+												
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
+													<div class='uk-width-1-1'>";
+												$inputs->input_form_row('','historico','Histórico',"","");
+												echo"</div>
+													</li>";
+												
+												
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','exercicio','Exercicio (ano)',"","");
+												echo"</div>
+													<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','periodo','Período (mês)',"","");
+												echo"</div></li>";
+												
+												
+												
+												
+											echo "</ul>
+											</div>
+												<div class='uk-width-1-1'>
+													<li style='text-align: right; padding-right: 0px; margin-right: -30px;'>		
+														<br/>
+														<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
+													</li>
+												</div>
+										</div>
+
+									</form>
+
 								</div>
-						</div>
 
-					</form>
+								
+								";
 
-				</div>
+							
+						echo "</div>";
+					echo "</div>";
+		}
+		if($tipo==6){
+			echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
+			echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
+				echo "<div class='uk-offcanvas-bar'>";
+					echo "<div class=' uk-width-1-1' style='padding-right: 10px; padding-left: 10px;'>
+								<style>
+									label{
+										font-size: 11px !important;
+									}
+								</style>
+								<h3>Filtro</h3>
+								<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
+									<ul class='uk-list'>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-2'>
+												";
+													$inputs->input_form_row('00/00/0000','data_inicio','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+								echo "
+												</div>
+												<div class='uk-width-1-2'>
+									";
+													$inputs->input_form_row('00/00/0000','data_fim','até',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+								echo	 	"
+												</div>
+										</div>
+										</li>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-2'>
+												";
+													$inputs->input_form_row('','conta_inicio','Conta contábil',''," ");
+								echo "
+												</div>
+												<div class='uk-width-1-2'>
+									";
+													$inputs->input_form_row('','conta_fim','até',''," ");
+								echo	 	"
+												</div>
+										</div>
+										</li>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-2'>
+												";
+													$inputs->input_form_row('','ctr_custo_inicio','Centro de custo',''," ");
+								echo "
+												</div>
+												<div class='uk-width-1-2'>
+									";
+													$inputs->input_form_row('','ctr_custo_fim','até',''," ");
+								echo	 	"
+												</div>
+										</div>
+										</li>
 
-				
-				";
+										<li>
+										<div class='uk-width-1-1' style='text-align: right ! important;'>
+			
+												<br/>
+												<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
 
+										</div>
+										</li>
+									</ul>
+								
+								</form>
+
+							
+						</div>";
+				echo "</div>";
+			echo "</div>";
+		
 		}
 
 	
 	}
 	function razao_conta(){
 		echo "<div class='uk-grid ' style=' '>";			
-			echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
-				echo "<div class='uk-offcanvas-bar'>";
-					$this->filtros(2);	
-				echo "</div>";
-			echo "</div>";
 			echo "<div class=' uk-width-1-1    ' style=''>";		
 			if(isset($_POST) and isset($_POST['data_inicio']) and isset($_POST['data_fim']) and isset($_POST['conta_inicio']) and isset($_POST['conta_fim']) and isset($_POST['ctr_custo_inicio']) and isset($_POST['ctr_custo_fim'])){			
 			
@@ -2642,11 +3053,6 @@ class relatorios{
 	}
 	function livro_diario(){
 		echo "<div class='uk-grid ' style=' '>";			
-			echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
-				echo "<div class='uk-offcanvas-bar'>";
-					$this->filtros(3);	
-				echo "</div>";
-			echo "</div>";
 			echo "<div class=' uk-width-1-1    ' style=''>";	
 			if(isset($_POST) and isset($_POST['data_inicio']) and isset($_POST['data_fim']) and isset($_POST['conta_inicio']) and isset($_POST['conta_fim']) and isset($_POST['ctr_custo_inicio']) and isset($_POST['ctr_custo_fim'])){			
 			
@@ -2752,11 +3158,6 @@ class relatorios{
 	}
 	function balancete(){
 		echo "<div class='uk-grid ' style=' '>";			
-			echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
-				echo "<div class='uk-offcanvas-bar'>";
-					$this->filtros(4);	
-				echo "</div>";
-			echo "</div>";
 			echo "<div class=' uk-width-1-1    ' style=''>";	
 			if(isset($_POST) and isset($_POST['data_inicio']) and isset($_POST['data_fim']) ){			
 			
@@ -2806,7 +3207,7 @@ class relatorios{
 				";			
 			
 			//finalizar tabela
-				echo "<div id='relatorio' style='width: 21.0cm;height:29.7cm; padding: 1.5cm 0.5cm;  font-family: times ! important; color: rgb(0, 0, 0) ! important;'>";
+				echo "<div id='relatorio' style='width: 21.0cm;height:29.7cm; padding: 1.5cm 0.5cm;   color: rgb(0, 0, 0) ! important;'>";
 				echo $caption;
 				echo $table->TreeGrid();
 				echo "</div>";					
@@ -2958,9 +3359,24 @@ class relatorios{
 		
 	}
 
+}
+
+class conciliacao{
+	function conciliar(){
+
+		
+	}
+	function compensar(){
+		$pesquisa=new pesquisa;
+		$pesquisa->razao_conciliacao();
+		
+	}
 	
 	
 }
+
+
+
 
 class table{
 		public $thead;
@@ -2985,7 +3401,7 @@ class table{
 			
 			//montar caption
 				$caption="
-					<caption style='font-size: 12px ! important; font-family: times ! important; color: rgb(0, 0, 0) ! important;'>
+					<caption style='font-size: 12px ! important;  color: rgb(0, 0, 0) ! important;'>
 						<div class='uk-grid'>
 							<div class='uk-width-1-1'>".$this->caption['razao_social']."</div>
 							<div class='uk-width-1-1'>".$this->caption['cnpj']."</div>
@@ -3060,7 +3476,7 @@ class table{
 			
 			//finalizar tabela
 				$table="<div id='relatorio' style='width: 21.0cm;height:29.7cm; padding: 1.5cm 0.5cm;'>
-							<table class='uk-table uk-table-condensed' style='font-size: 12px ! important; font-family: times ! important; color: rgb(0, 0, 0) ! important;'>
+							<table class='' style='font-size: 12px ! important;  color: rgb(0, 0, 0) ! important;'>
 								".$caption.$table."								
 							</table>
 						</div>";
@@ -3397,14 +3813,16 @@ class layout{
 
 
 	function data($data){
-
-		if(strpos($data,"-")!==false){
-			$dat = explode ("-",$data,3);
-			return $dat[2]."/".$dat[1]."/".$dat[0];
-		}else{
-			$dat = explode ("/",$data,3);
-			return $dat[2]."-".$dat[1]."-".$dat[0];
+		if($data!=null){
+			if(strpos($data,"-")!==false){
+				$dat = explode ("-",$data,3);
+				return $dat[2]."/".$dat[1]."/".$dat[0];
+			}else{
+				$dat = explode ("/",$data,3);
+				return $dat[2]."-".$dat[1]."-".$dat[0];
+			}
 		}
+
 
 	}
 	function decimal($valor){

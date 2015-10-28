@@ -1,13 +1,47 @@
 ﻿<?php
+	session_start();
+	include "../../../php/login.php";
+	include "php.php";
+	include "config.php";
+	$sql=new sql;
 
-		if(isset($_POST) and isset($_GET['act']) and isset($_GET['mod']) and $_GET['act']=='editar' and $_GET['mod']=='cad_conta'){
-					
+	
+	$login=new login;
+	$login->checklogin();
+	if(isset($_SESSION['loged']) and $_SESSION['loged']==true){
 
+		//svar_dump($_POST);
+		
+		if(
+			isset($_POST['tabela']) and
+			((
+				isset($_POST['cod_conta']) and
+				isset($_POST['numero_conta_mae']) and
+				isset($_POST['numero_conta']) and
+				$_POST['numero_conta_mae']!="" and 
+				$_POST['numero_conta']!="" 					
+			)or(
+				isset($_POST['cod_centro_custo']) and
+				isset($_POST['numero_centro_custo_mae']) and
+				isset($_POST['numero_centro_custo']) and
+				$_POST['numero_centro_custo_mae']!="" and 
+				$_POST['numero_centro_custo']!="" 				
+
+			)) and 
+			isset($_POST['descricao']) and
+			isset($_POST['status']) and
+			$_POST['descricao']!="" and 
+			$_POST['status']!=""
+
+		
+		){
+			
+			
 					$sql=new sql;
 					
 					//$_POST['cod_conta_mae']
 				function id_conta($numero_conta){
-					//print_r($_POST);
+
 					//$numero_conta = explode (" ",$numero_conta,2);
 					//$numero_conta = $numero_conta[0];
 					include "config.php";
@@ -31,7 +65,7 @@
 					$cod_conta=$cod_conta[0];
 					return $cod_conta;
 				}
-				function cod_plano_conta($cod_plano_conta){
+				function cod_plano_conta(){
 					include "config.php";
 					$select="SELECT cod_plano_conta FROM ".$schema.".cad_plano_conta where cod_empresa=".$_SESSION['cod_empresa']." ; ";
 					$resultado=mysql_query($select,$conexao) or die (mysql_error());
@@ -41,16 +75,24 @@
 					$cod_conta=$cod_conta[0];
 					return $cod_conta;
 				}
-			
-			
-					
+				function cod_plano_centro_custo(){
+					include "config.php";
+					$select="SELECT cod_plano_centro_custo FROM ".$schema.".cad_plano_centro_custo where cod_empresa=".$_SESSION['cod_empresa']." ; ";
+					$resultado=mysql_query($select,$conexao) or die (mysql_error());
+					//if(mysql_num_rows($resultado)>=1){return true;}else{return false;}
+					$cod_centro_custo = mysql_fetch_array($resultado);
+					//if($cod_centro_custo==false){return 'false';}else{ return 'true';}
+					$cod_centro_custo=$cod_centro_custo[0];
+					return $cod_centro_custo;
+				}
 
-					//var_dump($x[$a]);
-					
+	
+
+		if(isset($_POST) and isset($_POST['act']) and isset($_POST['mod']) and $_POST['act']=='editar' and $_POST['mod']=='cad_conta'){
 					if(isset($_POST['cod_conta']) and $_POST['cod_conta']==0){
 						//novo
 						$cod_conta_mae=id_conta($_POST['numero_conta_mae']);
-						$cod_plano_conta=cod_plano_conta($_POST['numero_conta_mae']);
+						$cod_plano_conta=cod_plano_conta();
 						$tabela="cad_conta";
 						$campos_insert="`cod_conta_mae`,`numero_conta`,`cod_plano_conta`,`descricao`,`cod_tipo_conta`,`saldo_inicial`,`saldo_atual`,`status`";
 						$values="'".$cod_conta_mae."','".$_POST['numero_conta']."','".$cod_plano_conta."','".$_POST['descricao']."','".$_POST['cod_tipo_conta']."','".$_POST['saldo_inicial']."','".$_POST['saldo_atual']."','".$_POST['status']."'";
@@ -60,81 +102,50 @@
 					if(isset($_POST['cod_conta']) and $_POST['cod_conta']!=""){
 						//atualizar
 						$cod_conta_mae=id_conta($_POST['numero_conta_mae']);
-						$cod_plano_conta=cod_plano_conta($_POST['numero_conta_mae']);						
+						$cod_plano_conta=cod_plano_conta();						
 						$tabela="cad_conta";
 						$campos="`cod_conta_mae`='".$cod_conta_mae."',`numero_conta`='".$_POST['numero_conta']."',`cod_plano_conta`='".$cod_plano_conta."',`descricao`='".$_POST['descricao']."',`cod_tipo_conta`='".$_POST['cod_tipo_conta']."',`saldo_inicial`='".$_POST['saldo_inicial']."',`saldo_atual`='".$_POST['saldo_atual']."',`status`='".$_POST['status']."'";
 						$where="`cod_conta`='".$_POST['cod_conta']."'";
 						$sql->update($tabela,$campos,$where,'S');
 
 					}	
-						
-
-						
-					
-					 
-								
-			
 			
 		}
-		if(isset($_POST) and isset($_GET['act']) and isset($_GET['mod']) and $_GET['act']=='editar' and $_GET['mod']=='cad_centro_custo'){
-					
-					include "php.php";
-					$sql=new sql;
-					
-					
-					
-					//var_dump($_GET);
+		if(isset($_POST) and isset($_POST['act']) and isset($_POST['mod']) and $_POST['act']=='editar' and $_POST['mod']=='cad_centro_custo'){
 
-					
-					$json=$_POST['json'];
-					$json=str_replace("[","",$json);
-					$json=str_replace("]","",$json);
-					$json=str_replace("}","",$json);
-					$json=str_replace('"',"",$json);
-					$json=explode('{',$json);
-					for($a=0;$a<count($json);$a++){
-						$b=explode(',',$json[$a]);
-						for($c=0;$c<count($b);$c++){
-							$b[$c]=explode(':',$b[$c]);
-							if(isset($b[$c][0]) and isset($b[$c][1])){
-								$b[$c]=array($b[$c][0]=>$b[$c][1]);	
-							}
-						}	
-						$x[$a]=$b;
-					}
-					//	var_dump($x);	
-						
-						
-					for($a=0;$a<count($x);$a++){
-					//	var_dump($x[$a]);
-						
-						if(isset($x[$a][0]['ig_pk']) or (isset($x[$a][0]['ID']) and $x[$a][0]['ID']==0)){
+						if(isset($_POST['cod_centro_custo']) and ($_POST['cod_centro_custo']=="" or $_POST['cod_centro_custo']==0)){
 							//novo
+							$cod_centro_custo_mae=id_centro_custo($_POST['numero_centro_custo_mae']);
+							$cod_plano_centro_custo=cod_plano_centro_custo();
 							$tabela=$_POST['tabela'];
 							$campos_insert="`cod_centro_custo_mae`,`numero_centro_custo`,`cod_plano_centro_custo`,`descricao`,`saldo_inicial`,`saldo_atual`,`status`";
-							$values="'".$x[$a][1]['cod_centro_custo_mae']."','".$x[$a][2]['numero_centro_custo']."','".$_POST['plano_conta']."','".$x[$a][3]['descricao']."','".$x[$a][4]['saldo_inicial']."','".$x[$a][5]['saldo_atual']."','".$x[$a][6]['status']."'";
-							$sql->insert($tabela,$campos_insert,$values,'N');
-							
+							$values="'".$cod_centro_custo_mae."','".$_POST['numero_centro_custo']."','".$cod_plano_centro_custo."','".$_POST['descricao']."','".$_POST['saldo_inicial']."','".$_POST['saldo_atual']."','".$_POST['status']."'";
+							$sql->insert($tabela,$campos_insert,$values,'S');
 						}	
-						if(isset($x[$a][0]['ID']) and $x[$a][0]['ID']!=0){
+						if(isset($_POST['cod_centro_custo']) and ($_POST['cod_centro_custo']!="" or $_POST['cod_centro_custo']!=0)){
 							//atualizar
+							$cod_centro_custo_mae=id_centro_custo($_POST['numero_centro_custo_mae']);
+							$cod_plano_centro_custo=cod_plano_centro_custo();						
 							$tabela=$_POST['tabela'];
-							$campos="`cod_centro_custo_mae`='".$x[$a][1]['cod_centro_custo_mae']."',`numero_centro_custo`='".$x[$a][2]['numero_centro_custo']."',`cod_plano_centro_custo`='".$_POST['plano_conta']."',`descricao`='".$x[$a][3]['descricao']."',`saldo_inicial`='".$x[$a][4]['saldo_inicial']."',`saldo_atual`='".$x[$a][5]['saldo_atual']."',`status`='".$x[$a][6]['status']."'";
-							$where="`cod_centro_custo`='".$x[$a][0]['ID']."'";
-							$sql->update($tabela,$campos,$where,'N');
-
+							$campos="`cod_centro_custo_mae`='".$cod_centro_custo_mae."',`numero_centro_custo`='".$_POST['numero_centro_custo']."',`cod_plano_centro_custo`='".$cod_plano_centro_custo."',`descricao`='".$_POST['descricao']."',`saldo_inicial`='".$_POST['saldo_inicial']."',`saldo_atual`='".$_POST['saldo_atual']."',`status`='".$_POST['status']."'";
+							$where="`cod_centro_custo`='".$_POST['cod_centro_custo']."'";
+							$sql->update($tabela,$campos,$where,'S');
 						}	
-						
-						
-						
-					}
-					 
-								
-			
-			
 		}
 
 	
+
+		}else{
+			$html=new html;
+			$html->mensage("danger","Preencha os campos corretamente");
+			
+		}
+		
+		
+		
+		
+	}
+
 
 
 ?>

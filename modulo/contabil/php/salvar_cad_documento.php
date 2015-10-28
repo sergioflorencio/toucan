@@ -14,7 +14,7 @@
 	$login=new login;
 	$login->checklogin();
 	if(isset($_SESSION['loged']) and $_SESSION['loged']==true){
-		
+		//var_dump($_POST);
 		if(
 			isset($_POST['cod_tipo_documento']) and
 			isset($_POST['texto_cabecalho_documento']) and

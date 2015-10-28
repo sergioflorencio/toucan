@@ -25,18 +25,19 @@
 				var nColunas=a.columns.length;
 				var thead="<thead><tr>";
 				for(var x=0;x<nColunas;x++){
+					if(a.columns[x].width==undefined || a.columns[x].width==""){var width="100px";}else{var width=a.columns[x].width;}
 					thead+=
-						"<th style='padding: 0px;width:"+a.columns[x].width+"'>"+
-							"<div class='uk-text-truncate' data-uk-tooltip title='"+a.columns[x].headerText+"' style='width:"+a.columns[x].width+";padding: 2px; text-align: center; vertical-align: middle;'>"
+						"<th style='padding: 0px;'>"+
+							"<div class='uk-text-truncate' data-uk-tooltip title='"+a.columns[x].headerText+"' style='width:"+width+";padding: 2px; text-align: center; vertical-align: middle;'>"
 								+a.columns[x].headerText+
 							"</div>"+
-							"<div class='uk-form uk-form-icon' style='width:"+a.columns[x].width+";padding: 2px; text-align: center; vertical-align: middle;'>"+
+							"<div class='uk-form uk-form-icon' style='width:"+width+";padding: 2px; text-align: center; vertical-align: middle;'>"+
 							"<i class='uk-icon-filter'></i>"+
 							"<input class='filter_table' id='"+a.columns[x].key+"' placeholder='contém...' style='width: 100%;' class='uk-form-small' type='text'>"+
 							"</div>"+
 						"</th>";
 				}
-				 thead+="<th></th></tr></thead>";			
+				 thead+="<th style='width: 100% !important;'></th></tr></thead>";			
 				 //overflow-y: auto ! important; overflow-x: hidden; position: absolute; top: 69px; bottom: 15px;
 				 tbody="<tbody id='tbody_"+a.idGrid+"' style=' '><tbody>"
 				document.getElementById(a.idGrid).innerHTML="<div style='width:"+a.width+"; ' ><table class='uk-table uk-table-condensed uk-table-hover' style='font-size: 12px; border-top: 0px none ! important;'>"+thead+tbody+"</table></div>";
@@ -65,22 +66,30 @@
 									incluir=incluir+1;
 								}
 								if(a.columns[y].dataType=='number'){ align="text-align: right !important;"; }
-								else{align="text-align: left !important;";}		
+								else{align="text-align: left !important;";}
+								if(a.columns[y].width==undefined || a.columns[y].width==""){var width="100px";}else{var width=a.columns[y].width;}
 								tbody_+=
-								"<td style='padding: 0px;width:"+a.columns[y].width+";'>"+
-									"<div class='uk-text-truncate' style='width:"+a.columns[y].width+";padding: 2px; vertical-align: middle;"+align+"'>"
+								"<td style='padding: 0px 1px 0px 0px;'>"+
+									"<div class='uk-text-truncate' style='width:"+width+";padding: 2px; vertical-align: middle;"+align+"'>"
 										+a.dataSource[x][a.columns[y].key]+
 									"</div>"+						
 								"</td>";
 						}
-						tbody_+="<td></td></tr>";
+						tbody_+="<td style='width: 100% !important;'></td></tr>";
 						if(incluir>0){
 						tbody+=tbody_;
 						}
 					}
 
 					document.getElementById("tbody_"+a.idGrid).innerHTML=tbody;
-		
+					$('tbody tr').dblclick(function(){ 
+						if(this.id!=""){
+							//window.open('?act=editar&mod='+a.tableId+'&id='+this.id, '_blank');	
+							window.open('?act=cadastros&mod='+a.tableId+'&id='+this.id, '_blank');							
+							
+						}					
+						
+					});
 		
 		}	
 		
@@ -90,10 +99,7 @@
 		$('.filter_table').keyup(function(){ 
 			tabela.filter(this.id,this.value);
 		});
-		$('tbody tr').dblclick(function(){ 
-		
-			window.location.assign('?act=cadastros&mod='+a.tableId+'&id='+this.id);
-		});
+
 		
 		
 	}

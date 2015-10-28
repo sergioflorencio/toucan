@@ -173,44 +173,68 @@ $('textarea').keyup(function(){
 
 });
 
-function salvar_cadastro(tabela,plano_conta){
-			$("#grid").igGrid("commit");
-			id_responseText="grid";
+function salvar_cadastro(tabela){
+			
+			id_responseText="msg";
 			metodo="POST";
 			url="php/salvar_cadastro.php";
 			var formData = new FormData();
-				formData.append("json", JSON.stringify($("#grid").data("igGrid").dataSource.data()));
 				formData.append("tabela", tabela);
-				formData.append("plano_conta", plano_conta);
-			ajax(id_responseText, metodo, url,formData,'reload');
+				switch(tabela) {
+					case "cad_conta":
+							formData.append("cod_conta", document.getElementById("cod_conta").value);
+							formData.append("numero_conta_mae", document.getElementById('numero_conta_mae').value);
+							formData.append("numero_conta", document.getElementById('numero_conta').value);
+							formData.append("cod_tipo_conta", document.getElementById('cod_tipo_conta').value);							
+						break;
+					case "cad_centro_custo":
+							formData.append("cod_centro_custo", document.getElementById("cod_centro_custo").value);
+							formData.append("numero_centro_custo_mae", document.getElementById('numero_centro_custo_mae').value);
+							formData.append("numero_centro_custo", document.getElementById('numero_centro_custo').value);
+						break;
+					default:
+
+						break;
+				}
+
+				formData.append("descricao", document.getElementById('descricao').value);
+				formData.append("saldo_inicial", document.getElementById('saldo_inicial').value);
+				formData.append("saldo_atual", document.getElementById('saldo_atual').value);
+				formData.append("status", document.getElementById('status').value);
+				formData.append("act", "editar");
+				formData.append("mod", tabela);
+			
+				
+			ajax(id_responseText, metodo, url,formData,'');
 
 }
 
-	function cloneRow() {
+	function cloneRow(table_id) {
 	   
 		//limpar classes
 		limpar_classe();
 
-		var table = document.getElementById("tableToModify"); // find table to append to
+		var table = document.getElementById(table_id); // find table to append to
 		var row = table.rows[1]; // find row to copy
 		var clone = row.cloneNode(true); // copy children too
 		clone.id = "newID"; // change id or other attributes/contents
 		var inputs=clone.getElementsByTagName("input");	
 		for(var n=0;n<6;n++){inputs[n].value="";inputs[n].id=Math.floor((Math.random() * 100000) + 1)+"_"+Math.floor((Math.random() * 100000) + 1);inputs[n].addEventListener("keyup", maiusculas);}		
-		table.appendChild(clone); // add new row to end of table
+		var tbody=table.getElementsByTagName("tbody");
+		table.getElementsByTagName("tbody")[0].appendChild(clone); // add new row to end of table
 
 
 	}
-	function delAllRow(){
-		var table = document.getElementById("tableToModify"); // find table to append to
+	function delAllRow(table_id){
+		var table = document.getElementById(table_id); // find table to append to
 		var y=table.rows.length;
 		
 		for(var i=1;i<y-1;i++){
 			//alert(i);
-			document.getElementById("tableToModify").deleteRow(1);
+			document.getElementById(table_id).deleteRow(1);
 		}
 		
-		var table = document.getElementById("tableToModify"); // find table to append to
+		var table = document.getElementById(table_id); // find table to append to
 		var y=table.rows.length;
 
 		if(y==2){
@@ -219,16 +243,16 @@ function salvar_cadastro(tabela,plano_conta){
 			clone.id = "newID"; // change id or other attributes/contents
 			var inputs=clone.getElementsByTagName("input");	
 			for(var n=0;n<6;n++){inputs[n].value="";inputs[n].id=Math.floor((Math.random() * 100000) + 1)+"_"+Math.floor((Math.random() * 100000) + 1);inputs[n].addEventListener("keyup", maiusculas);}	
-			table=document.getElementById("tableToModify");
+			table=document.getElementById(table_id);
 			table.deleteRow(1);
-			table.appendChild(clone); // add new row to end of table
+			table.getElementsByTagName("tbody")[0].appendChild(clone); // add new row to end of table
 		}
 	}	
-	function delRow(r) {
-		var table = document.getElementById("tableToModify"); // find table to append to
+	function delRow(r,table_id) {
+		var table = document.getElementById(table_id); // find table to append to
 		if(table.rows.length>2){
 			var i = r.parentNode.parentNode.rowIndex;
-			document.getElementById("tableToModify").deleteRow(i);
+			document.getElementById(table_id).deleteRow(i);
 		}else{
 
 			
@@ -238,14 +262,15 @@ function salvar_cadastro(tabela,plano_conta){
 		var inputs=clone.getElementsByTagName("input");	
 		for(var n=0;n<6;n++){inputs[n].value="";inputs[n].id=Math.floor((Math.random() * 100000) + 1)+"_"+Math.floor((Math.random() * 100000) + 1);inputs[n].addEventListener("keyup", maiusculas);}	
 			var i = r.parentNode.parentNode.rowIndex;
-			document.getElementById("tableToModify").deleteRow(i);
-		table.appendChild(clone); // add new row to end of table
+			document.getElementById(table_id).deleteRow(i);
+		table.getElementsByTagName("tbody")[0].appendChild(clone); // add new row to end of table
 			
 		}
 	}	
 	function importar_lancamentos(){
 		
 			var base=document.getElementById("text_area_importar_lancamento").value;
+			var table_id="tableToModify";
 			var linhas=base.split("\n");
 			base=[];
 			
@@ -264,7 +289,7 @@ function salvar_cadastro(tabela,plano_conta){
 					
 					//se a matriz tiver a dimensão de 6 colunas deverá fazer a inclusão da linha
 					if(linha_.length==6 || linha__.length==6){
-						var table = document.getElementById("tableToModify"); 
+						var table = document.getElementById(table_id); 
 						var row = table.rows[1];
 						var clone = row.cloneNode(true); 
 						clone.id = "newID";
@@ -276,7 +301,7 @@ function salvar_cadastro(tabela,plano_conta){
 						}
 						
 						//se for a primeira linha, deve limpar a tabela de lançamentos
-						if(i==0){ for(var a=1;a<table.rows.length;a++){ document.getElementById("tableToModify").deleteRow(a); } }					
+						if(i==0){ for(var a=1;a<table.rows.length;a++){ document.getElementById(table_id).deleteRow(a); } }					
 						
 						//incluir a nova linha
 						table.appendChild(clone);
@@ -302,7 +327,7 @@ function salvar_cadastro(tabela,plano_conta){
 				//limpar classes
 				limpar_classe();
 						
-				//var itens=document.getElementById("tableToModify");
+				//var itens=document.getElementById(table_id);
 				var codigo_lancamento = document.querySelectorAll("[coluna='codigo_lancamento']");
 				var montante = document.querySelectorAll("[coluna='montante']");
 
@@ -523,7 +548,7 @@ function salvar_cadastro(tabela,plano_conta){
 				}
 				itens = "["+itens+"]";
 				
-				///Ultima verificação
+				//Ultima verificação
 
 					elements=document.getElementsByTagName("input");
 					for (var i = 0; i < elements.length; i++) {
@@ -609,15 +634,434 @@ function pesquisar_conta_mae(a){
 
 		
 }
+function pesquisar_centro_custo_mae(a){
+		var valor=a.value.split(".");
+			valor=a.value.split(".",valor.length-1);
+			if(valor.length==0){valor[0]=-1}
+			console.log(valor);
+			document.getElementById("numero_centro_custo_mae").value=valor.join(".");
+			
+			function ajax_pesquisa_centro_custo(id_responseText, metodo, url,formData,reload){
+					var xhr = new XMLHttpRequest();
+					xhr.onreadystatechange = function()
+					{
+						if(xhr.readyState == 4 && xhr.status == 200)
+						{
+							document.getElementById(id_responseText).value=xhr.responseText;
+							//alert(xhr.responseText);
+						}
+					}			
+					xhr.open(metodo, url);
+					xhr.overrideMimeType('text/xml; charset=utf-8');			
+					xhr.send(formData);
+			}
+
+			id_responseText="descricao_centro_custo_mae";
+			metodo="POST";
+			url="php/pesquisa_conta_mae.php";
+			
+			var formData = new FormData();
+				formData.append("valor", valor.join("."));
+				formData.append("cadastro", "cod_centro_custo");
+			ajax_pesquisa_centro_custo(id_responseText, metodo, url,formData,'');
+
+
+		
+}
 
 
 
 
+///////ofx///////
+	function readSingleFile(e) {
+	  var file = e.target.files[0];
+	  //console.log(e);
+	  //console.log(file);
+	  if (!file) {
+		return;
+	  }
+	  var reader = new FileReader();
+	  reader.onload = function(e) {
+		var contents = e.target.result;
+		displayContents(contents);
+		document.getElementById('input_selecionar_ofx').value=file.name;
+	  };
+	  reader.readAsText(file);
+	}
+	function displayContents(contents) {
+		
+		function format_data_(a){
+			valor=a;
+			valor = valor.replace( "-", "" );
+			valor = valor.replace( ",", "" );
+			valor = valor.replace( ".", "" );
+			valor = valor.replace( "/", "" );
+			valor = valor.replace( "/", "" );
+			valor = valor.replace( "/", "" );
+			valor = valor.replace( "/", "" );
+			valor = valor.replace( "/", "" );
+			valor = valor.replace( "/", "" );
+			valor = valor.replace( "(", "" );
+			valor = valor.replace( ")", "" );
+			valor = valor.replace( " ", "" );
+
+
+			var dia=valor.substring(6, 8);
+			var mes=valor.substring(4, 6);
+			var ano=valor.substring(0, 4);
+			
+			valor=dia+"/"+mes+"/"+ano;
+			
+			return valor;
+
+			
+			
+		}
+		function format_numero_(a){
+			valor=a;
+
+			valor = valor.replace( ",", "" );
+			valor = valor.replace( ".", "" );
+			valor = valor.replace( "/", "" );
+			valor = valor.replace( "/", "" );
+			valor = valor.replace( "/", "" );
+			valor = valor.replace( "/", "" );
+			valor = valor.replace( "/", "" );
+			valor = valor.replace( "/", "" );
+			valor = valor.replace( "(", "" );
+			valor = valor.replace( ")", "" );
+			valor = valor.replace( " ", "" );
+
+
+			valor = valor/100
+			valor = valor.toFixed(2);
+			
+			return valor;
+
+			
+			
+		}
+		
+		if (window.DOMParser)
+		  {
+		  parser=new DOMParser();
+		  xmlDoc=parser.parseFromString(contents,"text/xml");
+		  }
+		else // Internet Explorer
+		  {
+		  xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+		  xmlDoc.async=false;
+		  xmlDoc.loadXML(contents);
+		  }	
+		 // alert(xmlDoc.getElementsByTagName("ofx").length);
+		  
+		document.getElementById('div_preview_').innerHTML = contents;
+		
+		json=document.getElementsByTagName('STMTTRN');
+		//alert(json.length);
+		var tb={};
+		for(var n=0;n<json.length;n++){
+			campos=json[n].innerHTML;
+			campos = campos.replace(/	/g, '');	
+			campos = campos.replace(/:/g, ' ');	
+			campos = campos.replace(/\s\s+/g, ' ');			
+			campos = campos.replace(/<[/].*>/g, '');
+			campos = campos.replace(/]/g, ')');
+			campos = campos.replace(/[[]/g, '(');
+			campos = campos.replace(/\s</g, '<');	
+			
+			campos = campos.split("<");
+			for(var a=0;a<campos.length;a++){
+				campos[a]=campos[a].replace(/>/g, ':');
+				campos[a]=campos[a].replace(/\r/g, '');
+				campos[a]=campos[a].replace(/\n/g, '');
+				js = '{"'+campos[a].replace(/:/g, '":"')+'"}';
+				if(js!='{""}'){
+					campos[a]=JSON.parse(js);
+				}
+			}
+
+			tb[n]=campos;
+			
+		}
+
+
+			
+		var table="<table id='table_ofx' class='uk-table uk-table-condensed uk-table-hover' style='font-size:12px;border: 0px;'>";
+				table+="<thead><tr style='height: 34px;'>";
+				table+="<th style='min-width: 80px;padding: 0px;'><div style='padding: 0px 3px;'>Data</div></th>";
+				table+="<th style='min-width: 80px;padding: 0px;'><div style='padding: 0px 3px;'>Valor</div></th>";
+				table+="<th style='min-width: 80px;padding: 0px;'><div style='padding: 0px 3px;'>Doc.</div></th>";				
+				table+="<th style='min-width: 150px;padding: 0px;'><div style='padding: 0px 3px;'>Histórico</div></th>";
+				table+="<th style='min-width: 150px;padding: 0px;'><div style='padding: 0px 3px;'>Conta Contábil</div></th>";
+				table+="<th style='min-width: 150px;padding: 0px;'><div style='padding: 0px 3px;'>Centro de Custo</div></th>";
+				table+="<th style='min-width: 30px;padding: 0px;'></th>";
+				table+="</tr></thead>";		
+			for(var n=0;n<Object.keys(tb).length;n++){
+				table+="<tr style='height: 34px;'>";
+				//keys=Object.keys(tb[n]);
+				for( b in tb[n]){
+					key_=Object.keys(tb[n][b]);
+					//console.log(key_);
+					for(c in tb[n][b]){
+						if(c=='memo'|| c=='dtposted'|| c=='trnamt'|| c=='checknum' ){
+							switch(c) {
+								case 'dtposted':
+									table+="<td style='min-width: 80px ! important;padding: 0px;vertical-align: middle;'><div style='width: 65px;padding: 0px 3px;' class='uk-text-truncate'>"+format_data_(tb[n][b][c])+"</div></td>";
+									break;
+								case 'trnamt':
+									table+="<td style='min-width: 80px ! important;padding: 0px;vertical-align: middle;text-align:right;'><div style='width: 65px;padding: 0px 3px;'  class='uk-text-truncate'>"+format_numero_(tb[n][b][c])+"</div></td>";
+									break;
+								case 'checknum':	
+									table+="<td style='min-width: 80px ! important;padding: 0px;vertical-align: middle;'><div style='width: 65px;padding: 0px 3px;'  class='uk-text-truncate'>"+tb[n][b][c]+"</div></td>";
+									break;
+								case 'memo':	
+									table+="<td style='min-width: 150px ! important;padding: 0px;vertical-align: middle;'><div style='width: 135px;padding: 0px 3px;'  class='uk-text-truncate'>"+tb[n][b][c]+"</div></td>";
+									break;
+
+							} 						
+							
+						}
+					}
+				}
+				var input_conta="";
+					input_conta+= "<div class=' uk-autocomplete' data-uk-autocomplete='{source:bs_conta}' style=''>";
+					input_conta+= "<input  coluna='conta_ofx' id='n_cta_ofx_"+n+"' placeholder='' class='uk-form-small' type='text' style='width: 140px; margin-left: 10px; ' value=''/>";
+					input_conta+= "</div>";	
+					
+				var input_ctr_custo="";
+					input_ctr_custo+= "<div class=' uk-autocomplete' data-uk-autocomplete='{source:bs_ctrcusto}' style=''>";
+					input_ctr_custo+= "<input  coluna='ctr_custo_ofx' id='n_ctr_c_ofx_"+n+"' placeholder='' class='uk-form-small' type='text' style='width: 140px; margin-left: 10px; ' value=''/>";
+					input_ctr_custo+= "</div>";		
+					
+				table+="<td style='min-width: 150px ! important; padding: 0px;vertical-align: middle;' class='ofx_conta' >"+input_conta+"</td>";
+				table+="<td style='min-width: 150px ! important; padding: 0px;vertical-align: middle;' class='ofx_ctr_custo'>"+input_ctr_custo+"</td>";			
+				table+="<td style='min-width: 20px;padding: 0px;vertical-align: middle;'><button data-cached-title='Excluir linha' class='uk-button uk-button-mini uk-button-danger' type='button' onclick=delRow(this,'table_ofx') data-uk-tooltip='' title='' style='margin-left: 10px;'><i class='uk-icon-trash-o'></i></button></td>";
+				table+="</tr>";
+				
+				
+			}
+		 table+="</table>";
+		//console.log(table);
+		document.getElementById('div_preview').innerHTML = table;
+		for(var n=0;n<Object.keys(tb).length;n++){
+			document.getElementById("n_cta_ofx_"+n).addEventListener("click", verificar_ajax_ofx_input);
+			document.getElementById("n_cta_ofx_"+n).addEventListener("change", verificar_ajax_ofx_input);
+			document.getElementById("n_cta_ofx_"+n).addEventListener("onblur", verificar_ajax_ofx_input);
+			document.getElementById("n_cta_ofx_"+n).addEventListener("keyup", verificar_ajax_ofx_input);
+			document.getElementById("n_cta_ofx_"+n).addEventListener("keydown", verificar_ajax_ofx_input);
+			
+			document.getElementById("n_ctr_c_ofx_"+n).addEventListener("click", verificar_ajax_ofx_input);
+			document.getElementById("n_ctr_c_ofx_"+n).addEventListener("change", verificar_ajax_ofx_input);
+			document.getElementById("n_ctr_c_ofx_"+n).addEventListener("onblur", verificar_ajax_ofx_input);
+			document.getElementById("n_ctr_c_ofx_"+n).addEventListener("keyup", verificar_ajax_ofx_input);
+			document.getElementById("n_ctr_c_ofx_"+n).addEventListener("keydown", verificar_ajax_ofx_input);
+		}
+
+		
+	}
 
 
 
+	function verificar_ajax_ofx_input(){
+		var coluna=this.getAttribute("coluna");
+		if(coluna=="conta_ofx"){ var cadatro="cod_conta"}
+		if(coluna=="ctr_custo_ofx"){ var cadatro="cod_centro_custo"}
+		if(cadatro!=null){verificar_ajax_ofx(cadatro,this.value,this.id);}
+		
+	}
+	function verificar_ajax_ofx(cadastro,cod_,id){
+		var xhr = new XMLHttpRequest();
+		var formData = new FormData();				
+		var metodo = "POST";
+		var url = "php/verificar_cadastro.php";
+		formData.append('cadastro', cadastro);
+		formData.append('valor', cod_);
+		xhr.onreadystatechange = function()
+		{
+			if(xhr.readyState == 4 && xhr.status == 200)
+			{
+				var classe_=xhr.responseText;
+				if(document.getElementById(id)!=null){
+					var elemento = document.getElementById(id);
+						elemento.className=classe_;
+					var classes=elemento.className;
+				}
+
+				//if(classes.indexOf("uk-form-success")>-1){ elemento.parentNode.innerHTML=elemento.value;}
+			}
+		}		
+		xhr.open(metodo, url);
+		xhr.overrideMimeType('text/xml; charset=utf-8');			
+		xhr.send(formData);					
+	}	
+	function salvar_ajax_ofx(id_responseText,metodo, url,formData){
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function()
+				{
+					if(xhr.readyState == 4 && xhr.status == 200)
+					{
+						document.getElementById(id_responseText).innerHTML+=xhr.responseText;
+
+					}
+				}			
+				xhr.open(metodo, url);
+				xhr.overrideMimeType('text/xml; charset=utf-8');			
+				xhr.send(formData);
+	}
+	function importar_transacoes_ofx(){
+	//////função ajax para verificar cadatro
+
+		var arquivo=document.getElementById('input_selecionar_ofx');
+		var conta=document.getElementById('cod_conta');
+		var tabela=document.getElementById('table_ofx');
+		
+		//verificar se algum arquivo está selecionado
+			if (arquivo.value==''){
+				arquivo.className=" uk-form-small uk-form-danger "
+			}else{
+				arquivo.className=" uk-form-small uk-form-success "
+			}
+		
+		//verificar se a conta contabil foi indicada
+				//cod_centro_custo
+			if(conta!= null){
+				if(conta.value!=""){
+					verificar_ajax_ofx('cod_conta',conta.value,conta.id);
+				}else{
+					document.getElementById(conta.id).className=" uk-form-small uk-form-danger";
+					document.getElementById(conta.id).setAttribute("conferido", "erro");
+				}
+			}
+		//verificar se a tabela foi montada
+		if(tabela!=null){
+			//verificar se as contas contabeis foram preenchidas
+				var conta_ofx=document.querySelectorAll("[coluna='conta_ofx']");
+				for(var n=0;n<conta_ofx.length;n++){
+					if(conta_ofx[n].value==""){conta_ofx[n].className="﻿﻿﻿﻿﻿﻿ uk-form-small uk-form-danger";}
+				}
+		
+			//verificar se os centros de custo foram preenchidos
+				var ctr_custo_ofx=document.querySelectorAll("[coluna='ctr_custo_ofx']");
+				for(var n=0;n<ctr_custo_ofx.length;n++){
+					if(ctr_custo_ofx[n].value==""){ctr_custo_ofx[n].className="﻿﻿﻿﻿﻿﻿ uk-form-small uk-form-danger";}
+				}
+				
+			//transformar tudo em table
+			var conta=document.querySelectorAll("[coluna='conta_ofx']")
+			for(n=0;n<conta.length;n++){
+				var elemento = document.getElementById(conta[n].id);
+				var classes=elemento.className;				
+				if(classes.indexOf("uk-form-success")>-1){ elemento.parentNode.innerHTML=elemento.value;}
+			}			
+			var ctr_custo=document.querySelectorAll("[coluna='ctr_custo_ofx']")
+			for(n=0;n<ctr_custo.length;n++){
+				var elemento = document.getElementById(ctr_custo[n].id);
+				var classes=elemento.className;				
+				if(classes.indexOf("uk-form-success")>-1){ elemento.parentNode.innerHTML=elemento.value;}
+			}			
+			
+			
+			
+			//verificar dangers
+			var danger=document.getElementsByClassName("uk-form-danger");
+			var success=document.getElementsByClassName("uk-form-success");
+			if(danger.length==0 && success.length==1){
+			////////////////////////////////////////////////////////////////////////////////////////////////
+				// montar matriz de itens
+				
+			var tabela=document.getElementsByTagName("table");
+			var tr=tabela[0].getElementsByTagName("tr");
+			console.log(tr.length);
+
+			var data_vencimento_liquidacao="";
+			var codigo_lancamento="";
+			var montante="";
+			var cod_ctr_custo="";
+			var cod_conta="";
+			var historico="";
+			var itens="";
+			var td="";
+			var msg="";
+			
+			var id_responseText="msg";
+			var metodo="POST";
+			var url="php/salvar_cad_documento.php";
+			var cod_conta_banco=document.getElementById("cod_conta_banco").innerHTML;
+			var cod_documento=document.getElementById("input_selecionar_ofx").value;
+			
+			document.getElementById(id_responseText).innerHTML="";
+			
+			for (var n=1;n<tr.length;n++){
+					td=tr[n].getElementsByTagName("td");
+
+					data=td[0].childNodes[0].innerHTML;
+					data = data.replace(/[/]/g, ' ');	
+					exercicio=data.substring(4, 8);	
+					periodo=data.substring(2, 4);
+					
+					if(Number(td[1].childNodes[0].innerHTML)>=0){codigo_lancamento= "D"}else{codigo_lancamento= "C"};	
+					if(Number(td[1].childNodes[0].innerHTML)>=0){codigo_lancamento_= "C"}else{codigo_lancamento_= "D"};	
+					
+					itens="[{";
+					itens+="'codigo_lancamento':'"+codigo_lancamento+"',";
+					itens+="'cod_ctr_custo':'"+td[5].childNodes[0].innerHTML+"',";
+					itens+="'cod_conta':'"+cod_conta_banco+"',";
+					itens+="'historico':'"+td[4].childNodes[0].innerHTML+"',";
+					itens+="'montante':'"+Math.abs(Number(td[1].childNodes[0].innerHTML))+"',";
+					itens+="'data_vencimento_liquidacao':'"+td[0].childNodes[0].innerHTML+"'";
+					itens+="},{";
+					itens+="'codigo_lancamento':'"+codigo_lancamento_+"',";
+					itens+="'cod_ctr_custo':'"+td[5].childNodes[0].innerHTML+"',";
+					itens+="'cod_conta':'"+td[4].childNodes[0].innerHTML+"',";
+					itens+="'historico':'"+td[3].childNodes[0].innerHTML+"',";
+					itens+="'montante':'"+Math.abs(Number(td[1].childNodes[0].innerHTML))+"',";
+					itens+="'data_vencimento_liquidacao':'"+td[0].childNodes[0].innerHTML+"'";
+					itens+="}]";
+					
+				var formData = new FormData();
+					formData.append("cod_documento",cod_documento);
+					formData.append("cod_tipo_documento","4" );
+					formData.append("referencia",td[2].childNodes[0].innerHTML);
+					formData.append("texto_cabecalho_documento",td[2].childNodes[0].innerHTML);
+					formData.append("data_lancamento",td[0].childNodes[0].innerHTML);
+					formData.append("data_base",td[0].childNodes[0].innerHTML);
+					formData.append("exercicio",exercicio);
+					formData.append("periodo",periodo);
+					formData.append("itens", itens);
+				salvar_ajax_ofx(id_responseText,metodo, url,formData);
+			}
 
 
+	
+		
+		
+		
+		
+			////////////////////////////////////////////////////////////////////////////////////////////////					
+				
+				
+				
+				
+				
+				
+				
+				
+			}
+			
+			
+			
+			
+
+			//criar o json
+			
+			
+			
+
+		}
+
+	}
+	$(function(){$( "#bt_selecionar_ofx" ).click(function(){document.getElementById('file-input').click();});});
 
 
 

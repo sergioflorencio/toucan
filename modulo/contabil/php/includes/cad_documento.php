@@ -9,15 +9,15 @@
 ?>
 
 
-<div class='uk-width-1-1 ' style=''  id="msg">
+<div class='uk-width-1-1 uk-panel uk-panel-box uk-panel-box-primary' style=''  id="msg">
 
 	<div class="uk-grid" style="text-align: left !important;">
 		<div class="uk-width-1-1">
 			<div class="uk-grid" >
 				<div class="uk-tab uk-width-1-1" data-uk-tab="{connect:'#subnav-pill-content-2'}">
 
-						<li class="uk-active"><a href="#">Dados do documento</a></li>
-						<li class=""><a href="#">Lançamentos</a></li>
+						<li class="uk-active"><a href="#"><i class="uk-icon-file-o"></i> Dados do documento</a></li>
+						<li class=""><a href="#"><i class="uk-icon-list-ol"></i> Lançamentos</a></li>
 
 
 				</div>
