@@ -996,9 +996,9 @@ function pesquisar_centro_custo_mae(a){
 					td=tr[n].getElementsByTagName("td");
 
 					data=td[0].childNodes[0].innerHTML;
-					data = data.replace(/[/]/g, ' ');	
-					exercicio=data.substring(4, 8);	
-					periodo=data.substring(2, 4);
+					data = data.split('/');	
+					exercicio=data[2];	
+					periodo=data[1];
 					
 					if(Number(td[1].childNodes[0].innerHTML)>=0){codigo_lancamento= "D"}else{codigo_lancamento= "C"};	
 					if(Number(td[1].childNodes[0].innerHTML)>=0){codigo_lancamento_= "C"}else{codigo_lancamento_= "D"};	
@@ -1007,7 +1007,7 @@ function pesquisar_centro_custo_mae(a){
 					itens+="'codigo_lancamento':'"+codigo_lancamento+"',";
 					itens+="'cod_ctr_custo':'"+td[5].childNodes[0].innerHTML+"',";
 					itens+="'cod_conta':'"+cod_conta_banco+"',";
-					itens+="'historico':'"+td[4].childNodes[0].innerHTML+"',";
+					itens+="'historico':'"+td[3].childNodes[0].innerHTML+"',";
 					itens+="'montante':'"+Math.abs(Number(td[1].childNodes[0].innerHTML))+"',";
 					itens+="'data_vencimento_liquidacao':'"+td[0].childNodes[0].innerHTML+"'";
 					itens+="},{";
@@ -1061,7 +1061,53 @@ function pesquisar_centro_custo_mae(a){
 		}
 
 	}
-	$(function(){$( "#bt_selecionar_ofx" ).click(function(){document.getElementById('file-input').click();});});
+	
+////compesação //////
+	function compensacao_calcular(){
+		var input = document.querySelectorAll('input[type=checkbox]');
+		var total=0;
+		for(var n=0;n<input.length;n++){
+			if(input[n].checked==true){total=total+Number(input[n].value);}
+		}
+		document.getElementById('diferenca').value=total.toFixed(2);	
+		
+	}
+	function compensacao_selecionar_todos(status){
+		var input = document.querySelectorAll('input[type=checkbox]');
+		for(var n=0;n<input.length;n++){
+			input[n].checked=status;
+		}
+		compensacao_calcular();
+
+	}
+	function compensacao_compensar(){
+		if(document.getElementById('diferenca').value=='0' || document.getElementById('diferenca').value=='0.00'){
+			var input = document.querySelectorAll('input[type=checkbox]');
+			var itens="";
+			for(var n=0;n<input.length;n++){
+				if(input[n].checked==true){itens+=","+input[n].id;}
+			}
+				id_responseText="msg";
+				metodo="POST";
+				url="php/conciliacao.php";
+				var formData = new FormData();
+					formData.append("act","conciliar" );
+					formData.append("itens", itens);
+
+				ajax(id_responseText, metodo, url,formData,'reload');				
+			
+		}else{
+			alert("Para efetuar a compensação a diferença deve ser igual a zero!");
+			
+		}
+		
+		
+	}
+	
+	
+
+
+$(function(){$( "#bt_selecionar_ofx" ).click(function(){document.getElementById('file-input').click();});});
 
 
 

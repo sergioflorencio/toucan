@@ -329,7 +329,19 @@ class menus{
 						break;
 						case "compensar":
 							$relatorios->filtros(6);
-							echo "<li><span class='uk-form'>Diferença: <input type=text value=0 id=diferenca class='uk-form-small' style='text-align: right; margin-top: -3px;' readonly></span></li>";
+							echo "<li>
+										<span class='uk-form'>Diferença: <input type=text value=0 id=diferenca class='uk-form-small' style='text-align: right; margin-top: -3px;' readonly></span>
+								</li>";
+							echo "<li>
+										<div class='uk-button-group'>
+											<button class='uk-button uk-button-mini uk-button-success' onclick=compensacao_selecionar_todos(false);><i class='uk-icon-square-o'></i></button>
+											<button class='uk-button uk-button-mini uk-button-success' onclick=compensacao_selecionar_todos(true);><i class='uk-icon-check-square-o'></i></button>
+										</div>
+								</li>";
+							echo "<li>
+										<button class='uk-button uk-button-mini uk-button-danger' onclick=compensacao_compensar();><i class='uk-icon-magnet'></i> Compensar</button>
+								</li>";
+								//compensacao_selecionar_todos(status)
 							$this->menu_exportar('grid',0);
 
 						break;
@@ -545,7 +557,7 @@ class sql{
 						$sql->update($tabela,$campos,$where,'N');
 						
 						$tabela="cad_documento_item";
-						$campos="cod_documento_compensacao='".$cod_documento_."'";
+						$campos="cod_documento_compensacao='".$key."'";
 						$where="cod_documento='".$cod_documento."'";
 						$sql->update($tabela,$campos,$where,'N');
 
@@ -579,7 +591,7 @@ class sql{
 									`cad_documento_item`.`montante`,
 									`cad_documento_item`.`historico`,
 									`cad_documento_item`.`data_vencimento_liquidacao`,
-									'".$cod_documento."',
+									'".$key."',
 									now(),
 									now(),
 									'".$_SESSION['cod_usuario']."',
@@ -2032,7 +2044,7 @@ class pesquisa{
 							$select= "
 									SELECT 
 										cad_documento.cod_documento as id, 
-										concat('<input type=checkbox id=',cad_documento_item.cod_documento_item,' value=',if(cad_documento_item.codigo_lancamento='C',-cad_documento_item.montante,cad_documento_item.montante), '>') as checkbox, 
+										if(`cod_documento_compensacao`!='null','',concat('<input type=checkbox id=',cad_documento_item.cod_documento_item,' value=',if(cad_documento_item.codigo_lancamento='C',-cad_documento_item.montante,cad_documento_item.montante),' onclick=compensacao_calcular();', '>')) as checkbox, 
 										cad_documento.cod_documento, 
 										cad_documento.referencia, 
 										cad_documento.texto_cabecalho_documento, 
@@ -2067,8 +2079,8 @@ class pesquisa{
 										
 							if ($_POST['data_inicio']!="00/00/0000" || $_POST['data_fim']!="00/00/0000"){ $select=$select. "and (`".$schema."`.cad_documento.`data_base` between '".data($_POST['data_base_de'])."' and '".data($_POST['data_base_ate'])."')";}
 	
-							if ($_POST['conta_inicio']!=""){ $select=$select. " and (concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(0,20-length(REPLACE(cad_conta.numero_conta,'.',''))))>=concat(REPLACE('".$_POST['conta_inicio']."','.',''),repeat(0,20-length(REPLACE('".$_POST['conta_inicio']."','.','')))))";}
-							if ($_POST['conta_fim']!=""){ $select=$select. " and (concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(9,20-length(REPLACE(cad_conta.numero_conta,'.',''))))<=concat(REPLACE('".$_POST['conta_fim']."','.',''),repeat(9,20-length(REPLACE('".$_POST['conta_fim']."','.','')))))";}
+							if ($_POST['conta_inicio']!=""){ $select=$select. " and (numero_conta='".$_POST['conta_inicio']."')";}
+						//	if ($_POST['conta_fim']!=""){ $select=$select. " and (concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(9,20-length(REPLACE(cad_conta.numero_conta,'.',''))))<=concat(REPLACE('".$_POST['conta_fim']."','.',''),repeat(9,20-length(REPLACE('".$_POST['conta_fim']."','.','')))))";}
 
 							if ($_POST['ctr_custo_inicio']!=""){ $select=$select. " and (concat(REPLACE(cad_centro_custo.numero_centro_custo,'.',''),repeat(0,20-length(REPLACE(cad_centro_custo.numero_centro_custo,'.',''))))>=concat(REPLACE('".$_POST['ctr_custo_inicio']."','.',''),repeat(0,20-length(REPLACE('".$_POST['ctr_custo_inicio']."','.','')))))";}
 							if ($_POST['ctr_custo_fim']!=""){ $select=$select. " and (concat(REPLACE(cad_centro_custo.numero_centro_custo,'.',''),repeat(9,20-length(REPLACE(cad_centro_custo.numero_centro_custo,'.',''))))<=concat(REPLACE('".$_POST['ctr_custo_fim']."','.',''),repeat(9,20-length(REPLACE('".$_POST['ctr_custo_fim']."','.','')))))";}
@@ -2831,15 +2843,10 @@ class relatorios{
 										</li>
 										<li>
 											<div class='uk-grid'>
-												<div class='uk-width-1-2'>
+												<div class='uk-width-1-1'>
 												";
 													$inputs->input_form_row('','conta_inicio','Conta contábil',''," ");
 								echo "
-												</div>
-												<div class='uk-width-1-2'>
-									";
-													$inputs->input_form_row('','conta_fim','até',''," ");
-								echo	 	"
 												</div>
 										</div>
 										</li>
@@ -3367,6 +3374,7 @@ class conciliacao{
 		
 	}
 	function compensar(){
+		echo "<div id='msg'></div>";
 		$pesquisa=new pesquisa;
 		$pesquisa->razao_conciliacao();
 		
