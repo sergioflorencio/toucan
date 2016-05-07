@@ -766,9 +766,11 @@ class igniteui{
 				
 			//$('#grid').igGrid({
 			//	cellClick: function(evt, ui) { window.location.assign('?act=cadastros&mod=".$tabela."&id='+$('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));}
-			//});	
+			//});
+			
 		</script>
 ";
+		//$(function(){$('#".$tabela."').colResizable();});
 		//Initialize
 	//$('#grid').igGrid({
 	//	cellClick: function(evt, ui) { window.location.assign('?act=cadastros&mod=".$tabela."&id='+$('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));}
@@ -779,16 +781,7 @@ class igniteui{
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	}
 	function TreeGrid($base,$column,$tabela,$combo,$plano_conta){
-	echo 
-		"
-		<div id='grid' style='margin-top: -20px;'></div>
-		<style>
-			tr{
-				cursor:pointer;
-				
-			}
-		</style>
-		
+	echo "<div id='grid' style='margin-top: -20px;'></div>
 		<script>
 					var tabela= new TreeGrid({
 						idGrid:'grid',
@@ -802,9 +795,6 @@ class igniteui{
 					});
 
 		</script>";
-	///alert($('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	}
 	function igrid_movimento($base,$column,$tabela){
 	echo 
@@ -1855,7 +1845,8 @@ class pesquisa{
 								if ($_POST['data_base_de']!="01/01/1900" || $_POST['data_base_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_documento`.`data_base` between '".data($_POST['data_base_de'])."' and '".data($_POST['data_base_ate'])."')";}
 								if ($_POST['data_estorno_de']!="01/01/1900" || $_POST['data_estorno_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_documento`.`data_estorno` between '".data($_POST['data_estorno_de'])."' and '".data($_POST['data_estorno_ate'])."')";}
 								if ($_POST['data_alteracao_de']!="01/01/1900" || $_POST['data_alteracao_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.`cad_documento`.`data_alteracao` between '".data($_POST['data_alteracao_de'])."' and '".data($_POST['data_alteracao_ate'])."')";}
-
+								
+								$select.= " order by cad_documento.data_base ";
 											
 								$select.= ";";
 									
@@ -1867,13 +1858,13 @@ class pesquisa{
 								$column.="{headerText: 'cod_documento', key: 'cod_documento', width: '100px',  dataType: 'string'},";
 								$column.="{headerText: 'cod_tipo_documento', key: 'cod_tipo_documento', width: '50px',  dataType: 'string'},";
 								$column.="{headerText: 'referencia', key: 'referencia', width: '150px',  dataType: 'string'},";
-								$column.="{headerText: 'texto_cabecalho_documento', key: 'texto_cabecalho_documento',  dataType: 'string'},";
-								$column.="{headerText: 'data_lancamento', key: 'data_lancamento', width: '150px',  dataType: 'string'},";
-								$column.="{headerText: 'data_inclusao', key: 'data_inclusao', width: '150px',  dataType: 'string'},";				
-								$column.="{headerText: 'data_base', key: 'data_base', width: '150px',  dataType: 'string'},";
-								$column.="{headerText: 'data_estorno', key: 'data_estorno', width: '150px',  dataType: 'string'},";
-								$column.="{headerText: 'exercicio', key: 'exercicio', width: '100px',  dataType: 'string'},";
-								$column.="{headerText: 'periodo', key: 'periodo', width: '50px',  dataType: 'string'},";
+								$column.="{headerText: 'texto_cabecalho_documento', key: 'texto_cabecalho_documento',width: '200px',  dataType: 'string'},";
+								$column.="{headerText: 'data_lancamento', key: 'data_lancamento', width: '80px',  dataType: 'string'},";
+								$column.="{headerText: 'data_inclusao', key: 'data_inclusao', width: '80px',  dataType: 'string'},";				
+								$column.="{headerText: 'data_base', key: 'data_base', width: '80px',  dataType: 'string'},";
+								$column.="{headerText: 'data_estorno', key: 'data_estorno', width: '80px',  dataType: 'string'},";
+								$column.="{headerText: 'exercicio', key: 'exercicio', width: '50px',  dataType: 'string'},";
+								$column.="{headerText: 'periodo', key: 'periodo', width: '30px',  dataType: 'string'},";
 
 
 
@@ -1990,8 +1981,8 @@ class pesquisa{
 							if ($_POST['data_alteracao_de']!="01/01/1900" || $_POST['data_alteracao_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.cad_documento.`data_alteracao` between '".data($_POST['data_alteracao_de'])."' and '".data($_POST['data_alteracao_ate'])."')";}
 							if ($_POST['numero_ctr_custo']!=""){ $select=$select. "and  cad_centro_custo.numero_centro_custo='".$_POST['numero_ctr_custo']."'";}
 							if ($_POST['numero_conta']!=""){ $select=$select. "and  cad_conta.numero_conta='".$_POST['numero_conta']."'";}
-						
-										
+							
+							$select.= " order by data_base ";
 							$select.= ";";
 								
 							$pesquisa=new pesquisa;
@@ -2002,17 +1993,17 @@ class pesquisa{
 								$column ="{headerText: 'ID', key: 'id', width: '50px',  dataType: 'string'},";
 								$column.="{headerText: 'referencia', key: 'referencia', width: '150px',  dataType: 'string'},";
 								$column.="{headerText: 'texto_cabecalho_documento', key: 'texto_cabecalho_documento', width: '150px',  dataType: 'string'},";
-								$column.="{headerText: 'data_lancamento', key: 'data_lancamento', width: '150px',  dataType: 'string'},";
-								$column.="{headerText: 'data_inclusao', key: 'data_inclusao', width: '150px',  dataType: 'string'},";				
-								$column.="{headerText: 'data_base', key: 'data_base', width: '150px',  dataType: 'string'},";
-								$column.="{headerText: 'data_estorno', key: 'data_estorno', width: '150px',  dataType: 'string'},";
+								$column.="{headerText: 'data_lancamento', key: 'data_lancamento', width: '80px',  dataType: 'string'},";
+								$column.="{headerText: 'data_inclusao', key: 'data_inclusao', width: '80px',  dataType: 'string'},";				
+								$column.="{headerText: 'data_base', key: 'data_base', width: '80px',  dataType: 'string'},";
+								$column.="{headerText: 'data_estorno', key: 'data_estorno', width: '80px',  dataType: 'string'},";
 								$column.="{headerText: 'exercicio', key: 'exercicio', width: '80px',  dataType: 'string'},";
 								$column.="{headerText: 'periodo', key: 'periodo', width: '50px',  dataType: 'string'},";
-								$column.="{headerText: 'debito', key: 'debito', width: '150px',  dataType: 'number'},";
-								$column.="{headerText: 'credito', key: 'credito', width: '150px',  dataType: 'number'},";
-								$column.="{headerText: 'numero_conta', key: 'numero_conta', width: '150px',  dataType: 'string'},";
+								$column.="{headerText: 'debito', key: 'debito', width: '100px',  dataType: 'number'},";
+								$column.="{headerText: 'credito', key: 'credito', width: '100px',  dataType: 'number'},";
+								$column.="{headerText: 'numero_conta', key: 'numero_conta', width: '100px',  dataType: 'string'},";
 								$column.="{headerText: 'conta', key: 'conta', width: '250px',  dataType: 'string'},";
-								$column.="{headerText: 'numero_centro_custo', key: 'numero_centro_custo', width: '150px',  dataType: 'string'},";
+								$column.="{headerText: 'numero_centro_custo', key: 'numero_centro_custo', width: '100px',  dataType: 'string'},";
 								$column.="{headerText: 'centro_custo', key: 'centro_custo', width: '250px',  dataType: 'string'},";
 
 								$tabela="cad_documento";
@@ -2084,7 +2075,8 @@ class pesquisa{
 
 							if ($_POST['ctr_custo_inicio']!=""){ $select=$select. " and (concat(REPLACE(cad_centro_custo.numero_centro_custo,'.',''),repeat(0,20-length(REPLACE(cad_centro_custo.numero_centro_custo,'.',''))))>=concat(REPLACE('".$_POST['ctr_custo_inicio']."','.',''),repeat(0,20-length(REPLACE('".$_POST['ctr_custo_inicio']."','.','')))))";}
 							if ($_POST['ctr_custo_fim']!=""){ $select=$select. " and (concat(REPLACE(cad_centro_custo.numero_centro_custo,'.',''),repeat(9,20-length(REPLACE(cad_centro_custo.numero_centro_custo,'.',''))))<=concat(REPLACE('".$_POST['ctr_custo_fim']."','.',''),repeat(9,20-length(REPLACE('".$_POST['ctr_custo_fim']."','.','')))))";}
-
+							
+							$select=$select. " order by data_base ";
 							//$select.= ";";
 
 							$pesquisa=new pesquisa;
@@ -3164,8 +3156,7 @@ class relatorios{
 		
 	}
 	function balancete(){
-		echo "<div class='uk-grid ' style=' '>";			
-			echo "<div class=' uk-width-1-1    ' style=''>";	
+
 			if(isset($_POST) and isset($_POST['data_inicio']) and isset($_POST['data_fim']) ){			
 			
 				//set variables 
@@ -3180,7 +3171,7 @@ class relatorios{
 			$pesquisa=new pesquisa;
 
 
-			$column="{headerText: 'conta', key: 'conta', width: '350px', dataType: 'string'},";
+			$column ="{headerText: 'conta', key: 'conta', width: '350px', dataType: 'string'},";
 			$column.="{headerText: 'Saldo inicial', key: 'saldo_inicial',width: '100px',  dataType: 'number'},";
 			$column.="{headerText: 'Débito', key: 'debito',width: '100px',  dataType: 'number'},";
 			$column.="{headerText: 'Crédito', key: 'credito',width: '100px',  dataType: 'number'},";
@@ -3214,21 +3205,23 @@ class relatorios{
 				";			
 			
 			//finalizar tabela
-				echo "<div id='relatorio' style='width: 21.0cm;height:29.7cm; padding: 1.5cm 0.5cm;   color: rgb(0, 0, 0) ! important;'>";
-				echo $caption;
+				//echo "<div id='relatorio' style='width: 21.0cm;height:29.7cm; padding: 1.5cm 0.5cm;   color: rgb(0, 0, 0) ! important;'>";
+				//echo $caption;
+			//	echo "<div class='uk-grid ' style=' '>";			
+			//		echo "<div class=' uk-width-1-1    ' style=''>";	
 				echo $table->TreeGrid();
-				echo "</div>";					
+				//echo "</div>";					
 				
 				///////////////////////////////////
-				
+			//		echo "</div>";			
+			//	echo "</div>";		
 				
 				
 				
 			}
 		
 		
-			echo "</div>";			
-		echo "</div>";			
+	
 			
 			
 	
@@ -3375,8 +3368,11 @@ class conciliacao{
 	}
 	function compensar(){
 		echo "<div id='msg'></div>";
-		$pesquisa=new pesquisa;
-		$pesquisa->razao_conciliacao();
+		if($_POST['conta_inicio']!=""){
+			$pesquisa=new pesquisa;
+			$pesquisa->razao_conciliacao();
+		}
+
 		
 	}
 	

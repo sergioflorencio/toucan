@@ -76,6 +76,12 @@
 											<?php $cadastro->cad_menu('imobilizado','0'); ?>
 										</div>	
 									</div>
+									<div class='uk-width-medium-1-2 uk-width-small-1-1 uk-width-large-1-2 uk-panel uk-panel-box'>
+										<div class="uk-form uk-panel uk-panel-box-primary">
+											<h4>Projetos</h4>
+											<?php $cadastro->cad_menu('projetos','0'); ?>
+										</div>	
+									</div>
 									
 
 							
