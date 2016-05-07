@@ -471,6 +471,20 @@ function salvar_cadastro(tabela){
 							}
 						}
 					
+				//validar projeto
+					//1// pegar valor do campo projeto
+						var cod_projeto=document.querySelectorAll("[coluna='cod_projeto']");
+					
+					//2// verificar se existe
+						for(var n=0;n<cod_projeto.length;n++){
+							if(cod_projeto[n].value!=""){
+								verificar_ajax('cod_projeto',cod_projeto[n].value,cod_projeto[n].id);
+							}else{
+								document.getElementById(cod_projeto[n].id).className=" uk-form-small uk-form-danger";
+								document.getElementById(cod_projeto[n].id).setAttribute("conferido", "erro");
+							}
+						}
+					
 				
 				
 				
@@ -539,12 +553,13 @@ function salvar_cadastro(tabela){
 				var codigo_lancamento=document.querySelectorAll("[coluna='codigo_lancamento']");
 				var cod_ctr_custo=document.querySelectorAll("[coluna='cod_ctr_custo']");
 				var cod_conta=document.querySelectorAll("[coluna='cod_conta']");
+				var cod_projeto=document.querySelectorAll("[coluna='cod_projeto']");
 				var historico=document.querySelectorAll("[coluna='historico_']");
 				var montante=document.querySelectorAll("[coluna='montante']");
 				var data_vencimento_liquidacao=document.querySelectorAll("[coluna='data_vencimento_liquidacao']");
 				
 				for(var i=0; i<codigo_lancamento.length;i++){
-					itens+="{'codigo_lancamento':'"+codigo_lancamento[i].value+"','cod_ctr_custo':'"+cod_ctr_custo[i].value+"','cod_conta':'"+cod_conta[i].value+"','historico':'"+historico[i].value+"','montante':'"+montante[i].value+"','data_vencimento_liquidacao':'"+data_vencimento_liquidacao[i].value+"'}";
+					itens+="{'codigo_lancamento':'"+codigo_lancamento[i].value+"','cod_ctr_custo':'"+cod_ctr_custo[i].value+"','cod_conta':'"+cod_conta[i].value+"','cod_projeto':'"+cod_projeto[i].value+"','historico':'"+historico[i].value+"','montante':'"+montante[i].value+"','data_vencimento_liquidacao':'"+data_vencimento_liquidacao[i].value+"'}";
 				}
 				itens = "["+itens+"]";
 				

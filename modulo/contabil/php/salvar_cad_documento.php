@@ -93,6 +93,16 @@
 								$cod_centro_custo=$cod_centro_custo[0];
 								return $cod_centro_custo;
 							}
+							function cod_projeto($cod_projeto){
+								$cod_projeto = explode (" ",$cod_projeto,2);
+								$cod_projeto = $cod_projeto[0];
+								include "config.php";
+								$select="SELECT cod_projeto FROM ".$schema_projetos.".cad_projeto where cod_projeto='".$cod_projeto."' and cod_empresa=".$_SESSION['cod_empresa']." ; ";
+								$resultado=mysql_query($select,$conexao) or die (mysql_error());
+								$cod_projeto = mysql_fetch_array($resultado);
+								$cod_projeto=$cod_projeto[0];
+								return $cod_projeto;
+							}
 						}
 						
 						
@@ -102,14 +112,15 @@
 							$numero_item=$n+1;
 							$cod_conta=$pesquisa_cod_->cod_conta($itens[$n]->cod_conta);
 							$cod_ctr_custo=$pesquisa_cod_->cod_centro_custo($itens[$n]->cod_ctr_custo);
+							$cod_projeto=$pesquisa_cod_->cod_projeto($itens[$n]->cod_projeto);
 							$codigo_lancamento=$itens[$n]->codigo_lancamento;
 							$montante=$itens[$n]->montante;
 							$historico=$itens[$n]->historico;
 							$data_vencimento_liquidacao=data_($itens[$n]->data_vencimento_liquidacao);
 							
 							$tabela="cad_documento_item";
-							$campos_insert="`cod_documento`, `numero_item`,  `codigo_lancamento`,`cod_conta`, `cod_ctr_custo`, `montante`, `historico`, `data_vencimento_liquidacao`";
-							$values = "'".$cod_documento."','".$numero_item."','".$codigo_lancamento."','".$cod_conta."','".$cod_ctr_custo."','".$montante."','".$historico."','".$data_vencimento_liquidacao."'";
+							$campos_insert="`cod_documento`, `numero_item`,  `codigo_lancamento`,`cod_conta`, `cod_ctr_custo`,`cod_projeto`, `montante`, `historico`, `data_vencimento_liquidacao`";
+							$values = "'".$cod_documento."','".$numero_item."','".$codigo_lancamento."','".$cod_conta."','".$cod_ctr_custo."','".$cod_projeto."','".$montante."','".$historico."','".$data_vencimento_liquidacao."'";
 							$sql->insert($tabela,$campos_insert,$values,'N');
 							//echo $values;
 						}

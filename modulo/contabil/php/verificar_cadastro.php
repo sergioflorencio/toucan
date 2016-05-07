@@ -42,6 +42,18 @@
 					//$cod_centro_custo=$cod_centro_custo[0];
 					//return $cod_centro_custo;
 				}
+				function cod_projeto($cod_projeto){
+					$cod_projeto = explode (" ",$cod_projeto,2);
+					$cod_projeto = $cod_projeto[0];
+					include "config.php";
+					$select="SELECT cod_projeto FROM ".$schema_projetos.".cad_projeto where  cod_projeto='".$cod_projeto."' and cod_empresa=".$_SESSION['cod_empresa']." ; ";
+					$resultado=mysql_query($select,$conexao) or die (mysql_error());
+					if(mysql_num_rows($resultado)>=1){return true;}else{return false;}
+					//$cod_projeto = mysql_fetch_array($resultado);
+					//if($cod_projeto==false){return 'false';}else{ return 'true';}
+					//$cod_projeto=$cod_projeto[0];
+					//return $cod_projeto;
+				}
 			}		
 
 			$pesquisa_cod_=new pesquisa_cod_;

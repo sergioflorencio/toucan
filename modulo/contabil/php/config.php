@@ -4,6 +4,7 @@
 	$usuario="root";
 	$senha="";
 	$schema='contabil';
+	$schema_projetos='projetos';
 	$conexao=mysql_connect($servidor,$usuario,$senha)  or die(mysql_error());
 	
 	//DNS

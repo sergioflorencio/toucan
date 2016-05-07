@@ -9,7 +9,7 @@
 ?>
 
 
-<div class='uk-width-1-1 uk-panel uk-panel-box uk-panel-box-primary' style=''  id="msg">
+<div class='uk-width-1-1 uk-panel uk-panel-box uk-panel-box-primary' style='min-height: 500px;'  id="msg">
 
 	<div class="uk-grid" style="text-align: left !important;">
 		<div class="uk-width-1-1">

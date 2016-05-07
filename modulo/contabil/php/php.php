@@ -108,6 +108,25 @@ class selects{
 		
 	
 	}
+	function projeto_autocomplete($id_orcamento){
+		include "config.php";
+		$select = "SELECT ".$schema_projetos.".cad_projeto.cod_projeto as 'text', concat(".$schema_projetos.".cad_projeto.cod_projeto,' - ',".$schema_projetos.".cad_projeto.nome_projeto) as 'value'   FROM ".$schema_projetos.".cad_projeto  where  cod_empresa='".$_SESSION['cod_empresa']."' ;";
+		$resultado=mysql_query($select,$conexao) or die (mysql_error());
+		$bs_projeto="";
+		while($row = mysql_fetch_array($resultado))
+		{
+			$bs_projeto.=json_encode($row);
+		}	
+			$bs_projeto=str_replace("}{","},{",$bs_projeto);
+			$bs_projeto="var bs_projeto=[".$bs_projeto."];";
+			echo $bs_projeto;
+		
+		
+		
+	
+	}
+
+	
 }
 
 class menus{
@@ -707,7 +726,7 @@ class igniteui{
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		///border: 1px solid #ccc; bottom: 10px ! important; position: absolute; top: 60px; left: 10px; right: 10px; overflow: auto;
 " 
-		<div id='grid' style='margin-top: -20px;'></div>
+		<div id='grid' style='margin-top: -20px; resize: none;height: 100%;'></div>
 		<style>
 			tr{
 				cursor:pointer;
@@ -1854,17 +1873,17 @@ class pesquisa{
 								$json=$pesquisa->json($select);
 							
 
-								$column ="{headerText: 'ID', key: 'id', width: '50px',  dataType: 'string'},";
-								$column.="{headerText: 'cod_documento', key: 'cod_documento', width: '100px',  dataType: 'string'},";
-								$column.="{headerText: 'cod_tipo_documento', key: 'cod_tipo_documento', width: '50px',  dataType: 'string'},";
-								$column.="{headerText: 'referencia', key: 'referencia', width: '150px',  dataType: 'string'},";
+								$column ="{headerText: 'ID', key: 'id', width: '50px',  dataType: 'number'},";
+								$column.="{headerText: 'cod_documento', key: 'cod_documento', width: '100px',  dataType: 'number'},";
+								$column.="{headerText: 'cod_tipo_documento', key: 'cod_tipo_documento', width: '50px',  dataType: 'number'},";
+								$column.="{headerText: 'referencia', key: 'referencia', width: '200px',  dataType: 'string'},";
 								$column.="{headerText: 'texto_cabecalho_documento', key: 'texto_cabecalho_documento',width: '200px',  dataType: 'string'},";
 								$column.="{headerText: 'data_lancamento', key: 'data_lancamento', width: '80px',  dataType: 'string'},";
 								$column.="{headerText: 'data_inclusao', key: 'data_inclusao', width: '80px',  dataType: 'string'},";				
 								$column.="{headerText: 'data_base', key: 'data_base', width: '80px',  dataType: 'string'},";
 								$column.="{headerText: 'data_estorno', key: 'data_estorno', width: '80px',  dataType: 'string'},";
-								$column.="{headerText: 'exercicio', key: 'exercicio', width: '50px',  dataType: 'string'},";
-								$column.="{headerText: 'periodo', key: 'periodo', width: '30px',  dataType: 'string'},";
+								$column.="{headerText: 'exercicio', key: 'exercicio', width: '80px',  dataType: 'number'},";
+								$column.="{headerText: 'periodo', key: 'periodo', width: '50px',  dataType: 'number'},";
 
 
 
@@ -1928,7 +1947,7 @@ class pesquisa{
 	function razao($id){
 
 				echo "<div class='uk-grid ' style=' '>";			
-					echo "<div class=' uk-width-1-1    ' style=''>";
+					echo "<div class=' uk-width-1-1    ' style='text-align: left; bottom: 0px ! important; position: absolute; top: 42px;'>";
 						if(isset($_POST)==true and $_POST!=null){
 							include "config.php";		
 								
@@ -1953,18 +1972,22 @@ class pesquisa{
 										cad_conta.descricao as conta,
 										cad_documento_item.cod_ctr_custo,
 										concat('#',cad_centro_custo.numero_centro_custo) as numero_centro_custo,
-										cad_centro_custo.descricao as centro_custo
+										cad_centro_custo.descricao as centro_custo,
+										concat('#',cad_projeto.numero_projeto) as numero_projeto,
+										cad_projeto.nome_projeto as nome_projeto
 									
 									FROM 
 										".$schema.".cad_documento,
 										".$schema.".cad_documento_item,
 										".$schema.".cad_conta,
-										".$schema.".cad_centro_custo
+										".$schema.".cad_centro_custo,
+										".$schema_projetos.".cad_projeto
 									
 									WHERE 
 										cad_documento.cod_documento=cad_documento_item.cod_documento and 
 										cad_documento_item.cod_conta=cad_conta.cod_conta and
 										cad_documento_item.cod_ctr_custo=cad_centro_custo.cod_centro_custo and
+										cad_documento_item.cod_projeto=cad_projeto.cod_projeto and
 										cad_documento.cod_empresa='".$_SESSION['cod_empresa']."' ";					
 										
 										
@@ -1981,6 +2004,7 @@ class pesquisa{
 							if ($_POST['data_alteracao_de']!="01/01/1900" || $_POST['data_alteracao_ate']!="01/01/9999"){ $select=$select. "and (`".$schema."`.cad_documento.`data_alteracao` between '".data($_POST['data_alteracao_de'])."' and '".data($_POST['data_alteracao_ate'])."')";}
 							if ($_POST['numero_ctr_custo']!=""){ $select=$select. "and  cad_centro_custo.numero_centro_custo='".$_POST['numero_ctr_custo']."'";}
 							if ($_POST['numero_conta']!=""){ $select=$select. "and  cad_conta.numero_conta='".$_POST['numero_conta']."'";}
+							if ($_POST['numero_projeto']!=""){ $select=$select. "and  cad_projeto.numero_projeto='".$_POST['numero_projeto']."'";}
 							
 							$select.= " order by data_base ";
 							$select.= ";";
@@ -2005,6 +2029,8 @@ class pesquisa{
 								$column.="{headerText: 'conta', key: 'conta', width: '250px',  dataType: 'string'},";
 								$column.="{headerText: 'numero_centro_custo', key: 'numero_centro_custo', width: '100px',  dataType: 'string'},";
 								$column.="{headerText: 'centro_custo', key: 'centro_custo', width: '250px',  dataType: 'string'},";
+								$column.="{headerText: 'numero_projeto', key: 'numero_projeto', width: '100px',  dataType: 'string'},";
+								$column.="{headerText: 'nome_projeto', key: 'nome_projeto', width: '250px',  dataType: 'string'},";
 
 								$tabela="cad_documento";
 								$combo="";
@@ -2126,7 +2152,7 @@ class lancamento{
 	function listar_cad_documento_item($cod_documento){
 		/////////////////////////////////////////////////////////////////////////////
 	
-		function tbody($codigo_lancamento,$cod_ctr_custo,$cod_conta,$historico,$montante,$data_vencimento_liquidacao){
+		function tbody($codigo_lancamento,$cod_projeto,$cod_ctr_custo,$cod_conta,$historico,$montante,$data_vencimento_liquidacao){
 
 				if(intval($_GET['id'])>0){
 					$disabled=" disabled ";
@@ -2138,6 +2164,11 @@ class lancamento{
 		return "<tr id='rowToClone'>
 						<td class='uk-form-row' style='width: 20px;padding: 0px 6px;'>
 							<input ".$disabled." coluna='codigo_lancamento' id='codigo_lancamento' placeholder='' onchange='calcular_total_debito_credito();' onkeyup='calcular_total_debito_credito();' class='uk-form-small' type='text' style='width: 100%;' value='".$codigo_lancamento."'></td>
+						<td class='uk-form-row' style='width: 150px;padding: 0px 6px;'>
+							<div class='uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_projeto}' style='width: 100%;'>
+								<input ".$disabled." coluna='cod_projeto' id='cod_projeto' placeholder='' class='uk-form-small' type='text' style='width: 100%;' value='".$cod_projeto."'>
+							</div>
+						</td>
 						<td class='uk-form-row' style='width: 150px;padding: 0px 6px;'>
 							<div class='uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_ctrcusto}' style='width: 100%;'>
 								<input ".$disabled." coluna='cod_ctr_custo' id='cod_ctr_custo' placeholder='' class='uk-form-small' type='text' style='width: 100%;' value='".$cod_ctr_custo."'>
@@ -2159,7 +2190,7 @@ class lancamento{
 		if(intval($_GET['id'])>0){
 			$tbody="";
 		}else{
-			$tbody=tbody('','' ,'','','','');
+			$tbody=tbody('','' ,'' ,'','','','');
 			
 		}
 		
@@ -2171,6 +2202,7 @@ class lancamento{
 							cad_documento_item.numero_item, 
 							cad_documento_item.codigo_lancamento,
 							
+							concat(cad_projeto.cod_projeto,' - ', cad_projeto.nome_projeto) as cod_projeto,
 							concat(cad_conta.numero_conta,' - ', cad_conta.descricao) as cod_conta,
 							concat(cad_centro_custo.numero_centro_custo,' - ', cad_centro_custo.descricao) as cod_ctr_custo,
 
@@ -2181,11 +2213,13 @@ class lancamento{
 							DATE_FORMAT(data_vencimento_liquidacao,'%d/%m/%Y') as data_vencimento_liquidacao,
 							cod_documento_compensacao
 					 FROM 
+						".$schema_projetos.".cad_projeto, 
 						".$schema.".cad_documento_item, 
 						".$schema.".cad_conta,
 						".$schema.".cad_centro_custo 
 						
 						where 
+							cad_documento_item.cod_projeto=cad_projeto.cod_projeto and
 							cad_documento_item.cod_conta=cad_conta.cod_conta and
 							cad_documento_item.cod_ctr_custo=cad_centro_custo.cod_centro_custo and
 							cod_documento='".$cod_documento."'  and cad_documento_item.cod_empresa=".$_SESSION['cod_empresa']." ; ";
@@ -2194,13 +2228,18 @@ class lancamento{
 		$resultado=mysql_query($select,$conexao) or die (mysql_error());
 		while($row = mysql_fetch_array($resultado))
 		{
-			$tbody.=tbody($row['codigo_lancamento'],$row['cod_ctr_custo'] ,$row['cod_conta'] ,$row['historico'] ,$row['montante'] ,$row['data_vencimento_liquidacao'] );
+			$tbody.=tbody($row['codigo_lancamento'],$row['cod_projeto'] ,$row['cod_ctr_custo'] ,$row['cod_conta'] ,$row['historico'] ,$row['montante'] ,$row['data_vencimento_liquidacao'] );
 		}	
 	
 	
 	
 	
 			echo	" <div>
+						<script>";
+							$selects=new selects;
+							$selects-> projeto_autocomplete('');
+
+			echo		"</script>
 						<script>";
 							$selects=new selects;
 							$selects-> ctrcusto_autocomplete('');
@@ -2217,6 +2256,7 @@ class lancamento{
 							<thead>
 								<tr>
 									<th style='width: 20px;'>CL</th>
+									<th style='width: 150px;'>Projeto</th>
 									<th style='width: 150px;'>Ctr. Custo</th>
 									<th style='width: 150px;'>Conta</th>
 									<th style='width: 200px;'>Descrição</th>
@@ -2225,7 +2265,7 @@ class lancamento{
 									<th style='width: 30px;'></th>
 								</tr>
 							</thead>
-				<tbody>
+				<tbody style='min-height: 250px;'>
 					".$tbody."
 				</tbody>
 			</table>
@@ -2752,10 +2792,18 @@ class relatorios{
 												$inputs->input_form_row('','numero_ctr_custo','Numero Ctr. Custo',"","");
 												echo"</div></li>";
 											
-												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
-												$inputs->input_form_row('','cod_documento','Cód. de documento',"","");
-												echo"</div>
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
 													<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','numero_projeto','Numero Projeto',"","");
+												echo"</div>												
+													<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','cod_documento','Cód. de documento',"","");
+												echo"</div>
+												
+												</li>";
+												
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
+													<div class='uk-width-1-1'>";
 												$inputs->input_form_row('','referencia','Referência',"","");
 												echo"</div></li>";
 												

@@ -15,12 +15,11 @@
 	$lancamento->listar_cad_documento_item($id);
 
 ?>
-<hr class="uk-article-divider" style="margin-bottom: 10px;">
 
 
-	<div class="">
+	<div class="" style="bottom: 0px; position: absolute; width: 100%;">
 		<div class=" uk-tab-flip">	
-			<form class="uk-form">
+			<form class="uk-form" style="height: 100%;">
 				<div class="uk-grid">			
 					<span class="uk-form-controls-condensed uk-width-1-5 uk-push-4-5" style="text-align: right;max-width: 230px !important;min-width: 120px !important;">
 						Total de Débitos 
