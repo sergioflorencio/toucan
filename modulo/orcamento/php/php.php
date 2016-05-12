@@ -1,1856 +1,1478 @@
-<?php
+﻿<?php
+class selects{
+	function _____modelo____($sql_select,$campo_id,$id,$campo_descricao,$label){
+		include "config.php";
+					if ($id!="" and $id!=0){
+						$sql_select.=" where `".$campo_id."`=".$id.";";
+					}
+					$resultado_option=mysql_query($sql_select,$conexao) or die (mysql_error());
+					$options="<option value=''></option>";
+					while($row_option = mysql_fetch_array($resultado_option))
+					{
+						if(isset($id) and $row_option[$campo_id]==$id){
+							$options.= "<option value='".$row_option[$campo_id]."' selected >".$row_option[$campo_id]." - ".$row_option[$campo_descricao]."</option>";
+						}else{
+							$options.= "<option value='".$row_option[$campo_id]."'>".$row_option[$campo_id]." - ".$row_option[$campo_descricao]."</option>";
+						}
+					}	
+						echo "<label class='uk-form-label' for='".$campo_id."'>".$label."</label><select class='uk-form-small' id='".$campo_id."' name='".$campo_id."' style='width: 100%;'>".$options."</select>";
+	}
+	function _____modelo__2__($sql_select,$campo_id,$id,$campo_descricao,$label){
+		include "config.php";
 
+					$resultado_option=mysql_query($sql_select,$conexao) or die (mysql_error());
+					$options="<option value=''></option>";
+					while($row_option = mysql_fetch_array($resultado_option))
+					{
+						if(isset($id) and $row_option[$campo_id]==$id){
+							$options.= "<option value='".$row_option[$campo_id]."' selected >".$row_option[$campo_id]." - ".$row_option[$campo_descricao]."</option>";
+						}else{
+							$options.= "<option value='".$row_option[$campo_id]."'>".$row_option[$campo_id]." - ".$row_option[$campo_descricao]."</option>";
+						}
+					}	
+						echo "<label class='uk-form-label' for='".$campo_id."'>".$label."</label><select class='uk-form-small' id='".$campo_id."' name='".$campo_id."' style='width: 100%;'>".$options."</select>";
+	}
+	function modelo($id,$label){
+		include "config.php";		
+		$sql_select="SELECT * FROM ".$schema.".cad_fornecedor";
+		$campo_id="cod_fornecedor";
+		$campo_descricao="nome_razao_social";
+		
+		$select=new selects;
+		$select->_____modelo____($sql_select,$campo_id,$id,$campo_descricao,$label);
+	}
+	function cod_projeto($id,$label){
+		include "config.php";		
+		$sql_select="SELECT * FROM ".$schema_projeto.".cad_projeto";
+		$campo_id="cod_projeto";
+		$campo_descricao="nome_projeto";
+		
+		$select=new selects;
+		$select->_____modelo____($sql_select,$campo_id,$id,$campo_descricao,$label);
+	}
+	function cod_orcamento($id,$label){
+		include "config.php";		
+		$sql_select="
+					SELECT 
+						cad_orcamento.cod_orcamento,
+						cad_orcamento.cod_projeto,
+						cad_orcamento.data_inicio,
+						cad_orcamento.data_fim,
+						cad_projeto.nome_projeto,
+						concat(DATE_FORMAT(cad_orcamento.data_inicio,'%d/%m/%Y'),' - ', DATE_FORMAT(cad_orcamento.data_fim,'%d/%m/%Y'),' - ',cad_projeto.nome_projeto) as nome_orcamento
+
+					FROM 
+						".$schema.".cad_orcamento,".$schema_projeto.".cad_projeto
+
+					WHERE
+						cad_orcamento.cod_projeto=cad_projeto.cod_projeto and
+						cad_orcamento.cod_empresa='".$_SESSION['cod_empresa']."'";
+						
+		$campo_id="cod_orcamento";
+		$campo_descricao="nome_orcamento";
+		
+		$select=new selects;
+		$select->_____modelo__2__($sql_select,$campo_id,$id,$campo_descricao,$label);
+	}
+	function cod_projeto_centro_custo($id,$label){
+		include "config.php";		
+		$sql_select="
+						SELECT 
+							cad_projeto_centro_custo.*,
+							cad_centro_custo.numero_centro_custo,
+							cad_centro_custo.descricao,
+							concat(cad_centro_custo.numero_centro_custo,' - ',cad_centro_custo.descricao) as descircao_
+						FROM 
+							".$schema_projeto.".cad_projeto_centro_custo,
+							".$schema_contabil.".cad_centro_custo 
+						
+						where 
+							cad_projeto_centro_custo.cod_centro_custo=cad_centro_custo.cod_centro_custo 
+							and `check`='true' 
+							and cod_projeto='".$id."' and
+							cad_centro_custo.cod_empresa=".$_SESSION['cod_empresa']." and
+							cad_projeto_centro_custo.cod_empresa=".$_SESSION['cod_empresa']."
+		";
+		$campo_id="cod_centro_custo";
+		$campo_descricao="descircao_";
+		
+		$select=new selects;
+		$select->_____modelo__2__($sql_select,$campo_id,$id,$campo_descricao,$label);
+	}
+	function cod_orcamento_centro_custo($id,$label){
+		include "config.php";		
+		$sql_select="
+						SELECT 
+							cad_projeto_centro_custo.*,
+							cad_centro_custo.numero_centro_custo,
+							cad_centro_custo.descricao,
+							concat(cad_centro_custo.numero_centro_custo,' - ',cad_centro_custo.descricao) as descircao_
+						FROM 
+							".$schema_projeto.".cad_projeto_centro_custo,
+							".$schema_contabil.".cad_centro_custo, 
+							".$schema.".cad_orcamento 
+						
+						where 
+							cad_projeto_centro_custo.cod_centro_custo=cad_centro_custo.cod_centro_custo 
+							and cad_projeto_centro_custo.cod_projeto=cad_orcamento.cod_projeto  
+							and cad_orcamento.cod_orcamento='".$id."'
+							and cad_projeto_centro_custo.`check`='true' 
+							and cad_centro_custo.cod_empresa=".$_SESSION['cod_empresa']." 
+							and cad_projeto_centro_custo.cod_empresa=".$_SESSION['cod_empresa']."
+		";
+		$campo_id="cod_centro_custo";
+		$campo_descricao="descircao_";
+		
+		$select=new selects;
+		$select->_____modelo__2__($sql_select,$campo_id,$id,$campo_descricao,$label);
+	}
+
+	
+	
+}
+
+class menus{
+	
+	function navegador_($valores,$id){
+		echo "
+			<div class='uk-width-1-4' style=''>
+				<a href='?act=cadastros&mod=".$_GET['mod']."&id=".$valores['min']."' class='uk-button'><i class='uk-icon-fast-backward'></i> primeiro</a>
+				<a href='?act=cadastros&mod=".$_GET['mod']."&id=".max($id-1,$valores['min']) ."' class='uk-button'><i class='uk-icon-backward'></i> anterior</a>
+				<a href='?act=cadastros&mod=".$_GET['mod']."&id=".min($id+1,$valores['max'])."' class='uk-button'><i class='uk-icon-forward'></i> próximo</a>
+				<a href='?act=cadastros&mod=".$_GET['mod']."&id=".$valores['max']."' class='uk-button'><i class='uk-icon-fast-forward'></i> útimo</a>
+			</div>";
+	}
+	function submenu(){
+		echo "
+					<li>
+						<div class='uk-button-group'>
+							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=pesquisa&mod=".$_GET['mod']."&id='  style=''><i class='uk-icon-binoculars'></i> Pesquisar</a>
+							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=cadastros&mod=".$_GET['mod']."&id=' style=''><i class='uk-icon-file-o'></i> Novo</a> 
+							<a class='uk-button uk-button-mini uk-button-primary ' href='#' id='bt_salvar'  style=''><i class='uk-icon-save '></i> Salvar</a>
+						</div>		
+					</li>
+					<script>$('#bt_salvar').click(function(){document.getElementById('form_cadastro').submit();});</script>	
+
+		";
+	}
+	function submenu_1(){
+		echo "
+					<li>
+						<div class='uk-button-group'>
+							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=pesquisa&mod=".$_GET['mod']."&id='  style=''><i class='uk-icon-binoculars'></i> Pesquisar</a>
+							<a class='uk-button uk-button-mini uk-button-primary ' href='#' id='bt_salvar'  style=''><i class='uk-icon-save '></i> Salvar</a>
+						</div>		
+					</li>
+					<script>$('#bt_salvar').click(function(){document.getElementById('form_cadastro').submit();});</script>	
+
+		";
+	}
+	function submenu_2(){
+		echo "
+					<li>
+						<div class='uk-button-group'>
+							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=pesquisa&mod=".$_GET['mod']."&id='  style=''><i class='uk-icon-binoculars'></i> Pesquisar</a>
+							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=editar&mod=".$_GET['mod']."&id=' style=''><i class='uk-icon-file-o'></i> Novo</a> 
+							<a class='uk-button uk-button-mini uk-button-primary ' href='#' id='bt_salvar' style=''><i class='uk-icon-save '></i> Salvar</a>
+						</div>		
+					</li>
+					<script>$('#bt_salvar').click(function(){document.getElementById('form_cadastro').submit();});</script>	
+
+		";
+	}
+	function submenu_3(){
+		echo "
+					<li>
+						<div class='uk-button-group'>
+							<a class='uk-button uk-button-mini uk-button-primary ' href='?act=pesquisa&mod=".$_GET['mod']."&id='  style=''><i class='uk-icon-binoculars'></i> Pesquisar</a>
+						</div>		
+					</li>
+					<script>$('#bt_salvar').click(function(){document.getElementById('form_cadastro').submit();});</script>	
+
+		";
+	}	
+	function submenu_4(){
+
+	//print_r($_POST);
+	//$numero_conta = explode (" ",$numero_conta,2);
+	//$numero_conta = $numero_conta[0];
+	include "config.php";
+	$select="
+			SELECT
+				cad_projeto.cod_projeto,
+				cad_projeto.nome_projeto,
+				cod_orcamento,
+				DATE_FORMAT(cad_orcamento.data_inicio,'%d/%m/%Y') as data_inicio, 
+				DATE_FORMAT(cad_orcamento.data_fim,'%d/%m/%Y') as data_fim
+			
+			FROM 
+				".$schema.".cad_orcamento,
+				".$schema_projeto.".cad_projeto 
+				
+			WHERE
+				cad_orcamento.cod_projeto=cad_projeto.cod_projeto
+				and cad_orcamento.cod_orcamento='".$_GET['id']."'
+				and cad_orcamento.cod_empresa=".$_SESSION['cod_empresa']." ; 
+				";
+	$resultado=mysql_query($select,$conexao) or die (mysql_error());
+	$projeto = mysql_fetch_array($resultado);
+
+		echo "
+					<li>
+						<div class=' uk-form uk-form-horizontal' >
+							<input type='text' id='cod_orcamento' value='".$projeto['cod_orcamento']."' style='height: 25px;font-size: 12px ! important; width: 75px; padding: 2px ! important;' disabled> | 
+							<input type='text' id='nome_projeto' value='".$projeto['nome_projeto']."' style='height: 25px;font-size: 12px ! important; width: 250px; padding: 2px ! important;' disabled>
+						</div>		
+					</li>
+		";
+		echo "
+					<li>
+						<div class='uk-button-group uk-form uk-form-horizontal'>
+							";
+							$selects=new selects;
+							$selects->cod_projeto_centro_custo($_GET['id'],'Projeto');
+						
+		echo "
+						</div>		
+					</li>
+					<li>
+						<div class='uk-button-group'>
+							<a class='uk-button uk-button-mini uk-button-primary ' href='#' onclick='salvar_orcamento();' style=''><i class='uk-icon-save '></i> Salvar</a>
+						</div>		
+					</li>					
+		";
+	}	
+	function submenu_5(){
+		echo "
+					<li>
+						<form id='form_pesquisa' method='post'>
+							<div class='uk-button-group'>
+							";
+								$selects=new selects;
+								$selects->cod_orcamento('','Projeto');
+					echo "
+							<script>$('#cod_orcamento').change(function(){pesquisar_cod_orcamento_centro_custo();});</script>	
+							</div>		
+
+							<div class='uk-button-group' id='cod_orcamento_centro_custo'>
+							</div>	
+						</form>	
+					</li>
+					<li>
+						<div class='uk-button-group' id=''>
+							<a class='uk-button uk-button-mini uk-button-primary ' href='#' onclick='' id='bt_salvar' style=''><i class='uk-icon-binoculars'></i> Pesquisar</a>
+							<script>$('#bt_salvar').click(function(){document.getElementById('form_pesquisa').submit();});</script>	
+						</div>		
+					</li>
+					
+					
+					";
+					
+					
+					
+					
+					
+	}
+
+
+	function submenu_editar(){
+		echo "
+		<li>
+			<div class='uk-button-group'>
+				<a class='uk-button uk-button-mini uk-button-primary ' href='?act=pesquisa&mod=".$_GET['mod']."&id='  style=''><i class='uk-icon-binoculars'></i> Pesquisar</a>
+				<a class='uk-button uk-button-mini uk-button-primary ' href='?act=".$_GET['act']."&mod=".$_GET['mod']."&id=' style=''><i class='uk-icon-file-o'></i> Novo</a> 
+				<a class='uk-button uk-button-mini uk-button-primary ' href='#' id='bt_salvar' onclick=salvar_cadastro('".$_GET['mod']."'); style=''><i class='uk-icon-save '></i> Salvar</a>
+			</div>		
+		</li>
+		";
+
+	}
+	function submenu_cad_documento(){
+		if($_GET['id']>0 or $_GET['id']!=""){$disabled=" disabled ";$disabled_="  ";}else{$disabled="  ";$disabled_=" disabled ";}
+		echo "
+				<li>
+					<div class='uk-button-group'>
+						<a class='uk-button uk-button-mini uk-button-primary' href='?act=pesquisa&mod=".$_GET['mod']."&id=' class='uk-button-link '  style=''><i class='uk-icon-binoculars'></i> Pesquisar</a> 
+						<a class='uk-button uk-button-mini uk-button-primary' href='?act=cadastros&mod=".$_GET['mod']."&id=' class='uk-button-link ' style=''><i class='uk-icon-file'></i> Novo documento</a> 
+						<button class='uk-button uk-button-mini uk-button-primary' type='button' onclick='salvar_documento()' ".$disabled."><i class='uk-icon-check'></i> Salvar</button>
+					</div>
+					<div class='uk-button-group'>
+						<button class='uk-button uk-button-mini uk-button-success' data-uk-modal=".'"'."{target:'#div_importar_lancamentos'}".'"'."  ".$disabled."><i class='uk-icon-sign-in'></i>  Importar lançamentos</button>
+					</div>
+					
+					<div class='uk-button-group'>
+						<button class='uk-button uk-button-mini uk-button-danger' type='button' onclick=cloneRow('tableToModify')  ".$disabled." ><i class='uk-icon-plus-circle'></i> Nova linha</button>
+						<button class='uk-button uk-button-mini uk-button-danger' type='button' onclick=delAllRow('tableToModify')  ".$disabled."><i class='uk-icon-times'></i> Excluir linhas</button>
+					</div>
+					
+					<div class='uk-button-group'>
+						<a class='uk-button uk-button-mini uk-button-danger' type='button' href='?act=lancamento&mod=estornar_documento&id=".$_GET['id']."' ".$disabled_." ><i class='uk-icon-eraser'></i> Estornar documento</a>
+					</div>
+				</li>
+		";
+	}
+	function menu_exportar($id_grid,$filtro){
+
+	
+	//	echo "<ul class='uk-subnav uk-subnav-line uk-navbar-flip' style='margin-bottom: 10px;'>";
+		
+		if($filtro!=""){
+			echo	"<li>
+						<div class='uk-button-dropdown' data-uk-dropdown={justify:'#principal',mode:'click'} >
+							<a href='#'><i class='uk-icon-filter'></i> Filtro <i class='uk-icon-caret-down'></i></a>
+								<div style='' class='uk-dropdown'>		
+								";
+			$relatorios=new relatorios;
+			$filtro=$relatorios->filtros($filtro);					
+		echo "
+								</div>
+						</div>							
+				</li>	";	
+		}				
+				
+		echo "
+				<li>
+					<div class='uk-button-group'>
+						<a class='uk-button uk-button-mini uk-button-primary' href='#' onclick=exportar('xls','".$id_grid."','html'); ><i class='uk-icon-file-excel-o'></i> .xls </a>
+						<a class='uk-button uk-button-mini uk-button-primary' href='#' onclick=exportar('doc','".$id_grid."','html'); ><i class='uk-icon-file-word-o'></i> .doc </a>
+					</div>
+				</li>
+				<li id='arquivo_gerado'>
+				</li>
+			
+		";
+	}
+	function menu(){
+
+		$relatorios=new relatorios;
+		
+		if(isset($_GET['act']) and isset($_GET['mod']) and isset($_GET['id'])){
+		
+			switch ($_GET['act']) {
+
+				case "pesquisa":
+					switch ($_GET['mod']) {
+						
+						case "cad_orcamento":
+							$this->submenu();
+						break;
+
+							
+						case "orcamento":
+							//$this->submenu_1();
+						break;
+							
+						case "cad_documento":
+							$relatorios->filtros(1);
+							echo "<li  data-uk-tooltip={pos:'right'} title='Novo'><div class='uk-button-group'><a href='?act=cadastros&mod=".$_GET['mod']."&id=' class='uk-button uk-button-mini uk-button-primary ' style=''><i class='uk-icon-file'></i> Incluir novo cadastro</a></div></li>";
+							$this->menu_exportar('grid',0);
+						break;
+							
+						case "razao":
+							$relatorios->filtros(5);
+							$this->menu_exportar('grid',0);
+						break;
+							
+						default:
+							$this->submenu();
+						break;
+					}				
+				break;
+				
+				case "cadastros":
+					switch ($_GET['mod']) {
+						case "cad_orcamento_lancamento":
+							$this->submenu_4();
+						break;
+						
+						default:
+							$this->submenu();
+						break;
+					}
+				break;
+				
+				case "editar":
+					switch ($_GET['mod']) {
+						
+						case "cad_conta":
+							$this->submenu_editar();
+						break;
+						
+						case "cad_centro_custo":
+							$this->submenu_editar();
+						break;
+						
+						default:
+						break;
+					}
+				break;
+				
+				case "relatorios":
+					switch ($_GET['mod']) {
+						case "orcamento":
+							$this->submenu_5();
+							$this->menu_exportar('grid','');
+						break;
+
+
+						default:
+						break;
+					}				
+				break;
+				
+				case "conciliacao":
+					switch ($_GET['mod']) {
+						case "conciliar":
+							$relatorios->filtros(6);
+							$this->menu_exportar('grid',0);
+						break;
+						case "compensar":
+							$relatorios->filtros(6);
+							echo "<li>
+										<span class='uk-form'>Diferença: <input type=text value=0 id=diferenca class='uk-form-small' style='text-align: right; margin-top: -3px;' readonly></span>
+								</li>";
+							echo "<li>
+										<div class='uk-button-group'>
+											<button class='uk-button uk-button-mini uk-button-success' onclick=compensacao_selecionar_todos(false);><i class='uk-icon-square-o'></i></button>
+											<button class='uk-button uk-button-mini uk-button-success' onclick=compensacao_selecionar_todos(true);><i class='uk-icon-check-square-o'></i></button>
+										</div>
+								</li>";
+							echo "<li>
+										<button class='uk-button uk-button-mini uk-button-danger' onclick=compensacao_compensar();><i class='uk-icon-magnet'></i> Compensar</button>
+								</li>";
+								//compensacao_selecionar_todos(status)
+							$this->menu_exportar('grid',0);
+
+						break;
+							
+						default:
+						break;
+					}
+				break;
+			
+				default:	
+				
+				break;
+				
+				
+			}
+		
+		
+					
+		 }
+
+
+
+	
+	
+	
+	}
+	
+}
 
 class sql{
-	public function update($schema,$table,$campos,$where){
+	function min_max($tabela,$campo){
 		include "config.php";
-		if(isset($_SESSION)){$uid=$_SESSION['uid'];$username=$_SESSION['username'];}else{$uid=0;$username='';}
-		$consulta="UPDATE `".$schema."`.`".$table."` SET ".$campos.", data_ultima_alteracao=Now(),usuario_ultima_alteracao=".$uid." WHERE ".$where.";";
+		$select="
+			SELECT 
+				min(`".$campo."`) as min, 
+				max(`".$campo."`) as max 
+			FROM 
+				".$schema.".".$tabela.";		
+		";
+
+		$resultado=mysql_query($select,$conexao) or die (mysql_error());
+		$valores = mysql_fetch_array($resultado);
+		 return $valores;
+	}
+	public function update($table,$campos,$where,$msg){
+		
+		include "config.php";
+		if(isset($_SESSION['cod_usuario'])){$uid=$_SESSION['cod_usuario'];$username=$_SESSION['user'];}else{$uid=0;$username='';}
+		$consulta="UPDATE `".$schema."`.`".$table."` SET ".$campos.", cod_empresa='".$_SESSION['cod_empresa']."', data_ultima_alteracao=Now(),usuario_ultima_alteracao=".$_SESSION['cod_usuario']." WHERE ".$where.";";
 		$update=mysql_query($consulta,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main uk-width-medium-1-2 uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	
-				echo "
-		
-			<div class='uk-alert uk-alert-success tm-main uk-width-medium-1-1 uk-container-center' data-uk-alert=''>
+		if($msg=='S'){
+		echo "
+			<div class='uk-alert uk-alert-success tm-main uk-width-medium-1-1 uk-container-center' data-uk-alert='' style=''>
 				<a href='' class='uk-alert-close uk-close'></a>
 				<p>O registro foi salvo com sucesso!</p>
-			</div>
+			</div>";
+		}
 
-			
-		";//echo $consulta;
+		//echo $consulta;
 	}
-	public function insert($schema,$table,$campos,$values){
+	public function insert($table,$campos,$values,$msg){
 		include "config.php";
-		if(isset($_SESSION)){$uid=$_SESSION['uid'];$username=$_SESSION['username'];}else{$uid=0;$username='';}
-		$consulta="INSERT INTO `".$schema."`.".$table." (".$campos.")  VALUES (".$values.");"; 
+		if(isset($_SESSION['cod_usuario'])){$uid=$_SESSION['cod_usuario'];$username=$_SESSION['user'];}else{$uid=0;$username='';}
+		$consulta="INSERT INTO `".$schema."`.".$table." (".$campos.",`cod_empresa`,`usuario_inclusao`)  VALUES (".$values.",'".$_SESSION['cod_empresa']."','".$_SESSION['cod_usuario']."');"; 
 		$insert=mysql_query($consulta,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main  uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	;	
-
-				echo "
-		
-			<div class='uk-alert uk-alert-success tm-main  uk-container-center' data-uk-alert=''>
+		if($msg=='S'){
+		echo "
+			<div class='uk-alert uk-alert-success tm-main uk-width-medium-1-1 uk-container-center' data-uk-alert='' style=''>
 				<a href='' class='uk-alert-close uk-close'></a>
 				<p>O registro foi salvo com sucesso!</p>
-			</div>
-
-			
-		";
+			</div>";
+		}
 	}
-	public function delete($schema,$table,$where){
+	public function insert_($table,$campos,$values,$msg){
 		include "config.php";
-		$consulta="DELETE FROM `".$schema."`.".$table." WHERE ".$where.";";
+		if(isset($_SESSION['cod_usuario'])){$uid=$_SESSION['cod_usuario'];$username=$_SESSION['user'];}else{$uid=0;$username='';}
+		$consulta="INSERT INTO `".$schema."`.".$table." (".$campos.",`cod_empresa`,`usuario_inclusao`)  VALUES ".$values.";"; 
+		$insert=mysql_query($consulta,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main  uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	;	
+		if($msg=='S'){
+		echo "
+			<div class='uk-alert uk-alert-success tm-main uk-width-medium-1-1 uk-container-center' data-uk-alert='' style=''>
+				<a href='' class='uk-alert-close uk-close'></a>
+				<p>O registro foi salvo com sucesso!</p>
+			</div>";
+		}
+	}
+	public function delete($table,$where,$msg){
+		include "config.php";
+		$consulta="DELETE FROM ".$schema.".".$table." WHERE ".$where.";";
 		$delete=mysql_query($consulta,$conexao) or die ("<div class='uk-alert uk-alert-danger  tm-main  uk-container-center'>".mysql_error()."<br><br>Consulta<br>".$consulta."</div>");	;	
-				echo "
-			<div class='uk-alert uk-alert-success tm-main uk-container-center' data-uk-alert=''>
+		if($msg=='S'){
+		echo "
+			<div class='uk-alert uk-alert-success tm-main uk-width-medium-1-1 uk-container-center' data-uk-alert='' style='margin: -15px 35px 30px;'>
 				<a href='' class='uk-alert-close uk-close'></a>
-				<p>O registro foi salvo com sucesso!</p>
+				<p>O registro foi excluido com sucesso!</p>
+			</div>";
+		}
+
+	}
+	public function salvar($tabela,$key_id){
+				
+		function formatar_data($data){
+			if($data!=null){
+				$date = str_replace('/', '-', $data);
+				return date('Y-m-d', strtotime($data));
+			}
+		}
+
+		$keys=array_keys($_POST);
+
+		for($i=0;$i<count($keys);$i++){
+			if(strpos($keys[$i],'data')===false){}else{$_POST[$keys[$i]]=DateTime::createFromFormat('d/m/Y', $_POST[$keys[$i]])->format('Y-m-d');}
+		}
+
+		//update
+		$json="{";
+			$keys=array_keys($_POST);
+			for($c=0;$c<count($keys);$c++){
+				$json.='"'.$keys[$c].'":"'.$_POST[$keys[$c]].'",';
+			}
+		$json.="}";
+		
+		$json=str_replace(',}',"}",$json);
+		$json=str_replace('{"',"`",$json);
+		$json=str_replace('":"',"`='",$json);
+		$json=str_replace('","',"',`",$json);
+		$json=str_replace('"}',"'",$json);
+		$sql=new sql;
+		$campos=$json;
+		$where="`".$key_id."`='".$_POST[$key_id]."'";
+			
+		//insert
+
+		$campos_insert="";
+		$values="";
+		for($i=0;$i<count($keys);$i++){
+			if($_POST[$keys[$i]]!=""){
+				$campos_insert.="`".$keys[$i]."`";
+				$values.="'".$_POST[$keys[$i]]."',";
+			}
+		}
+
+		$values="(".$values.")";
+		$campos_insert=str_replace('``',"`,`",$campos_insert);		
+		$values=str_replace(",)",")",$values);		
+		$values=str_replace(")","",$values);		
+		$values=str_replace("(","",$values);		
+
+		
+		if($_POST[$key_id]!="" and $_POST[$key_id]!=null){
+			$sql->update($tabela,$campos,$where,'S');
+		}else{
+			$sql->insert($tabela,$campos_insert,$values,'S');
+		}
+	}
+	public function estorno_documento($cod_documento){
+		include "config.php";
+			$pesquisa=new pesquisa;
+			$documento=$pesquisa->documento($_GET['id']);
+		
+		//estornar
+		$sql=new sql;
+		$key = md5(mt_rand(1,10000).strtotime(date('Y-m-d H:i:s')));
+						$select_cad_documento="
+								INSERT INTO 
+									`".$schema."`.`cad_documento`
+										(
+										`cod_empresa`,
+										`cod_tipo_documento`,
+										`referencia`,
+										`texto_cabecalho_documento`,
+										`data_lancamento`,
+										`data_base`,
+										`data_estorno`,
+										`data_alteracao`,
+										`exercicio`,
+										`periodo`,
+										`historico`,
+										`data_inclusao`,
+										`data_ultima_alteracao`,
+										`usuario_inclusao`,
+										`usuario_ultima_alteracao`)
+
+
+								select 
+
+									`cod_empresa`,
+									'2',
+									'".$key."',
+									concat('ESTORNO - ',`texto_cabecalho_documento`),
+									`data_lancamento`,
+									`data_base`,
+									DATE_FORMAT(now(),'%Y-%m-%d'),
+									DATE_FORMAT(now(),'%Y-%m-%d'),
+									`exercicio`,
+									`periodo`,
+									`historico`,
+									now(),
+									DATE_FORMAT(now(),'%Y-%m-%d'),
+									`usuario_inclusao`,
+									`usuario_ultima_alteracao`
+
+								 from 
+									".$schema.".cad_documento 
+									
+								where 
+									cod_empresa='".$_SESSION['cod_empresa']."' and 
+									cod_documento='".$cod_documento."'	";
+						$resultado=mysql_query($select_cad_documento,$conexao) or die (mysql_error());
+									
+					//2//pesquisar cod_documento
+						$select="SELECT cod_documento FROM ".$schema.".cad_documento WHERE referencia='".$key."' and cod_empresa=".$_SESSION['cod_empresa']."; ";
+						$resultado=mysql_query($select,$conexao) or die (mysql_error());
+						$cod_documento_ = mysql_fetch_array($resultado);
+						$cod_documento_=$cod_documento_[0];
+
+					//3//update referencia
+						$tabela="cad_documento";
+						$campos="referencia='ESTORNO - ".$documento['referencia']."'";
+						$where="referencia='".$key."'";
+						$sql->update($tabela,$campos,$where,'N');
+						
+						$tabela="cad_documento";
+						$campos="data_estorno=DATE_FORMAT(now(),'%Y-%m-%d')";
+						$where="cod_documento='".$cod_documento."'";
+						$sql->update($tabela,$campos,$where,'N');
+						
+						$tabela="cad_documento_item";
+						$campos="cod_documento_compensacao='".$key."'";
+						$where="cod_documento='".$cod_documento."'";
+						$sql->update($tabela,$campos,$where,'N');
+
+		
+						$select_cad_documento_item="
+								 INSERT INTO 
+									`".$schema."`.`cad_documento_item`
+										(
+										`cod_empresa`,
+										`cod_documento`,
+										`numero_item`,
+										`codigo_lancamento`,
+										`cod_conta`,
+										`cod_ctr_custo`,
+										`montante`,
+										`historico`,
+										`data_vencimento_liquidacao`,
+										`cod_documento_compensacao`,
+										`data_inclusao`,
+										`data_ultima_alteracao`,
+										`usuario_inclusao`,
+										`usuario_ultima_alteracao`)
+
+								SELECT 
+									`cad_documento_item`.`cod_empresa`,
+									'".$cod_documento_."',
+									`cad_documento_item`.`numero_item`,
+									if(`cad_documento_item`.`codigo_lancamento`='D','C','D'),
+									`cad_documento_item`.`cod_conta`,
+									`cad_documento_item`.`cod_ctr_custo`,
+									`cad_documento_item`.`montante`,
+									`cad_documento_item`.`historico`,
+									`cad_documento_item`.`data_vencimento_liquidacao`,
+									'".$key."',
+									now(),
+									now(),
+									'".$_SESSION['cod_usuario']."',
+									'".$_SESSION['cod_usuario']."'
+
+									
+								FROM 
+									`".$schema."`.`cad_documento_item`
+									
+								where 
+									cod_empresa='".$_SESSION['cod_empresa']."' and 
+									cod_documento='".$cod_documento."'";	
+						$resultado=mysql_query($select_cad_documento_item,$conexao) or die (mysql_error());		
+		
+	}
+}
+
+class inputs{
+	function input_form_row($valor,$id,$label,$placeholder,$atributo){
+	echo "<div class='uk-form-row'>
+			<label class='uk-form-label' for='xxx'>".$label."</label>
+			<input class='uk-form-small' placeholder='".$placeholder."' type='text' ".$atributo." style='width:100%;' name='".$id."' id='".$id."' value='".$valor."' >
+		</div>	
+	";
+
+	}
+
+
+}
+
+class imagens{
+	function thumbnail($id_imagem,$src,$titulo){
+		echo "
+			<div class='uk-width-1-2'>
+				<a class='uk-thumbnail uk-overlay-toggle' href='#img_".$id_imagem."' data-uk-modal>
+					<div class='uk-overlay'>
+						<img src='".$src."' alt=''>
+						<div class='uk-overlay-caption'>".$titulo."</div>
+					</div>
+				</a>
+				<div id='img_".$id_imagem."' class='uk-modal'>
+					<div class='uk-modal-dialog uk-modal-dialog-lightbox' style=''>
+						<p style='margin-right: -20px; margin-left: -20px; margin-top: -20px;'><img src='".$src."' alt='' style=''></p>
+						<div class='uk-modal-footer uk-text-right'>
+							<button type='button' class='uk-button uk-modal-close '>Cancel</button>
+							<button type='button' class='uk-button uk-button-primary' onclick=excluir_fotos('".$id_imagem."');>Excluir</button>
+						</div>					
+					</div>
+				</div>				
 			</div>
 		";
-
 	}
-	
-}
-
-class tabelas{
-	public function lista_bases_(){
+	function listar($id_item){
 		include "config.php";
-		$select= "SELECT * FROM orcamento.tb_base;";
-
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		
-			$tabela= "
-				<table class='uk-table uk-table-hover uk-table-condensed uk-table-striped uk-text-nowrap uk-panel-box' style='font-size: 11px;'>
-					<tr>
-						<th style='width: 15px !important;'></th>
-						<th style='width: 30px !important;'>Cod</th>
-						<th>Nome</th>
-						<th style='width: 100px !important;'>Data</th>
-					</tr>";						
-		
+		$imagens=new imagens;
+		//pesquisar imagens
+		$sql_select="SELECT * FROM ".$schema.".cad_imagens where cod_item=".$id_item.";";
+			$resultado=mysql_query($sql_select,$conexao) or die (mysql_error());
 			while($row = mysql_fetch_array($resultado))
 			{
-			$tabela.=  
-				"<tr>
-					<td><input  class='radio_schema' id='radio_schema' name='radio_schema' type='radio' value='".$row['ID']."'></td>
-					<td>".$row['cod_base']."</td>
-					<td>".$row['nome']."</td>
-					<td >".$row['data']."</td>
-				</tr>";
-			}	
-			$tabela.= "</table>";
-			echo $tabela;
-	
+				//gerar thumbnail
+				$imagens->thumbnail($row['cod_imagem'],$row['endereco_imagem'],$row['data_inclusao']);
+			}
+		
+
 	
 	}
-	public function lista_bases(){
-		include "config.php";
-		$select= "SELECT * FROM orcamento.tb_base;";
+	function upload($id){
 
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		
-			$tabela= "<table class='uk-table uk-table-hover uk-table-condensed uk-table-striped uk-text-nowrap uk-panel-box' style='font-size: 11px;'>
-					<tr>
-						<th style='width: 15px !important;'></th>
-						<th style='width: 30px !important;'>Cod</th>
-						<th>Nome</th>
-						<th style='width: 100px !important;'>Data</th>
-					</tr>";						
-		
-			while($row = mysql_fetch_array($resultado))
+	
+		//move arquivo
+			$arquivo = $_FILES['my_uploaded_file'];
+		//Salvando o Arquivo
+			$nome_arquivo = md5(mt_rand(1,10000).$arquivo['name']).'.jpg';
+			$caminho_arquivo = "fotos/";
+			if (!file_exists($caminho_arquivo))
 			{
-			$tabela.=  
-				"<tr>
-					<td><input  class='radio_schema' id='radio_schema' name='radio_schema' type='radio' value='".$row['ID']."'></td>
-					<td>".$row['cod_base']."</td>
-					<td>".$row['nome']."</td>
-					<td >".$row['data']."</td>
-				</tr>";
-			}	
-			$tabela.= "</table>";
-			echo $tabela;
-	
-	
-	}
-	public function listar_lancamentos($id_orcamento,$data_inicio,$data_fim,$idconta,$idctrcusto,$idcaixa){
-		include "config.php";
-		
-		$filtro="";
-		if($idconta!=""){
-
-			$filtro.="and SUBSTRING(plano_de_contas.numero,1,length('".$idconta."'))='".$idconta."' ";
-		}
-		if($idctrcusto!=""){
-
-			$filtro.="and SUBSTRING(centro_de_custos.numero,1,length('".$idctrcusto."'))='".$idctrcusto."' ";
-		}
-		if($idcaixa!=""){
-			$filtro.="and tb_orcamento_lancamentos.idcaixa='".$idcaixa."'";
-
-		}
-
-		if($id_orcamento!="" and $data_inicio!='1900-01-01' and $data_fim!='9999-12-31'){
-			$select = "
-						SELECT 
-							tb_orcamento_lancamentos.id_tb_orcamento_lancamentos,
-
-
-							centro_de_custos.numero as numero_centro_custo,
-							centro_de_custos.descricao as centro_custo,
-
-
-							plano_de_contas.numero as numero_conta,
-							plano_de_contas.descricao as conta,
-
-							tb_orcamento_lancamentos.idcaixa,
-							tb_orcamento_lancamentos.tipo_movimento,
-							tb_orcamento_lancamentos.data,
-							tb_orcamento_lancamentos.valor,
-							tb_orcamento_lancamentos.descricao
-
-
-
-						FROM 
-							orcamento.tb_orcamento_lancamentos,
-							orcamento.centro_de_custos,
-							orcamento.plano_de_contas,
-							orcamento.tb_orcamento
-					
-						where 
-							tb_orcamento_lancamentos.id_orcamento =tb_orcamento.id_orcamento and
-							tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and
-							tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and
-
-							centro_de_custos.id=tb_orcamento_lancamentos.idctrcusto and
-							plano_de_contas.id=tb_orcamento_lancamentos.idconta  and
-
-							tb_orcamento_lancamentos.id_orcamento=".$id_orcamento." and
-							(tb_orcamento_lancamentos.data between '".$data_inicio."' and '".$data_fim."') 
-							".$filtro."
-						order by
-							tb_orcamento_lancamentos.data,tb_orcamento_lancamentos.idconta,tb_orcamento_lancamentos.idctrcusto;		
-			";
-
-				$json="";
-				$resultado=mysql_query($select,$conexao) or die (mysql_error());
-				while($row = mysql_fetch_array($resultado))
-				{
-				$json.=json_encode($row);
-				}	
-				$json=str_replace("}{","},{",$json);
-				echo "var base=[".$json."];";		
-		
-		
-		}
-		
-		
-
-			
-	}
-	public function orcamento_lancamentos(){
-		include "config.php";
-		
-		function formatar($txt,$niveis){
-				$resultado="";
-				$txt=explode(".", $txt);
-				for($i=0;$i<count($txt);$i++){
-					if($i==$niveis-1){
-							for($x=strlen($txt[$i]);$x<=3;$x++){
-							$txt[$i]="0".$txt[$i];
-						}	
-					}else{
-							for($x=strlen($txt[$i]);$x<=1;$x++){
-							$txt[$i]="0".$txt[$i];
-						}
-					
-					}
-				}
-				for($i=0;$i<count($txt);$i++){
-					if($i>0){
-						$resultado.= ".";
-					}
-						$resultado.= $txt[$i];
-
-				}
-
-				return $resultado;				
-
-				//split($txt,".");
-		}
-		function pai($txt){
-			$resultado= "";
-			$txt=explode(".", $txt);
-				for($i=0;$i<count($txt)-1;$i++){
-					if($i>0){
-						$resultado.= ".";
-					}
-						$resultado.= $txt[$i];
-
-				}
-			return "9999".str_replace(".","",$resultado);	
-
-		}
-		function id($txt){
-			$resultado="9999".str_replace(".","",$txt);
-			return $resultado;
-		}
-		
-		$select= "
-						SELECT
-							tb_plano_de_contas.id,
-							tb_plano_de_contas.`schema`,
-							tb_plano_de_contas.numero,
-							tb_plano_de_contas.descricao,
-
-							sum(ifnull(mes_1.valor,0)) as mes_01,
-							sum(ifnull(mes_2.valor,0)) as mes_02,
-							sum(ifnull(mes_3.valor,0)) as mes_03,
-							sum(ifnull(mes_4.valor,0)) as mes_04,
-							sum(ifnull(mes_5.valor,0)) as mes_05,
-							sum(ifnull(mes_6.valor,0)) as mes_06,
-							sum(ifnull(mes_7.valor,0)) as mes_07,
-							sum(ifnull(mes_8.valor,0)) as mes_08,
-							sum(ifnull(mes_9.valor,0)) as mes_09,
-							sum(ifnull(mes_10.valor,0)) as mes_10,
-							sum(ifnull(mes_11.valor,0)) as mes_11,
-							sum(ifnull(mes_12.valor,0)) as mes_12
-
-
-						FROM 
-							(SELECT
-								plano_de_contas.id,
-								plano_de_contas.`schema`,
-								plano_de_contas.numero,
-								plano_de_contas.descricao
-							FROM
-								orcamento.plano_de_contas
-							WHERE
-								plano_de_contas.`schema`='3c3d545454a1c8bf8b6aba7691cab4e1.sec3'
-							
-							) as tb_plano_de_contas 
-							
-							
-						left join (SELECT month(data) as mes,idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos where data between '2015-01-01' and '2015-01-31' group by idconta ) as mes_1 on tb_plano_de_contas.id=mes_1.idconta
-						left join (SELECT month(data) as mes,idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos where data between '2015-02-01' and '2015-02-28' group by idconta ) as mes_2 on tb_plano_de_contas.id=mes_2.idconta
-						left join (SELECT month(data) as mes,idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos where data between '2015-03-01' and '2015-03-31' group by idconta ) as mes_3 on tb_plano_de_contas.id=mes_3.idconta
-						left join (SELECT month(data) as mes,idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos where data between '2015-04-01' and '2015-04-30' group by idconta ) as mes_4 on tb_plano_de_contas.id=mes_4.idconta
-						left join (SELECT month(data) as mes,idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos where data between '2015-05-01' and '2015-05-31' group by idconta ) as mes_5 on tb_plano_de_contas.id=mes_5.idconta
-						left join (SELECT month(data) as mes,idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos where data between '2015-06-01' and '2015-06-30' group by idconta ) as mes_6 on tb_plano_de_contas.id=mes_6.idconta
-						left join (SELECT month(data) as mes,idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos where data between '2015-07-01' and '2015-07-31' group by idconta ) as mes_7 on tb_plano_de_contas.id=mes_7.idconta
-						left join (SELECT month(data) as mes,idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos where data between '2015-08-01' and '2015-08-31' group by idconta ) as mes_8 on tb_plano_de_contas.id=mes_8.idconta
-						left join (SELECT month(data) as mes,idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos where data between '2015-09-01' and '2015-09-30' group by idconta ) as mes_9 on tb_plano_de_contas.id=mes_9.idconta
-						left join (SELECT month(data) as mes,idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos where data between '2015-10-01' and '2015-10-31' group by idconta ) as mes_10 on tb_plano_de_contas.id=mes_10.idconta
-						left join (SELECT month(data) as mes,idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos where data between '2015-11-01' and '2015-11-30' group by idconta ) as mes_11 on tb_plano_de_contas.id=mes_11.idconta
-						left join (SELECT month(data) as mes,idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos where data between '2015-12-01' and '2015-12-31' group by idconta ) as mes_12 on tb_plano_de_contas.id=mes_12.idconta
-
-
-
-						GROUP BY 
-							tb_plano_de_contas.id;
-							
-							";
-					
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		$i=0;
-		while($row = mysql_fetch_array($resultado))
-		{
-				$row_[$i]['numero']=formatar($row['numero'],5);
-				$row_[$i]['id_grid']=id(formatar($row['numero'],5));
-				$row_[$i]['id_grid_pai']=pai(formatar($row['numero'],5));
-				$row_[$i]['descricao']=$row['descricao'];
-				$row_[$i]['id']=$row['id'];
-				$row_[$i]['mes_01']=$row['mes_01'];
-				$row_[$i]['mes_02']=$row['mes_02'];
-				$row_[$i]['mes_03']=$row['mes_03'];
-				$row_[$i]['mes_04']=$row['mes_04'];
-				$row_[$i]['mes_05']=$row['mes_05'];
-				$row_[$i]['mes_06']=$row['mes_06'];
-				$row_[$i]['mes_07']=$row['mes_07'];
-				$row_[$i]['mes_08']=$row['mes_08'];
-				$row_[$i]['mes_09']=$row['mes_09'];
-				$row_[$i]['mes_10']=$row['mes_10'];
-				$row_[$i]['mes_11']=$row['mes_11'];
-				$row_[$i]['mes_12']=$row['mes_12'];
-				$i=$i+1;
-		}	
-		//echo count($row_);
-		for($i=0;$i<count($row_);$i++){
-			$numero=$row_[$i]['numero'];
-
-			for($x=0;$x<count($row_);$x++){
-				if(
-						$row_[$x]['numero']!=$numero and 
-						substr($row_[$x]['numero'],0,strlen($numero))==$numero
-					){
-					$row_[$i]['mes_01']=$row_[$i]['mes_01']+$row_[$x]['mes_01'];
-					$row_[$i]['mes_02']=$row_[$i]['mes_02']+$row_[$x]['mes_02'];
-					$row_[$i]['mes_03']=$row_[$i]['mes_03']+$row_[$x]['mes_03'];
-					$row_[$i]['mes_04']=$row_[$i]['mes_04']+$row_[$x]['mes_04'];
-					$row_[$i]['mes_05']=$row_[$i]['mes_05']+$row_[$x]['mes_05'];
-					$row_[$i]['mes_06']=$row_[$i]['mes_06']+$row_[$x]['mes_06'];
-					$row_[$i]['mes_07']=$row_[$i]['mes_07']+$row_[$x]['mes_07'];
-					$row_[$i]['mes_08']=$row_[$i]['mes_08']+$row_[$x]['mes_08'];
-					$row_[$i]['mes_09']=$row_[$i]['mes_09']+$row_[$x]['mes_09'];
-					$row_[$i]['mes_10']=$row_[$i]['mes_10']+$row_[$x]['mes_10'];
-					$row_[$i]['mes_11']=$row_[$i]['mes_11']+$row_[$x]['mes_11'];
-					$row_[$i]['mes_12']=$row_[$i]['mes_12']+$row_[$x]['mes_12'];
-				}
-
+			mkdir($caminho_arquivo, 0755);  
 			}
-		
-		
-		}
-		$json="";
-		for($i=0;$i<count($row_);$i++){
-			$json.='{
-					"id":'.$row_[$i]['id'].',
-					"id_grid":'.$row_[$i]['id_grid'].',
-					"id_grid_pai":'.$row_[$i]['id_grid_pai'].',
-					"numero":"'.$row_[$i]['numero'].'",
-					"nome_conta":"'.$row_[$i]['numero'].' - '.$row_[$i]['descricao'].'" ,
-					"mes_01":'.$row_[$i]['mes_01'].' ,
-					"mes_02":'.$row_[$i]['mes_02'].' ,
-					"mes_03":'.$row_[$i]['mes_03'].' ,
-					"mes_04":'.$row_[$i]['mes_04'].' ,
-					"mes_05":'.$row_[$i]['mes_05'].' ,
-					"mes_06":'.$row_[$i]['mes_06'].' ,
-					"mes_07":'.$row_[$i]['mes_07'].' ,
-					"mes_08":'.$row_[$i]['mes_08'].' ,
-					"mes_09":'.$row_[$i]['mes_09'].' ,
-					"mes_10":'.$row_[$i]['mes_10'].' ,
-					"mes_11":'.$row_[$i]['mes_11'].' ,
-					"mes_12":'.$row_[$i]['mes_12'].' ,
-					"total":'.
-							 ($row_[$i]['mes_01']
-							+$row_[$i]['mes_02']
-							+$row_[$i]['mes_03']
-							+$row_[$i]['mes_04']
-							+$row_[$i]['mes_05']
-							+$row_[$i]['mes_06']
-							+$row_[$i]['mes_07']
-							+$row_[$i]['mes_08']
-							+$row_[$i]['mes_09']
-							+$row_[$i]['mes_10']
-							+$row_[$i]['mes_11']
-							+$row_[$i]['mes_12'])
-							.'
-					}';
-
-		}		
-		$json=str_replace("}{","},{",$json);
-		echo 'var base=[{ "id":0, "id_grid":9999, "id_grid_pai":-1, "numero":"00", "nome_conta":"00 - RESULTADO", "mes_01":0.00, "mes_02":0.00, "mes_03":0.00, "mes_04":0.00, "mes_05":0.00, "mes_06":0.00, "mes_07":0.00, "mes_08":0.00, "mes_09":0.00, "mes_10":0.00, "mes_11":0.00, "mes_12":0.00, "total":0.00 },'.$json.'];';
-	
-	}
-	public function orcamento_orcado_real_conta($schema_real,$id_orcamento,$ctrcusto){
-		include "config.php";
-		$filtro="";
-		if($ctrcusto!=""){
-	//		$filtro.="and centro_de_custos.numero='".$idctrcusto."'";
-			$filtro.="and SUBSTRING(centro_de_custos.numero,1,length('".$ctrcusto."'))='".$ctrcusto."' ";
-		}
-		function formatar($txt,$niveis){
-				$resultado="";
-				$txt=explode(".", $txt);
-				for($i=0;$i<count($txt);$i++){
-					if($i==$niveis-1){
-							for($x=strlen($txt[$i]);$x<=3;$x++){
-							$txt[$i]="0".$txt[$i];
-						}	
-					}else{
-							for($x=strlen($txt[$i]);$x<=1;$x++){
-							$txt[$i]="0".$txt[$i];
-						}
-					
-					}
-				}
-				for($i=0;$i<count($txt);$i++){
-					if($i>0){
-						$resultado.= ".";
-					}
-						$resultado.= $txt[$i];
-
-				}
-
-				return $resultado;				
-
-				//split($txt,".");
-		}
-		function pai($txt){
-			$id=$txt;
-			$resultado= "";
-			$txt=explode(".", $txt);
-				for($i=0;$i<count($txt)-1;$i++){
-					if($i>0){
-						$resultado.= ".";
-					}
-						$resultado.= $txt[$i];
-
-				}
-				if($id=='00'){
-					return '-1';
-				}else{
-					return "9999".str_replace(".","",$resultado);
-				}			
-
-		}
-		function id($txt){
-			$resultado="9999".str_replace(".","",$txt);
-			return $resultado;
-		}
-		function href($idconta,$valor,$data_inicio,$data_fim,$R_O){
-			return  "<a href='detalhe_real_orcado?id_conta=".$idconta."&data_inicio=".$data_inicio."&data_fim=".$data_fim."&R_O=".$R_O."' _blank>".$valor."</a>";
-		}
-		function sinalizador($real,$orcado){
-			if($real<$orcado){
-				return "'down'";
-			}else{
-				return "'up'";
-			}
-		
-		}
-				
-		
-		
-		$select="SELECT year(data_inicio) as ano FROM orcamento.tb_orcamento where id_orcamento='".$id_orcamento."';";
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		while($row = mysql_fetch_array($resultado))
-		{
-			$ano=$row['ano'];	
-		}
-
-			$mes_01_I = date("Y-m-d", mktime (0, 0, 0, 1  , 1, $ano));
-			$mes_02_I = date("Y-m-d", mktime (0, 0, 0, 2  , 1, $ano));
-			$mes_03_I = date("Y-m-d", mktime (0, 0, 0, 3  , 1, $ano));
-			$mes_04_I = date("Y-m-d", mktime (0, 0, 0, 4  , 1, $ano));
-			$mes_05_I = date("Y-m-d", mktime (0, 0, 0, 5  , 1, $ano));
-			$mes_06_I = date("Y-m-d", mktime (0, 0, 0, 6  , 1, $ano));
-			$mes_07_I = date("Y-m-d", mktime (0, 0, 0, 7  , 1, $ano));
-			$mes_08_I = date("Y-m-d", mktime (0, 0, 0, 8  , 1, $ano));
-			$mes_09_I = date("Y-m-d", mktime (0, 0, 0, 9  , 1, $ano));
-			$mes_10_I = date("Y-m-d", mktime (0, 0, 0, 10 , 1, $ano));
-			$mes_11_I = date("Y-m-d", mktime (0, 0, 0, 11 , 1, $ano));
-			$mes_12_I = date("Y-m-d", mktime (0, 0, 0, 12 , 1, $ano));
-
-			$mes_01_F = date("Y-m-d", mktime (0, 0, 0, 2  , 1, $ano)-1);
-			$mes_02_F = date("Y-m-d", mktime (0, 0, 0, 3  , 1, $ano)-1);
-			$mes_03_F = date("Y-m-d", mktime (0, 0, 0, 4  , 1, $ano)-1);
-			$mes_04_F = date("Y-m-d", mktime (0, 0, 0, 5  , 1, $ano)-1);
-			$mes_05_F = date("Y-m-d", mktime (0, 0, 0, 6  , 1, $ano)-1);
-			$mes_06_F = date("Y-m-d", mktime (0, 0, 0, 7  , 1, $ano)-1);
-			$mes_07_F = date("Y-m-d", mktime (0, 0, 0, 8  , 1, $ano)-1);
-			$mes_08_F = date("Y-m-d", mktime (0, 0, 0, 9  , 1, $ano)-1);
-			$mes_09_F = date("Y-m-d", mktime (0, 0, 0, 10  , 1, $ano)-1);
-			$mes_10_F = date("Y-m-d", mktime (0, 0, 0, 11 , 1, $ano)-1);
-			$mes_11_F = date("Y-m-d", mktime (0, 0, 0, 12 , 1, $ano)-1);
-			$mes_12_F = date("Y-m-d", mktime (0, 0, 0, 1 , 1, $ano+1)-1);		
-		
-		
-		
-		
-		
-		$select= "
-						select
-							0 as id, 
-							'00' as numero,
-							'CONSOLIDADO' as descricao,
-							
-							0.00 as mes_01_O,
-							0.00 as mes_02_O,
-							0.00 as mes_03_O,
-							0.00 as mes_04_O,
-							0.00 as mes_05_O,
-							0.00 as mes_06_O,
-							0.00 as mes_07_O,
-							0.00 as mes_08_O,
-							0.00 as mes_09_O,
-							0.00 as mes_10_O,
-							0.00 as mes_11_O,
-							0.00 as mes_12_O,
-
-							0.00 as mes_01_R,
-							0.00 as mes_02_R,
-							0.00 as mes_03_R,
-							0.00 as mes_04_R,
-							0.00 as mes_05_R,
-							0.00 as mes_06_R,
-							0.00 as mes_07_R,
-							0.00 as mes_08_R,
-							0.00 as mes_09_R,
-							0.00 as mes_10_R,
-							0.00 as mes_11_R,
-							0.00 as mes_12_R
-
-						
-						union all
-
-						
-						SELECT
-							tb_plano_de_contas.id,
-							concat('00.',tb_plano_de_contas.numero) as numero,							
-							tb_plano_de_contas.descricao,
-
-							-sum(ifnull(mes_1_O.valor,0)) as mes_01_O,
-							-sum(ifnull(mes_2_O.valor,0)) as mes_02_O,
-							-sum(ifnull(mes_3_O.valor,0)) as mes_03_O,
-							-sum(ifnull(mes_4_O.valor,0)) as mes_04_O,
-							-sum(ifnull(mes_5_O.valor,0)) as mes_05_O,
-							-sum(ifnull(mes_6_O.valor,0)) as mes_06_O,
-							-sum(ifnull(mes_7_O.valor,0)) as mes_07_O,
-							-sum(ifnull(mes_8_O.valor,0)) as mes_08_O,
-							-sum(ifnull(mes_9_O.valor,0)) as mes_09_O,
-							-sum(ifnull(mes_10_O.valor,0)) as mes_10_O,
-							-sum(ifnull(mes_11_O.valor,0)) as mes_11_O,
-							-sum(ifnull(mes_12_O.valor,0)) as mes_12_O,
-
-							sum(ifnull(mes_1_R.valor,0)) as mes_01_R,
-							sum(ifnull(mes_2_R.valor,0)) as mes_02_R,
-							sum(ifnull(mes_3_R.valor,0)) as mes_03_R,
-							sum(ifnull(mes_4_R.valor,0)) as mes_04_R,
-							sum(ifnull(mes_5_R.valor,0)) as mes_05_R,
-							sum(ifnull(mes_6_R.valor,0)) as mes_06_R,
-							sum(ifnull(mes_7_R.valor,0)) as mes_07_R,
-							sum(ifnull(mes_8_R.valor,0)) as mes_08_R,
-							sum(ifnull(mes_9_R.valor,0)) as mes_09_R,
-							sum(ifnull(mes_10_R.valor,0)) as mes_10_R,
-							sum(ifnull(mes_11_R.valor,0)) as mes_11_R,
-							sum(ifnull(mes_12_R.valor,0)) as mes_12_R
-
-
-						FROM 
-							(
-							SELECT
-								plano_de_contas.id,
-								plano_de_contas.`schema`,
-								plano_de_contas.numero,
-								plano_de_contas.descricao
-							FROM
-								orcamento.plano_de_contas,
-								orcamento.tb_orcamento
-							WHERE
-								plano_de_contas.`schema`=tb_orcamento.schema_plano_de_contas and
-								tb_orcamento.id_orcamento='".$id_orcamento."' 						
-							) as tb_plano_de_contas 
-							
-							
-						left join (SELECT month(data) as mes, idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=tb_orcamento_lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_01_I."' and '".$mes_01_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idconta ) as mes_1_O on tb_plano_de_contas.id=mes_1_O.idconta
-						left join (SELECT month(data) as mes, idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=tb_orcamento_lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_02_I."' and '".$mes_02_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idconta ) as mes_2_O on tb_plano_de_contas.id=mes_2_O.idconta
-						left join (SELECT month(data) as mes, idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=tb_orcamento_lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_03_I."' and '".$mes_03_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idconta ) as mes_3_O on tb_plano_de_contas.id=mes_3_O.idconta
-						left join (SELECT month(data) as mes, idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=tb_orcamento_lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_04_I."' and '".$mes_04_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idconta ) as mes_4_O on tb_plano_de_contas.id=mes_4_O.idconta
-						left join (SELECT month(data) as mes, idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=tb_orcamento_lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_05_I."' and '".$mes_05_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idconta ) as mes_5_O on tb_plano_de_contas.id=mes_5_O.idconta
-						left join (SELECT month(data) as mes, idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=tb_orcamento_lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_06_I."' and '".$mes_06_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idconta ) as mes_6_O on tb_plano_de_contas.id=mes_6_O.idconta
-						left join (SELECT month(data) as mes, idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=tb_orcamento_lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_07_I."' and '".$mes_07_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idconta ) as mes_7_O on tb_plano_de_contas.id=mes_7_O.idconta
-						left join (SELECT month(data) as mes, idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=tb_orcamento_lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_08_I."' and '".$mes_08_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idconta ) as mes_8_O on tb_plano_de_contas.id=mes_8_O.idconta
-						left join (SELECT month(data) as mes, idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=tb_orcamento_lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_09_I."' and '".$mes_09_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idconta ) as mes_9_O on tb_plano_de_contas.id=mes_9_O.idconta
-						left join (SELECT month(data) as mes, idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=tb_orcamento_lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_10_I."' and '".$mes_10_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idconta ) as mes_10_O on tb_plano_de_contas.id=mes_10_O.idconta
-						left join (SELECT month(data) as mes, idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=tb_orcamento_lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_11_I."' and '".$mes_11_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idconta ) as mes_11_O on tb_plano_de_contas.id=mes_11_O.idconta
-						left join (SELECT month(data) as mes, idconta, sum(ifnull(valor,0)) as valor FROM orcamento.tb_orcamento_lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=tb_orcamento_lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_12_I."' and '".$mes_12_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idconta ) as mes_12_O on tb_plano_de_contas.id=mes_12_O.idconta
-
-						left join (SELECT month(data) as mes,	idconta, sum(ifnull(valor,0)) as valor FROM orcamento.lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_01_I."' and '".$mes_01_F."') and lancamentos.`schema`='".$schema_real."' group by idconta ) as mes_1_R on tb_plano_de_contas.id=mes_1_R.idconta
-						left join (SELECT month(data) as mes,	idconta, sum(ifnull(valor,0)) as valor FROM orcamento.lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_02_I."' and '".$mes_02_F."') and lancamentos.`schema`='".$schema_real."' group by idconta ) as mes_2_R on tb_plano_de_contas.id=mes_2_R.idconta
-						left join (SELECT month(data) as mes,	idconta, sum(ifnull(valor,0)) as valor FROM orcamento.lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_03_I."' and '".$mes_03_F."') and lancamentos.`schema`='".$schema_real."' group by idconta ) as mes_3_R on tb_plano_de_contas.id=mes_3_R.idconta
-						left join (SELECT month(data) as mes,	idconta, sum(ifnull(valor,0)) as valor FROM orcamento.lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_04_I."' and '".$mes_04_F."') and lancamentos.`schema`='".$schema_real."' group by idconta ) as mes_4_R on tb_plano_de_contas.id=mes_4_R.idconta
-						left join (SELECT month(data) as mes,	idconta, sum(ifnull(valor,0)) as valor FROM orcamento.lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_05_I."' and '".$mes_05_F."') and lancamentos.`schema`='".$schema_real."' group by idconta ) as mes_5_R on tb_plano_de_contas.id=mes_5_R.idconta
-						left join (SELECT month(data) as mes,	idconta, sum(ifnull(valor,0)) as valor FROM orcamento.lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_06_I."' and '".$mes_06_F."') and lancamentos.`schema`='".$schema_real."' group by idconta ) as mes_6_R on tb_plano_de_contas.id=mes_6_R.idconta
-						left join (SELECT month(data) as mes,	idconta, sum(ifnull(valor,0)) as valor FROM orcamento.lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_07_I."' and '".$mes_07_F."') and lancamentos.`schema`='".$schema_real."' group by idconta ) as mes_7_R on tb_plano_de_contas.id=mes_7_R.idconta
-						left join (SELECT month(data) as mes,	idconta, sum(ifnull(valor,0)) as valor FROM orcamento.lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_08_I."' and '".$mes_08_F."') and lancamentos.`schema`='".$schema_real."' group by idconta ) as mes_8_R on tb_plano_de_contas.id=mes_8_R.idconta
-						left join (SELECT month(data) as mes,	idconta, sum(ifnull(valor,0)) as valor FROM orcamento.lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_09_I."' and '".$mes_09_F."') and lancamentos.`schema`='".$schema_real."' group by idconta ) as mes_9_R on tb_plano_de_contas.id=mes_9_R.idconta
-						left join (SELECT month(data) as mes,	idconta, sum(ifnull(valor,0)) as valor FROM orcamento.lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_10_I."' and '".$mes_10_F."') and lancamentos.`schema`='".$schema_real."' group by idconta ) as mes_10_R on tb_plano_de_contas.id=mes_10_R.idconta
-						left join (SELECT month(data) as mes,	idconta, sum(ifnull(valor,0)) as valor FROM orcamento.lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_11_I."' and '".$mes_11_F."') and lancamentos.`schema`='".$schema_real."' group by idconta ) as mes_11_R on tb_plano_de_contas.id=mes_11_R.idconta
-						left join (SELECT month(data) as mes,	idconta, sum(ifnull(valor,0)) as valor FROM orcamento.lancamentos,orcamento.centro_de_custos, orcamento.tb_orcamento where centro_de_custos.id=lancamentos.idctrcusto and tb_orcamento.schema_plano_de_contas=centro_de_custos.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and  (data between '".$mes_12_I."' and '".$mes_12_F."') and lancamentos.`schema`='".$schema_real."' group by idconta ) as mes_12_R on tb_plano_de_contas.id=mes_12_R.idconta
-
-
-
-						GROUP BY 
-							tb_plano_de_contas.id;
-							
-							";
-
-		
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		$i=0;
-		$row_="";
-		while($row = mysql_fetch_array($resultado))
-		{
-				$row_[$i]['numero']=formatar($row['numero'],6);
-				$row_[$i]['id_grid']=id(formatar($row['numero'],6));
-				$row_[$i]['id_grid_pai']=pai(formatar($row['numero'],6));
-				$row_[$i]['descricao']=$row['descricao'];
-				$row_[$i]['id']=$row['id'];
-				$row_[$i]['mes_01_O']=$row['mes_01_O'];
-				$row_[$i]['mes_02_O']=$row['mes_02_O'];
-				$row_[$i]['mes_03_O']=$row['mes_03_O'];
-				$row_[$i]['mes_04_O']=$row['mes_04_O'];
-				$row_[$i]['mes_05_O']=$row['mes_05_O'];
-				$row_[$i]['mes_06_O']=$row['mes_06_O'];
-				$row_[$i]['mes_07_O']=$row['mes_07_O'];
-				$row_[$i]['mes_08_O']=$row['mes_08_O'];
-				$row_[$i]['mes_09_O']=$row['mes_09_O'];
-				$row_[$i]['mes_10_O']=$row['mes_10_O'];
-				$row_[$i]['mes_11_O']=$row['mes_11_O'];
-				$row_[$i]['mes_12_O']=$row['mes_12_O'];
-				
-				$row_[$i]['mes_01_R']=$row['mes_01_R'];
-				$row_[$i]['mes_02_R']=$row['mes_02_R'];
-				$row_[$i]['mes_03_R']=$row['mes_03_R'];
-				$row_[$i]['mes_04_R']=$row['mes_04_R'];
-				$row_[$i]['mes_05_R']=$row['mes_05_R'];
-				$row_[$i]['mes_06_R']=$row['mes_06_R'];
-				$row_[$i]['mes_07_R']=$row['mes_07_R'];
-				$row_[$i]['mes_08_R']=$row['mes_08_R'];
-				$row_[$i]['mes_09_R']=$row['mes_09_R'];
-				$row_[$i]['mes_10_R']=$row['mes_10_R'];
-				$row_[$i]['mes_11_R']=$row['mes_11_R'];
-				$row_[$i]['mes_12_R']=$row['mes_12_R'];
-				$i=$i+1;
-		}	
-		//echo count($row_);
-		for($i=0;$i<count($row_);$i++){
-			$numero=$row_[$i]['numero'];
-
-			for($x=0;$x<count($row_);$x++){
-				if(
-						$row_[$x]['numero']!=$numero and 
-						substr($row_[$x]['numero'],0,strlen($numero))==$numero
-					){
-					$row_[$i]['mes_01_O']=$row_[$i]['mes_01_O']+$row_[$x]['mes_01_O'];
-					$row_[$i]['mes_02_O']=$row_[$i]['mes_02_O']+$row_[$x]['mes_02_O'];
-					$row_[$i]['mes_03_O']=$row_[$i]['mes_03_O']+$row_[$x]['mes_03_O'];
-					$row_[$i]['mes_04_O']=$row_[$i]['mes_04_O']+$row_[$x]['mes_04_O'];
-					$row_[$i]['mes_05_O']=$row_[$i]['mes_05_O']+$row_[$x]['mes_05_O'];
-					$row_[$i]['mes_06_O']=$row_[$i]['mes_06_O']+$row_[$x]['mes_06_O'];
-					$row_[$i]['mes_07_O']=$row_[$i]['mes_07_O']+$row_[$x]['mes_07_O'];
-					$row_[$i]['mes_08_O']=$row_[$i]['mes_08_O']+$row_[$x]['mes_08_O'];
-					$row_[$i]['mes_09_O']=$row_[$i]['mes_09_O']+$row_[$x]['mes_09_O'];
-					$row_[$i]['mes_10_O']=$row_[$i]['mes_10_O']+$row_[$x]['mes_10_O'];
-					$row_[$i]['mes_11_O']=$row_[$i]['mes_11_O']+$row_[$x]['mes_11_O'];
-					$row_[$i]['mes_12_O']=$row_[$i]['mes_12_O']+$row_[$x]['mes_12_O'];
-					
-					$row_[$i]['mes_01_R']=$row_[$i]['mes_01_R']+$row_[$x]['mes_01_R'];
-					$row_[$i]['mes_02_R']=$row_[$i]['mes_02_R']+$row_[$x]['mes_02_R'];
-					$row_[$i]['mes_03_R']=$row_[$i]['mes_03_R']+$row_[$x]['mes_03_R'];
-					$row_[$i]['mes_04_R']=$row_[$i]['mes_04_R']+$row_[$x]['mes_04_R'];
-					$row_[$i]['mes_05_R']=$row_[$i]['mes_05_R']+$row_[$x]['mes_05_R'];
-					$row_[$i]['mes_06_R']=$row_[$i]['mes_06_R']+$row_[$x]['mes_06_R'];
-					$row_[$i]['mes_07_R']=$row_[$i]['mes_07_R']+$row_[$x]['mes_07_R'];
-					$row_[$i]['mes_08_R']=$row_[$i]['mes_08_R']+$row_[$x]['mes_08_R'];
-					$row_[$i]['mes_09_R']=$row_[$i]['mes_09_R']+$row_[$x]['mes_09_R'];
-					$row_[$i]['mes_10_R']=$row_[$i]['mes_10_R']+$row_[$x]['mes_10_R'];
-					$row_[$i]['mes_11_R']=$row_[$i]['mes_11_R']+$row_[$x]['mes_11_R'];
-					$row_[$i]['mes_12_R']=$row_[$i]['mes_12_R']+$row_[$x]['mes_12_R'];
-				}
-
-			}
-		
-		
-		}
-		$json="";
-		for($i=0;$i<count($row_);$i++){
+			$caminho = $caminho_arquivo.$nome_arquivo;
+			move_uploaded_file($arquivo['tmp_name'],"../".$caminho);  
 			
-			
-			$json.='{
-					"id":'.$row_[$i]['id'].',
-					"id_grid":'.$row_[$i]['id_grid'].',
-					"id_grid_pai":'.$row_[$i]['id_grid_pai'].',
-					"numero":"'.$row_[$i]['numero'].'",
-					"nome_conta":"'.$row_[$i]['numero'].' - '.$row_[$i]['descricao'].'" ,
-					"mes_01_O":'.$row_[$i]['mes_01_O'].' ,
-					"mes_02_O":'.$row_[$i]['mes_02_O'].' ,
-					"mes_03_O":'.$row_[$i]['mes_03_O'].' ,
-					"mes_04_O":'.$row_[$i]['mes_04_O'].' ,
-					"mes_05_O":'.$row_[$i]['mes_05_O'].' ,
-					"mes_06_O":'.$row_[$i]['mes_06_O'].' ,
-					"mes_07_O":'.$row_[$i]['mes_07_O'].' ,
-					"mes_08_O":'.$row_[$i]['mes_08_O'].' ,
-					"mes_09_O":'.$row_[$i]['mes_09_O'].' ,
-					"mes_10_O":'.$row_[$i]['mes_10_O'].' ,
-					"mes_11_O":'.$row_[$i]['mes_11_O'].' ,
-					"mes_12_O":'.$row_[$i]['mes_12_O'].' ,
-
-					"total_O":'.
-							($row_[$i]['mes_01_O']
-							+$row_[$i]['mes_02_O']
-							+$row_[$i]['mes_03_O']
-							+$row_[$i]['mes_04_O']
-							+$row_[$i]['mes_05_O']
-							+$row_[$i]['mes_06_O']
-							+$row_[$i]['mes_07_O']
-							+$row_[$i]['mes_08_O']
-							+$row_[$i]['mes_09_O']
-							+$row_[$i]['mes_10_O']
-							+$row_[$i]['mes_11_O']
-							+$row_[$i]['mes_12_O'])
-							.' ,
-					
-					"mes_01_R":'.$row_[$i]['mes_01_R'].' ,
-					"mes_02_R":'.$row_[$i]['mes_02_R'].' ,
-					"mes_03_R":'.$row_[$i]['mes_03_R'].' ,
-					"mes_04_R":'.$row_[$i]['mes_04_R'].' ,
-					"mes_05_R":'.$row_[$i]['mes_05_R'].' ,
-					"mes_06_R":'.$row_[$i]['mes_06_R'].' ,
-					"mes_07_R":'.$row_[$i]['mes_07_R'].' ,
-					"mes_08_R":'.$row_[$i]['mes_08_R'].' ,
-					"mes_09_R":'.$row_[$i]['mes_09_R'].' ,
-					"mes_10_R":'.$row_[$i]['mes_10_R'].' ,
-					"mes_11_R":'.$row_[$i]['mes_11_R'].' ,
-					"mes_12_R":'.$row_[$i]['mes_12_R'].' ,
-
-					"total_R":'.
-							($row_[$i]['mes_01_R']
-							+$row_[$i]['mes_02_R']
-							+$row_[$i]['mes_03_R']
-							+$row_[$i]['mes_04_R']
-							+$row_[$i]['mes_05_R']
-							+$row_[$i]['mes_06_R']
-							+$row_[$i]['mes_07_R']
-							+$row_[$i]['mes_08_R']
-							+$row_[$i]['mes_09_R']
-							+$row_[$i]['mes_10_R']
-							+$row_[$i]['mes_11_R']
-							+$row_[$i]['mes_12_R'])
-							.' ,
-							
-					"mes_01_V":'.($row_[$i]['mes_01_R']-$row_[$i]['mes_01_O']).' ,
-					"mes_02_V":'.($row_[$i]['mes_02_R']-$row_[$i]['mes_02_O']).' ,
-					"mes_03_V":'.($row_[$i]['mes_03_R']-$row_[$i]['mes_03_O']).' ,
-					"mes_04_V":'.($row_[$i]['mes_04_R']-$row_[$i]['mes_04_O']).' ,
-					"mes_05_V":'.($row_[$i]['mes_05_R']-$row_[$i]['mes_05_O']).' ,
-					"mes_06_V":'.($row_[$i]['mes_06_R']-$row_[$i]['mes_06_O']).' ,
-					"mes_07_V":'.($row_[$i]['mes_07_R']-$row_[$i]['mes_07_O']).' ,
-					"mes_08_V":'.($row_[$i]['mes_08_R']-$row_[$i]['mes_08_O']).' ,
-					"mes_09_V":'.($row_[$i]['mes_09_R']-$row_[$i]['mes_09_O']).' ,
-					"mes_10_V":'.($row_[$i]['mes_10_R']-$row_[$i]['mes_10_O']).' ,
-					"mes_11_V":'.($row_[$i]['mes_11_R']-$row_[$i]['mes_11_O']).' ,
-					"mes_12_V":'.($row_[$i]['mes_12_R']-$row_[$i]['mes_12_O']).' ,
-
-					"total_V":'.
-							(($row_[$i]['mes_01_R']
-							+$row_[$i]['mes_02_R']
-							+$row_[$i]['mes_03_R']
-							+$row_[$i]['mes_04_R']
-							+$row_[$i]['mes_05_R']
-							+$row_[$i]['mes_06_R']
-							+$row_[$i]['mes_07_R']
-							+$row_[$i]['mes_08_R']
-							+$row_[$i]['mes_09_R']
-							+$row_[$i]['mes_10_R']
-							+$row_[$i]['mes_11_R']
-							+$row_[$i]['mes_12_R'])
-							
-							-($row_[$i]['mes_01_O']
-							+$row_[$i]['mes_02_O']
-							+$row_[$i]['mes_03_O']
-							+$row_[$i]['mes_04_O']
-							+$row_[$i]['mes_05_O']
-							+$row_[$i]['mes_06_O']
-							+$row_[$i]['mes_07_O']
-							+$row_[$i]['mes_08_O']
-							+$row_[$i]['mes_09_O']
-							+$row_[$i]['mes_10_O']
-							+$row_[$i]['mes_11_O']
-							+$row_[$i]['mes_12_O']))
-							
-							
-							
-							.' ,
-							
-					"mes_01_sinalizador":'.sinalizador($row_[$i]['mes_01_R'],$row_[$i]['mes_01_O']).' ,
-					"mes_02_sinalizador":'.sinalizador($row_[$i]['mes_02_R'],$row_[$i]['mes_02_O']).' ,
-					"mes_03_sinalizador":'.sinalizador($row_[$i]['mes_03_R'],$row_[$i]['mes_03_O']).' ,
-					"mes_04_sinalizador":'.sinalizador($row_[$i]['mes_04_R'],$row_[$i]['mes_04_O']).' ,
-					"mes_05_sinalizador":'.sinalizador($row_[$i]['mes_05_R'],$row_[$i]['mes_05_O']).' ,
-					"mes_06_sinalizador":'.sinalizador($row_[$i]['mes_06_R'],$row_[$i]['mes_06_O']).' ,
-					"mes_07_sinalizador":'.sinalizador($row_[$i]['mes_07_R'],$row_[$i]['mes_07_O']).' ,
-					"mes_08_sinalizador":'.sinalizador($row_[$i]['mes_08_R'],$row_[$i]['mes_08_O']).' ,
-					"mes_09_sinalizador":'.sinalizador($row_[$i]['mes_09_R'],$row_[$i]['mes_09_O']).' ,
-					"mes_10_sinalizador":'.sinalizador($row_[$i]['mes_10_R'],$row_[$i]['mes_10_O']).' ,
-					"mes_11_sinalizador":'.sinalizador($row_[$i]['mes_11_R'],$row_[$i]['mes_11_O']).' ,
-					"mes_12_sinalizador":'.sinalizador($row_[$i]['mes_12_R'],$row_[$i]['mes_12_O']).' ,
-					"ttal_sinalizador":'.sinalizador(
-							($row_[$i]['mes_01_R']
-							+$row_[$i]['mes_02_R']
-							+$row_[$i]['mes_03_R']
-							+$row_[$i]['mes_04_R']
-							+$row_[$i]['mes_05_R']
-							+$row_[$i]['mes_06_R']
-							+$row_[$i]['mes_07_R']
-							+$row_[$i]['mes_08_R']
-							+$row_[$i]['mes_09_R']
-							+$row_[$i]['mes_10_R']
-							+$row_[$i]['mes_11_R']
-							+$row_[$i]['mes_12_R'])
-					
-							,
-							
-							($row_[$i]['mes_01_O']
-							+$row_[$i]['mes_02_O']
-							+$row_[$i]['mes_03_O']
-							+$row_[$i]['mes_04_O']
-							+$row_[$i]['mes_05_O']
-							+$row_[$i]['mes_06_O']
-							+$row_[$i]['mes_07_O']
-							+$row_[$i]['mes_08_O']
-							+$row_[$i]['mes_09_O']
-							+$row_[$i]['mes_10_O']
-							+$row_[$i]['mes_11_O']
-							+$row_[$i]['mes_12_O'])
-					
-					).'
-					}';
-
-		}		
-		$json=str_replace("}{","},{",$json);
-		echo 'var base=['.$json.'];';
+		$table="cad_imagens";
+		$campos="`cod_item`, `endereco_imagem`";
+		$values="'".$id."','".$caminho."'";
+		$msg="N";
 	
+		$sql=new sql;
+		$sql->insert($table,$campos,$values,$msg);
+
+
 	
-	
+		
 	}	
-	public function orcamento_orcado_real_ctrcusto($schema_real,$id_orcamento,$idconta){
-		include "config.php";
-		$filtro="";
-		if($idconta!=""){
-	//		$filtro.="and plano_de_contas.numero='".$idconta."' ";
-			$filtro.="and SUBSTRING(plano_de_contas.numero,1,length('".$idconta."'))='".$idconta."' ";
-		}
-		function formatar($txt,$niveis){
-				$resultado="";
-				$txt=explode(".", $txt);
-				for($i=0;$i<count($txt);$i++){
-					if($i==$niveis-1){
-							for($x=strlen($txt[$i]);$x<=3;$x++){
-							$txt[$i]="0".$txt[$i];
-						}	
-					}else{
-							for($x=strlen($txt[$i]);$x<=1;$x++){
-							$txt[$i]="0".$txt[$i];
-						}
-					
-					}
-				}
-				for($i=0;$i<count($txt);$i++){
-					if($i>0){
-						$resultado.= ".";
-					}
-						$resultado.= $txt[$i];
-
-				}
-
-				return $resultado;				
-
-				//split($txt,".");
-		}
-		function pai($txt){
-			$id=$txt;
-			$resultado= "";
-			$txt=explode(".", $txt);
-				for($i=0;$i<count($txt)-1;$i++){
-					if($i>0){
-						$resultado.= ".";
-					}
-						$resultado.= $txt[$i];
-
-				}
-				if($id=='00'){
-					return '-1';
-				}else{
-					return "9999".str_replace(".","",$resultado);
-				}
-	
-
-		}
-		function id($txt){
-			$resultado="9999".str_replace(".","",$txt);
-			return $resultado;
-		}
-		function href($idconta,$valor,$data_inicio,$data_fim,$R_O){
-			return  "<a href='detalhe_real_orcado?id_conta=".$idconta."&data_inicio=".$data_inicio."&data_fim=".$data_fim."&R_O=".$R_O."' _blank>".$valor."</a>";
-		}
-		function sinalizador($real,$orcado){
-			if($real<$orcado){
-				return "'down'";
-			}else{
-				return "'up'";
-			}
-		
-		}
-		
-		
-		$select="SELECT year(data_inicio) as ano FROM orcamento.tb_orcamento where id_orcamento='".$id_orcamento."';";
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		while($row = mysql_fetch_array($resultado))
-		{
-			$ano=$row['ano'];	
-		}
-
-			$mes_01_I = date("Y-m-d", mktime (0, 0, 0, 1  , 1, $ano));
-			$mes_02_I = date("Y-m-d", mktime (0, 0, 0, 2  , 1, $ano));
-			$mes_03_I = date("Y-m-d", mktime (0, 0, 0, 3  , 1, $ano));
-			$mes_04_I = date("Y-m-d", mktime (0, 0, 0, 4  , 1, $ano));
-			$mes_05_I = date("Y-m-d", mktime (0, 0, 0, 5  , 1, $ano));
-			$mes_06_I = date("Y-m-d", mktime (0, 0, 0, 6  , 1, $ano));
-			$mes_07_I = date("Y-m-d", mktime (0, 0, 0, 7  , 1, $ano));
-			$mes_08_I = date("Y-m-d", mktime (0, 0, 0, 8  , 1, $ano));
-			$mes_09_I = date("Y-m-d", mktime (0, 0, 0, 9  , 1, $ano));
-			$mes_10_I = date("Y-m-d", mktime (0, 0, 0, 10 , 1, $ano));
-			$mes_11_I = date("Y-m-d", mktime (0, 0, 0, 11 , 1, $ano));
-			$mes_12_I = date("Y-m-d", mktime (0, 0, 0, 12 , 1, $ano));
-
-			$mes_01_F = date("Y-m-d", mktime (0, 0, 0, 2  , 1, $ano)-1);
-			$mes_02_F = date("Y-m-d", mktime (0, 0, 0, 3  , 1, $ano)-1);
-			$mes_03_F = date("Y-m-d", mktime (0, 0, 0, 4  , 1, $ano)-1);
-			$mes_04_F = date("Y-m-d", mktime (0, 0, 0, 5  , 1, $ano)-1);
-			$mes_05_F = date("Y-m-d", mktime (0, 0, 0, 6  , 1, $ano)-1);
-			$mes_06_F = date("Y-m-d", mktime (0, 0, 0, 7  , 1, $ano)-1);
-			$mes_07_F = date("Y-m-d", mktime (0, 0, 0, 8  , 1, $ano)-1);
-			$mes_08_F = date("Y-m-d", mktime (0, 0, 0, 9  , 1, $ano)-1);
-			$mes_09_F = date("Y-m-d", mktime (0, 0, 0, 10  , 1, $ano)-1);
-			$mes_10_F = date("Y-m-d", mktime (0, 0, 0, 11 , 1, $ano)-1);
-			$mes_11_F = date("Y-m-d", mktime (0, 0, 0, 12 , 1, $ano)-1);
-			$mes_12_F = date("Y-m-d", mktime (0, 0, 0, 1 , 1, $ano+1)-1);		
-		
-		
-		
-		
-		
-		$select= "
-		
-						select
-							0 as id, 
-							'00' as numero,
-							'CONSOLIDADO' as descricao,
-							
-							0.00 as mes_01_O,
-							0.00 as mes_02_O,
-							0.00 as mes_03_O,
-							0.00 as mes_04_O,
-							0.00 as mes_05_O,
-							0.00 as mes_06_O,
-							0.00 as mes_07_O,
-							0.00 as mes_08_O,
-							0.00 as mes_09_O,
-							0.00 as mes_10_O,
-							0.00 as mes_11_O,
-							0.00 as mes_12_O,
-
-							0.00 as mes_01_R,
-							0.00 as mes_02_R,
-							0.00 as mes_03_R,
-							0.00 as mes_04_R,
-							0.00 as mes_05_R,
-							0.00 as mes_06_R,
-							0.00 as mes_07_R,
-							0.00 as mes_08_R,
-							0.00 as mes_09_R,
-							0.00 as mes_10_R,
-							0.00 as mes_11_R,
-							0.00 as mes_12_R
-
-						
-						union all
-						
-						SELECT
-							tb_centro_de_custos.id,
-							concat('00.',tb_centro_de_custos.numero) as numero,
-							tb_centro_de_custos.descricao,
-
-							-sum(ifnull(mes_1_O.valor,0)) as mes_01_O,
-							-sum(ifnull(mes_2_O.valor,0)) as mes_02_O,
-							-sum(ifnull(mes_3_O.valor,0)) as mes_03_O,
-							-sum(ifnull(mes_4_O.valor,0)) as mes_04_O,
-							-sum(ifnull(mes_5_O.valor,0)) as mes_05_O,
-							-sum(ifnull(mes_6_O.valor,0)) as mes_06_O,
-							-sum(ifnull(mes_7_O.valor,0)) as mes_07_O,
-							-sum(ifnull(mes_8_O.valor,0)) as mes_08_O,
-							-sum(ifnull(mes_9_O.valor,0)) as mes_09_O,
-							-sum(ifnull(mes_10_O.valor,0)) as mes_10_O,
-							-sum(ifnull(mes_11_O.valor,0)) as mes_11_O,
-							-sum(ifnull(mes_12_O.valor,0)) as mes_12_O,
-
-							sum(ifnull(mes_1_R.valor,0)) as mes_01_R,
-							sum(ifnull(mes_2_R.valor,0)) as mes_02_R,
-							sum(ifnull(mes_3_R.valor,0)) as mes_03_R,
-							sum(ifnull(mes_4_R.valor,0)) as mes_04_R,
-							sum(ifnull(mes_5_R.valor,0)) as mes_05_R,
-							sum(ifnull(mes_6_R.valor,0)) as mes_06_R,
-							sum(ifnull(mes_7_R.valor,0)) as mes_07_R,
-							sum(ifnull(mes_8_R.valor,0)) as mes_08_R,
-							sum(ifnull(mes_9_R.valor,0)) as mes_09_R,
-							sum(ifnull(mes_10_R.valor,0)) as mes_10_R,
-							sum(ifnull(mes_11_R.valor,0)) as mes_11_R,
-							sum(ifnull(mes_12_R.valor,0)) as mes_12_R
-
-
-						FROM 
-							(
-							SELECT
-								centro_de_custos.id,
-								centro_de_custos.`schema`,
-								centro_de_custos.numero,
-								centro_de_custos.descricao
-							FROM
-								orcamento.centro_de_custos,
-								orcamento.tb_orcamento
-							WHERE
-								centro_de_custos.`schema`=tb_orcamento.schema_plano_de_contas and
-								tb_orcamento.id_orcamento='".$id_orcamento."' 						
-							) as tb_centro_de_custos 
-							
-							
-
-						
-						
-						
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.tb_orcamento_lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=tb_orcamento_lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_01_I."' and '".$mes_01_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idctrcusto ) as mes_1_O on tb_centro_de_custos.id=mes_1_O.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.tb_orcamento_lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=tb_orcamento_lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_02_I."' and '".$mes_02_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idctrcusto ) as mes_2_O on tb_centro_de_custos.id=mes_2_O.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.tb_orcamento_lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=tb_orcamento_lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_03_I."' and '".$mes_03_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idctrcusto ) as mes_3_O on tb_centro_de_custos.id=mes_3_O.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.tb_orcamento_lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=tb_orcamento_lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_04_I."' and '".$mes_04_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idctrcusto ) as mes_4_O on tb_centro_de_custos.id=mes_4_O.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.tb_orcamento_lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=tb_orcamento_lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_05_I."' and '".$mes_05_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idctrcusto ) as mes_5_O on tb_centro_de_custos.id=mes_5_O.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.tb_orcamento_lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=tb_orcamento_lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_06_I."' and '".$mes_06_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idctrcusto ) as mes_6_O on tb_centro_de_custos.id=mes_6_O.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.tb_orcamento_lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=tb_orcamento_lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_07_I."' and '".$mes_07_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idctrcusto ) as mes_7_O on tb_centro_de_custos.id=mes_7_O.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.tb_orcamento_lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=tb_orcamento_lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_08_I."' and '".$mes_08_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idctrcusto ) as mes_8_O on tb_centro_de_custos.id=mes_8_O.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.tb_orcamento_lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=tb_orcamento_lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_09_I."' and '".$mes_09_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idctrcusto ) as mes_9_O on tb_centro_de_custos.id=mes_9_O.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.tb_orcamento_lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=tb_orcamento_lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_10_I."' and '".$mes_10_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idctrcusto ) as mes_10_O on tb_centro_de_custos.id=mes_10_O.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.tb_orcamento_lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=tb_orcamento_lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_11_I."' and '".$mes_11_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idctrcusto ) as mes_11_O on tb_centro_de_custos.id=mes_11_O.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.tb_orcamento_lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=tb_orcamento_lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_12_I."' and '".$mes_12_F."') and tb_orcamento_lancamentos.id_orcamento='".$id_orcamento."' group by idctrcusto ) as mes_12_O on tb_centro_de_custos.id=mes_12_O.idctrcusto
-
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_01_I."' and '".$mes_01_F."') and lancamentos.`schema`='".$schema_real."' group by idctrcusto ) as mes_1_R on tb_centro_de_custos.id=mes_1_R.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_02_I."' and '".$mes_02_F."') and lancamentos.`schema`='".$schema_real."' group by idctrcusto ) as mes_2_R on tb_centro_de_custos.id=mes_2_R.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_03_I."' and '".$mes_03_F."') and lancamentos.`schema`='".$schema_real."' group by idctrcusto ) as mes_3_R on tb_centro_de_custos.id=mes_3_R.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_04_I."' and '".$mes_04_F."') and lancamentos.`schema`='".$schema_real."' group by idctrcusto ) as mes_4_R on tb_centro_de_custos.id=mes_4_R.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_05_I."' and '".$mes_05_F."') and lancamentos.`schema`='".$schema_real."' group by idctrcusto ) as mes_5_R on tb_centro_de_custos.id=mes_5_R.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_06_I."' and '".$mes_06_F."') and lancamentos.`schema`='".$schema_real."' group by idctrcusto ) as mes_6_R on tb_centro_de_custos.id=mes_6_R.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_07_I."' and '".$mes_07_F."') and lancamentos.`schema`='".$schema_real."' group by idctrcusto ) as mes_7_R on tb_centro_de_custos.id=mes_7_R.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_08_I."' and '".$mes_08_F."') and lancamentos.`schema`='".$schema_real."' group by idctrcusto ) as mes_8_R on tb_centro_de_custos.id=mes_8_R.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_09_I."' and '".$mes_09_F."') and lancamentos.`schema`='".$schema_real."' group by idctrcusto ) as mes_9_R on tb_centro_de_custos.id=mes_9_R.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_10_I."' and '".$mes_10_F."') and lancamentos.`schema`='".$schema_real."' group by idctrcusto ) as mes_10_R on tb_centro_de_custos.id=mes_10_R.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_11_I."' and '".$mes_11_F."') and lancamentos.`schema`='".$schema_real."' group by idctrcusto ) as mes_11_R on tb_centro_de_custos.id=mes_11_R.idctrcusto
-						left join (SELECT month(data) as mes, idctrcusto, sum(ifnull(valor, 0)) as valor FROM orcamento.lancamentos, orcamento.plano_de_contas, orcamento.tb_orcamento where plano_de_contas.id=lancamentos.idconta and tb_orcamento.schema_plano_de_contas=plano_de_contas.schema and tb_orcamento.id_orcamento='".$id_orcamento."' ".$filtro." and (data between '".$mes_12_I."' and '".$mes_12_F."') and lancamentos.`schema`='".$schema_real."' group by idctrcusto ) as mes_12_R on tb_centro_de_custos.id=mes_12_R.idctrcusto
-						
-						
-						
-						
-						
-
-
-						GROUP BY 
-							tb_centro_de_custos.numero;
-							
-							";
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		$i=0;
-		$row_="";
-		while($row = mysql_fetch_array($resultado))
-		{
-				$row_[$i]['numero']=formatar($row['numero'],4);
-				$row_[$i]['id_grid']=id(formatar($row['numero'],4));
-				$row_[$i]['id_grid_pai']=pai(formatar($row['numero'],4));
-				$row_[$i]['descricao']=$row['descricao'];
-				$row_[$i]['id']=$row['id'];
-				$row_[$i]['mes_01_O']=$row['mes_01_O'];
-				$row_[$i]['mes_02_O']=$row['mes_02_O'];
-				$row_[$i]['mes_03_O']=$row['mes_03_O'];
-				$row_[$i]['mes_04_O']=$row['mes_04_O'];
-				$row_[$i]['mes_05_O']=$row['mes_05_O'];
-				$row_[$i]['mes_06_O']=$row['mes_06_O'];
-				$row_[$i]['mes_07_O']=$row['mes_07_O'];
-				$row_[$i]['mes_08_O']=$row['mes_08_O'];
-				$row_[$i]['mes_09_O']=$row['mes_09_O'];
-				$row_[$i]['mes_10_O']=$row['mes_10_O'];
-				$row_[$i]['mes_11_O']=$row['mes_11_O'];
-				$row_[$i]['mes_12_O']=$row['mes_12_O'];
-				
-				$row_[$i]['mes_01_R']=$row['mes_01_R'];
-				$row_[$i]['mes_02_R']=$row['mes_02_R'];
-				$row_[$i]['mes_03_R']=$row['mes_03_R'];
-				$row_[$i]['mes_04_R']=$row['mes_04_R'];
-				$row_[$i]['mes_05_R']=$row['mes_05_R'];
-				$row_[$i]['mes_06_R']=$row['mes_06_R'];
-				$row_[$i]['mes_07_R']=$row['mes_07_R'];
-				$row_[$i]['mes_08_R']=$row['mes_08_R'];
-				$row_[$i]['mes_09_R']=$row['mes_09_R'];
-				$row_[$i]['mes_10_R']=$row['mes_10_R'];
-				$row_[$i]['mes_11_R']=$row['mes_11_R'];
-				$row_[$i]['mes_12_R']=$row['mes_12_R'];
-				
-				
-				
-				$i=$i+1;
-		}	
-		//echo count($row_);
-		for($i=0;$i<count($row_);$i++){
-			$numero=$row_[$i]['numero'];
-
-			for($x=0;$x<count($row_);$x++){
-				if(
-						$row_[$x]['numero']!=$numero and 
-						substr($row_[$x]['numero'],0,strlen($numero))==$numero
-					){
-					$row_[$i]['mes_01_O']=$row_[$i]['mes_01_O']+$row_[$x]['mes_01_O'];
-					$row_[$i]['mes_02_O']=$row_[$i]['mes_02_O']+$row_[$x]['mes_02_O'];
-					$row_[$i]['mes_03_O']=$row_[$i]['mes_03_O']+$row_[$x]['mes_03_O'];
-					$row_[$i]['mes_04_O']=$row_[$i]['mes_04_O']+$row_[$x]['mes_04_O'];
-					$row_[$i]['mes_05_O']=$row_[$i]['mes_05_O']+$row_[$x]['mes_05_O'];
-					$row_[$i]['mes_06_O']=$row_[$i]['mes_06_O']+$row_[$x]['mes_06_O'];
-					$row_[$i]['mes_07_O']=$row_[$i]['mes_07_O']+$row_[$x]['mes_07_O'];
-					$row_[$i]['mes_08_O']=$row_[$i]['mes_08_O']+$row_[$x]['mes_08_O'];
-					$row_[$i]['mes_09_O']=$row_[$i]['mes_09_O']+$row_[$x]['mes_09_O'];
-					$row_[$i]['mes_10_O']=$row_[$i]['mes_10_O']+$row_[$x]['mes_10_O'];
-					$row_[$i]['mes_11_O']=$row_[$i]['mes_11_O']+$row_[$x]['mes_11_O'];
-					$row_[$i]['mes_12_O']=$row_[$i]['mes_12_O']+$row_[$x]['mes_12_O'];
-					
-					$row_[$i]['mes_01_R']=$row_[$i]['mes_01_R']+$row_[$x]['mes_01_R'];
-					$row_[$i]['mes_02_R']=$row_[$i]['mes_02_R']+$row_[$x]['mes_02_R'];
-					$row_[$i]['mes_03_R']=$row_[$i]['mes_03_R']+$row_[$x]['mes_03_R'];
-					$row_[$i]['mes_04_R']=$row_[$i]['mes_04_R']+$row_[$x]['mes_04_R'];
-					$row_[$i]['mes_05_R']=$row_[$i]['mes_05_R']+$row_[$x]['mes_05_R'];
-					$row_[$i]['mes_06_R']=$row_[$i]['mes_06_R']+$row_[$x]['mes_06_R'];
-					$row_[$i]['mes_07_R']=$row_[$i]['mes_07_R']+$row_[$x]['mes_07_R'];
-					$row_[$i]['mes_08_R']=$row_[$i]['mes_08_R']+$row_[$x]['mes_08_R'];
-					$row_[$i]['mes_09_R']=$row_[$i]['mes_09_R']+$row_[$x]['mes_09_R'];
-					$row_[$i]['mes_10_R']=$row_[$i]['mes_10_R']+$row_[$x]['mes_10_R'];
-					$row_[$i]['mes_11_R']=$row_[$i]['mes_11_R']+$row_[$x]['mes_11_R'];
-					$row_[$i]['mes_12_R']=$row_[$i]['mes_12_R']+$row_[$x]['mes_12_R'];
-				}
-
-			}
-		
-		
-		}
-		$json="";
-		for($i=0;$i<count($row_);$i++){
-			
-			
-			$json.='{
-					"id":'.$row_[$i]['id'].',
-					"id_grid":'.$row_[$i]['id_grid'].',
-					"id_grid_pai":'.$row_[$i]['id_grid_pai'].',
-					"numero":"'.$row_[$i]['numero'].'",
-					"nome_conta":"'.$row_[$i]['numero'].' - '.$row_[$i]['descricao'].'" ,
-					"mes_01_O":'.$row_[$i]['mes_01_O'].' ,
-					"mes_02_O":'.$row_[$i]['mes_02_O'].' ,
-					"mes_03_O":'.$row_[$i]['mes_03_O'].' ,
-					"mes_04_O":'.$row_[$i]['mes_04_O'].' ,
-					"mes_05_O":'.$row_[$i]['mes_05_O'].' ,
-					"mes_06_O":'.$row_[$i]['mes_06_O'].' ,
-					"mes_07_O":'.$row_[$i]['mes_07_O'].' ,
-					"mes_08_O":'.$row_[$i]['mes_08_O'].' ,
-					"mes_09_O":'.$row_[$i]['mes_09_O'].' ,
-					"mes_10_O":'.$row_[$i]['mes_10_O'].' ,
-					"mes_11_O":'.$row_[$i]['mes_11_O'].' ,
-					"mes_12_O":'.$row_[$i]['mes_12_O'].' ,
-
-					"total_O":'.
-							($row_[$i]['mes_01_O']
-							+$row_[$i]['mes_02_O']
-							+$row_[$i]['mes_03_O']
-							+$row_[$i]['mes_04_O']
-							+$row_[$i]['mes_05_O']
-							+$row_[$i]['mes_06_O']
-							+$row_[$i]['mes_07_O']
-							+$row_[$i]['mes_08_O']
-							+$row_[$i]['mes_09_O']
-							+$row_[$i]['mes_10_O']
-							+$row_[$i]['mes_11_O']
-							+$row_[$i]['mes_12_O'])
-							.' ,
-					
-					"mes_01_R":'.$row_[$i]['mes_01_R'].' ,
-					"mes_02_R":'.$row_[$i]['mes_02_R'].' ,
-					"mes_03_R":'.$row_[$i]['mes_03_R'].' ,
-					"mes_04_R":'.$row_[$i]['mes_04_R'].' ,
-					"mes_05_R":'.$row_[$i]['mes_05_R'].' ,
-					"mes_06_R":'.$row_[$i]['mes_06_R'].' ,
-					"mes_07_R":'.$row_[$i]['mes_07_R'].' ,
-					"mes_08_R":'.$row_[$i]['mes_08_R'].' ,
-					"mes_09_R":'.$row_[$i]['mes_09_R'].' ,
-					"mes_10_R":'.$row_[$i]['mes_10_R'].' ,
-					"mes_11_R":'.$row_[$i]['mes_11_R'].' ,
-					"mes_12_R":'.$row_[$i]['mes_12_R'].' ,
-
-					"total_R":'.
-							($row_[$i]['mes_01_R']
-							+$row_[$i]['mes_02_R']
-							+$row_[$i]['mes_03_R']
-							+$row_[$i]['mes_04_R']
-							+$row_[$i]['mes_05_R']
-							+$row_[$i]['mes_06_R']
-							+$row_[$i]['mes_07_R']
-							+$row_[$i]['mes_08_R']
-							+$row_[$i]['mes_09_R']
-							+$row_[$i]['mes_10_R']
-							+$row_[$i]['mes_11_R']
-							+$row_[$i]['mes_12_R'])
-							.' ,
-							
-					"mes_01_V":'.($row_[$i]['mes_01_R']-$row_[$i]['mes_01_O']).' ,
-					"mes_02_V":'.($row_[$i]['mes_02_R']-$row_[$i]['mes_02_O']).' ,
-					"mes_03_V":'.($row_[$i]['mes_03_R']-$row_[$i]['mes_03_O']).' ,
-					"mes_04_V":'.($row_[$i]['mes_04_R']-$row_[$i]['mes_04_O']).' ,
-					"mes_05_V":'.($row_[$i]['mes_05_R']-$row_[$i]['mes_05_O']).' ,
-					"mes_06_V":'.($row_[$i]['mes_06_R']-$row_[$i]['mes_06_O']).' ,
-					"mes_07_V":'.($row_[$i]['mes_07_R']-$row_[$i]['mes_07_O']).' ,
-					"mes_08_V":'.($row_[$i]['mes_08_R']-$row_[$i]['mes_08_O']).' ,
-					"mes_09_V":'.($row_[$i]['mes_09_R']-$row_[$i]['mes_09_O']).' ,
-					"mes_10_V":'.($row_[$i]['mes_10_R']-$row_[$i]['mes_10_O']).' ,
-					"mes_11_V":'.($row_[$i]['mes_11_R']-$row_[$i]['mes_11_O']).' ,
-					"mes_12_V":'.($row_[$i]['mes_12_R']-$row_[$i]['mes_12_O']).' ,
-
-					"total_V":'.
-							(($row_[$i]['mes_01_R']
-							+$row_[$i]['mes_02_R']
-							+$row_[$i]['mes_03_R']
-							+$row_[$i]['mes_04_R']
-							+$row_[$i]['mes_05_R']
-							+$row_[$i]['mes_06_R']
-							+$row_[$i]['mes_07_R']
-							+$row_[$i]['mes_08_R']
-							+$row_[$i]['mes_09_R']
-							+$row_[$i]['mes_10_R']
-							+$row_[$i]['mes_11_R']
-							+$row_[$i]['mes_12_R'])
-							
-							-($row_[$i]['mes_01_O']
-							+$row_[$i]['mes_02_O']
-							+$row_[$i]['mes_03_O']
-							+$row_[$i]['mes_04_O']
-							+$row_[$i]['mes_05_O']
-							+$row_[$i]['mes_06_O']
-							+$row_[$i]['mes_07_O']
-							+$row_[$i]['mes_08_O']
-							+$row_[$i]['mes_09_O']
-							+$row_[$i]['mes_10_O']
-							+$row_[$i]['mes_11_O']
-							+$row_[$i]['mes_12_O']))
-
-							.' ,
-							
-					"mes_01_sinalizador":'.sinalizador($row_[$i]['mes_01_R'],$row_[$i]['mes_01_O']).' ,
-					"mes_02_sinalizador":'.sinalizador($row_[$i]['mes_02_R'],$row_[$i]['mes_02_O']).' ,
-					"mes_03_sinalizador":'.sinalizador($row_[$i]['mes_03_R'],$row_[$i]['mes_03_O']).' ,
-					"mes_04_sinalizador":'.sinalizador($row_[$i]['mes_04_R'],$row_[$i]['mes_04_O']).' ,
-					"mes_05_sinalizador":'.sinalizador($row_[$i]['mes_05_R'],$row_[$i]['mes_05_O']).' ,
-					"mes_06_sinalizador":'.sinalizador($row_[$i]['mes_06_R'],$row_[$i]['mes_06_O']).' ,
-					"mes_07_sinalizador":'.sinalizador($row_[$i]['mes_07_R'],$row_[$i]['mes_07_O']).' ,
-					"mes_08_sinalizador":'.sinalizador($row_[$i]['mes_08_R'],$row_[$i]['mes_08_O']).' ,
-					"mes_09_sinalizador":'.sinalizador($row_[$i]['mes_09_R'],$row_[$i]['mes_09_O']).' ,
-					"mes_10_sinalizador":'.sinalizador($row_[$i]['mes_10_R'],$row_[$i]['mes_10_O']).' ,
-					"mes_11_sinalizador":'.sinalizador($row_[$i]['mes_11_R'],$row_[$i]['mes_11_O']).' ,
-					"mes_12_sinalizador":'.sinalizador($row_[$i]['mes_12_R'],$row_[$i]['mes_12_O']).' ,
-					"ttal_sinalizador":'.sinalizador(
-							($row_[$i]['mes_01_R']
-							+$row_[$i]['mes_02_R']
-							+$row_[$i]['mes_03_R']
-							+$row_[$i]['mes_04_R']
-							+$row_[$i]['mes_05_R']
-							+$row_[$i]['mes_06_R']
-							+$row_[$i]['mes_07_R']
-							+$row_[$i]['mes_08_R']
-							+$row_[$i]['mes_09_R']
-							+$row_[$i]['mes_10_R']
-							+$row_[$i]['mes_11_R']
-							+$row_[$i]['mes_12_R'])
-					
-							,
-							
-							($row_[$i]['mes_01_O']
-							+$row_[$i]['mes_02_O']
-							+$row_[$i]['mes_03_O']
-							+$row_[$i]['mes_04_O']
-							+$row_[$i]['mes_05_O']
-							+$row_[$i]['mes_06_O']
-							+$row_[$i]['mes_07_O']
-							+$row_[$i]['mes_08_O']
-							+$row_[$i]['mes_09_O']
-							+$row_[$i]['mes_10_O']
-							+$row_[$i]['mes_11_O']
-							+$row_[$i]['mes_12_O'])
-					
-					).'
-					
-					}';
-
-		}		
-		$json=str_replace("}{","},{",$json);
-		echo 'var base=['.$json.'];';
-	//	echo $select;
-	
-	
-	}	
-	public function detalhe_real($cod_conta,$data_inicio,$data_fim){
-	
-	
-	
+	function excluir($id){
+		$sql=new sql;
+		$table="cad_imagens";
+		$where="cod_imagem='".$id."' ";
+		$msg="N";
+		$sql->delete($table,$where,$msg);
 	}
-	public function lista_orcamentos(){
-		include "config.php";
-		$select= "
-				SELECT 
-					*
-				 FROM 
-					orcamento.tb_orcamento;";
+}
 
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		
-			$json="";					
-		
-			while($row = mysql_fetch_array($resultado))
-			{
-				$json.= json_encode($row) ;
-			}	
-			$json=str_replace("}{","},{",$json);
-			$json="var base=[".$json."];";
-			echo $json;
+class listas{
+	
+}
+
+class igniteui{
+	function igrid($base,$column,$tabela){
+	echo 
 	
 	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///border: 1px solid #ccc; bottom: 10px ! important; position: absolute; top: 60px; left: 10px; right: 10px; overflow: auto;
+" 
+		<div id='grid' style='margin-top: -20px;'></div>
+		<style>
+			tr{
+				cursor:pointer;
+				
+			}
+		.uk-form input {
+			font-size: 10px !important;	
+			
+		}			
+		.uk-form-icon input {
+			 padding: 1px 1px 1px 20px !important;
+			 height: 20px !important;
+			 font-family: calibri !important;
+			
+		}			
+		</style>
+		<script>
+				   var tabela= new Grid( {
+						idGrid:'grid',
+						autoGenerateColumns: false,
+						tableId: '".$tabela."',
+						dataSource: ".$base.",
+						dataSourceType: 'json',
+						columns:[".$column."],
+						width: '100%',
+						height: '300px',
+						virtualizationMode: 'fixed',
+						avgRowHeight: '30px',
+						tabIndex: 1,
+						features: [
+							{
+								name: 'Selection',
+								mode: 'row'
+							},
+							{
+								name: 'Hiding'
+							},
+							{
+								name: 'Paging',
+								type: 'local',
+								pageSize: 15
+							},					
+							{
+								name: 'Filtering',
+								type: 'local'
+
+							},	
+							{
+								name: 'Resizing'
+							},						
+						   
+
+						]
+					} );
+					
+				
+			//$('#grid').igGrid({
+			//	cellClick: function(evt, ui) { window.location.assign('?act=cadastros&mod=".$tabela."&id='+$('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));}
+			//});
+			
+		</script>
+";
+		//$(function(){$('#".$tabela."').colResizable();});
+		//Initialize
+	//$('#grid').igGrid({
+	//	cellClick: function(evt, ui) { window.location.assign('?act=cadastros&mod=".$tabela."&id='+$('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));}
+	//});	
+
+	///alert($('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	}
-	public function listar_schemas_orcamento_json(){
-		include "config.php";
-		$select= "SELECT `schema` FROM orcamento.plano_de_contas group by `schema`;";
+	function TreeGrid($base,$column,$tabela,$combo,$plano_conta){
+	echo "<div id='grid' style='margin-top: -20px;'></div>
+		<script>
+					var tabela= new TreeGrid({
+						idGrid:'grid',
+						width:'100%',
+						height:'100%',
+						ID:'ID',
+						PID:'PID',	
+						tableId:'".$tabela."',
+						dataSource: ".$base.",
+						columns: [".$column."]				
+					});
 
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		
-			$json="";					
-		
-			while($row = mysql_fetch_array($resultado))
-			{
-				$json.= '"'.$row['schema'].'",' ;
-			}	
+		</script>";
+	}
+	function TreeGrid_($base,$column,$tabela,$combo,$plano_conta){
+	echo "<div id='grid' style='margin-top: -20px;'></div>
+		<script>
+					var tabela= new TreeGrid_({
+						idGrid:'grid',
+						width:'100%',
+						height:'100%',
+						ID:'ID',
+						PID:'PID',	
+						tableId:'".$tabela."',
+						dataSource: ".$base.",
+						columns: [".$column."]				
+					});
 
-			$json="var schemas=[".$json."];";
-			echo $json;
+		</script>";
+	}
+	function igrid_movimento($base,$column,$tabela){
+	echo 
 	
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+" 
+<script>
+            $( '#grid_movimento' ).igGrid( {
+                autoGenerateColumns: false,
+                dataSource: ".$base.",
+                dataSourceType: 'json',
+				columns:[".$column."],
+                width: '100%',
+                height: '100%',
+                virtualizationMode: 'fixed',
+                avgRowHeight: '30px',
+                tabIndex: 1,
+                features: [
+                    {
+                        name: 'Selection',
+                        mode: 'row'
+                    },
+                    {
+                        name: 'Paging',
+                        type: 'local',
+                        pageSize: 15
+                    },					
+                   {
+                        name: 'Filtering',
+                        type: 'local'
+                    },	
+					{
+						name: 'Resizing'
+					}					
+                   
+
+                ]
+            } );
+		
+</script>
+";
+	///alert($('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	}
+	function igrid_relatorios($base,$column,$groupby){
+	echo 
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+" 
+<script>
+            $( '#grid_relatorio' ).igGrid( {
+                autoGenerateColumns: false,
+                dataSource: ".$base.",
+                dataSourceType: 'json',
+				columns:[".$column."],
+                width: '100%',
+                height: '100%',
+                virtualizationMode: 'fixed',
+                tabIndex: 1,
+                features: [
+                    {
+                        name: 'Selection',
+                        mode: 'row'
+                    },
+                    {
+                        name: 'Paging',
+                        type: 'local',
+                        pageSize: 15
+                    },						
+                   {
+                        name: 'Filtering',
+                        type: 'local'
+                    },	
+					{
+						name: 'Resizing'
+					},						
+                    {
+                        name: 'MultiColumnHeaders'
+                    },					
+                    {
+                        name: 'GroupBy',
+                        columnSettings: [
+						".$groupby."
+                        ]
+                    }
+				]
+  
+            } );
+		
+</script>
+";
+	///alert($('#grid').igGrid('getCellValue', ui.rowIndex, 'id'));
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	}
+	function igrid_editavel($base,$column,$column_editavel){
+	
+
+	echo 
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+" 
+<script>
+
+            $( '#grid_relatorio' ).igGrid( {
+                autoGenerateColumns: false,
+                dataSource: ".$base.",
+                dataSourceType: 'json',
+				columns:[".$column."],
+                width: '100%',
+                height: '80%',
+                primaryKey: 'id',				
+                virtualizationMode: 'fixed',
+                tabIndex: 1,
+                features: [
+                    {
+                        name: 'Selection',
+                        mode: 'row'
+                    },
+                    {
+                        name: 'MultiColumnHeaders'
+                    },
+					{
+						name: 'Hiding'
+					},
+                    {
+                        name: 'Paging',
+                        type: 'local',
+                        pageSize: 15
+                    },					
+                    {
+                        name: 'Filtering',
+                        type: 'local'
+
+                    },						
+                    {
+                        name: 'Updating',
+                        enableAddRow: false,
+                        editMode: 'row',
+                        enableDeleteRow: false,
+                        rowEditDialogContainment: 'owner',
+                        showReadonlyEditors: false,
+                        enableDataDirtyException: false,
+                        columnSettings: [".$column_editavel."]
+                    }
+				]
+  
+            } );
+		
+</script>
+";
+	}
+	function igrid_editavel_add($base,$column,$column_editavel){
+	
+
+	echo 
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+" 
+<script>
+			function decimal_(valor) {
+				valor = valor.replace( '-', '' );
+				valor = valor.replace( ',', '' );
+				valor = valor.replace( '.', '' );
+				valor = valor.replace( '/', '' );
+				valor = valor.replace( '/', '' );
+				valor = valor.replace( '/', '' );
+				valor = valor.replace( '/', '' );
+				valor = valor.replace( '/', '' );
+				valor = valor.replace( '/', '' );
+				valor = valor.replace( '(', '' );
+				valor = valor.replace( ')', '' );
+				valor = valor.replace( ' ', '' );
+				valor=valor/100;
+
+				return valor;
+			}
+            $( '#igrid_editavel_add' ).igGrid( {
+                autoGenerateColumns: false,
+                dataSource: ".$base.",
+                dataSourceType: 'json',
+				columns:[".$column."],
+                width: '100%',
+                height: '100%',
+				avgRowHeight : 20,
+                primaryKey: 'numero_item',				
+                virtualizationMode: 'fixed',
+                tabIndex: 1,
+                features: [
+                    {
+                        name: 'Selection',
+                        mode: 'row'
+                    },
+                    {
+                        name: 'Filtering',
+                        type: 'local'
+                    },		
+					{
+						name: 'Resizing'
+					},					
+                    {
+                        name: 'Updating',
+						excelNavigationMode: true,
+						rowEditDialogFieldWidth: 150 ,
+						addRowTooltip: 'Novo item',
+						editMode: 'row',
+			            enableAddRow: true,
+                        enableDeleteRow: true,
+                        rowEditDialogContainment: 'owner',
+                        showReadonlyEditors: false,
+                        enableDataDirtyException: false,
+                        columnSettings: [".$column_editavel."]
+                    }
+				]
+  
+            } );
+		
+</script>
+";
 	}
 	
 }
-class schema_cadastros{
-	public function cadastro($tabela){
-		include "config.php";
-		$select= "SELECT `schema` FROM ".$schema_mysql.".".$tabela." group by `schema`;";
 
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		
-				
-			$lista="";
-			while($row = mysql_fetch_array($resultado))
-			{
-			$lista.=  
-				"<li class='td_schema' ><a href=?schema=".$row['schema']."&tabela=".$tabela.">".$row['schema']."</a></li>";
-			}	
-			$lista.= "</ul>";
-			echo $lista;	
-	
-	
-	}
-	public function centro_de_custos(){}
-	public function caixas(){}
-
-}
-class cadastro{
-	function formatar($txt,$niveis){
-			$resultado="";
-			$txt=explode(".", $txt);
-			for($i=0;$i<count($txt);$i++){
-				if($i==$niveis-1){
-						for($x=strlen($txt[$i]);$x<=3;$x++){
-						$txt[$i]="0".$txt[$i];
-					}	
-				}else{
-						for($x=strlen($txt[$i]);$x<=1;$x++){
-						$txt[$i]="0".$txt[$i];
+class html{
+	function json_table($json){
+				$json=str_replace("[","",$json);
+				$json=str_replace("]","",$json);
+				$json=explode('},{',$json);
+				for($i=0;$i<count($json);$i++){
+					$json[$i]=str_replace("{","",$json[$i]);
+					$json[$i]=str_replace("}","",$json[$i]);
+					$json[$i]=str_replace("'",'"',$json[$i]);
+					$array[$i]="{".$json[$i]."}";
+					if($i==0){
+						$keys=$array[$i];
 					}
-				
+					$array[$i]=json_decode($array[$i],true);
 				}
-			}
-			for($i=0;$i<count($txt);$i++){
-				if($i>0){
-					$resultado.= ".";
+				$keys=json_decode($keys,true);
+				$keys=array_keys($keys);
+
+
+				$table= "<table class='uk-table uk-table-hover'>";
+					for($c=0;$c<count($keys);$c++){
+						$table.= "<th>";
+						$table.= $keys[$c];
+						$table.= "</th>";
+					}
+				for($l=0;$l<count($array);$l++){
+					$table.= "<tr id='".$array[$l][$keys[0]]."'>";
+					for($c=0;$c<count($keys);$c++){
+						$table.= "<td>";
+						$table.= $array[$l][$keys[$c]];
+						$table.= "</td>";
+					}
+					$table.= "</tr>";				
 				}
-					$resultado.= $txt[$i];
-
-			}
-
-			return $resultado;				
-
-			//split($txt,".");
+				$table.= "</table>";
+				return $table;
 	}
-	function pai($txt){
-		$resultado= "";
-		$txt=explode(".", $txt);
-			for($i=0;$i<count($txt)-1;$i++){
-				if($i>0){
-					$resultado.= ".";
-				}
-					$resultado.= $txt[$i];
-
-			}
-		return "999999".str_replace(".","",$resultado);	
-
-	}
-	function id($txt){
-		$resultado="999999".str_replace(".","",$txt);
-		return $resultado;
-	}
-		
-	function plano_de_contas($schema){
-		include "config.php";
-		$formatar=new cadastro;
-		
-		$select= "
-						SELECT
-								plano_de_contas.*
-						FROM 
-							orcamento.plano_de_contas
-						WHERE
-							plano_de_contas.`schema`='".$schema."'
-					
-
-					
-					";
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		$json='var db_grid=[{"id":0 ,"id_grid":999999 ,"id_grid_pai":-1 ,"numero":"0","nome":"RESULTADO"}';
-		while($row = mysql_fetch_array($resultado))
-		{
-			$numero=$formatar->formatar($row['numero'],5);				
-			$id_grid=$formatar->id($numero);
-			$id_grid_pai=$formatar->pai($numero);
-			$nome=$row['descricao'];
-			$json.='{
-					"id":'.$row['id'].',
-					"id_grid":'.$id_grid.',
-					"id_grid_pai":'.$id_grid_pai.',
-					"numero":"'.$numero.'",
-					"nome":"'.$numero." - ".$nome.'"
-					}';
-		}
-		$json=str_replace("}{","},{",$json);
-		$json.="];";
-		echo $json;
-
+	function tabela($json,$colunas){
+	//column
+	//id:
+	//headerText: 'ID',
+	//key: 'id', 
+	//width: '50px',
+	$html=new html;
+	echo $html->json_table($json);
+	
+	$header="";
+	$body="";
+	
+	
 	
 	}
-	function centro_de_custos($schema){
-		include "config.php";
-		$formatar=new cadastro;
-
-		$select= "
+	function mensage($type,$text){
+		switch ($type) {
+			case "success":
+				echo "<div class='uk-alert uk-alert-success' data-uk-alert=''>
+						<a href='' class='uk-alert-close uk-close'></a>
+						<p>".$text."</p>
+					</div>";
+				break;
+			case "warning":
+				echo "<div class='uk-alert uk-alert-warning' data-uk-alert=''>
+						<a href='' class='uk-alert-close uk-close'></a>
+						<p>".$text."</p>
+					</div>";
+				break;
+			case "danger":
+				echo "<div class='uk-alert uk-alert-danger' data-uk-alert=''>
+						<a href='' class='uk-alert-close uk-close'></a>
+						<p>".$text."</p>
+					</div>";
+				break;
+			default:
+				echo "<div class='uk-alert uk-alert-success' data-uk-alert=''>
+						<a href='' class='uk-alert-close uk-close'></a>
+						<p>".$text."</p>
+					</div>";
+		}
+		
+	}
+	function listar_anexos($id){
+	include "config.php";
+						
+					$select= "
+					
 							SELECT 
-								centro_de_custos.*
+								`cad_anexo_projeto`.`cod_anexo_projeto`,
+								`cad_anexo_projeto`.`cod_projeto`,
+								`cad_anexo_projeto`.`cod_empresa`,
+								`cad_anexo_projeto`.`nome_arquivo`,
+								`cad_anexo_projeto`.`caminho_arquivo`,
+								`cad_anexo_projeto`.`tamanho_arquivo`,
+								`cad_anexo_projeto`.`extensao`,
+								DATE_FORMAT(`cad_anexo_projeto`.`data_inclusao`,'%d/%m/%Y') as data_inclusao,
+								`cad_anexo_projeto`.`usuario_inclusao`,
+								`cad_anexo_projeto`.`data_ultima_alteracao`,
+								`cad_anexo_projeto`.`usuario_ultima_alteracao`
 							FROM 
-								orcamento.centro_de_custos
-							WHERE
-								centro_de_custos.`schema`='".$schema."'
+								".$schema.".`cad_anexo_projeto`
 
-					";
+							where 
+								cad_anexo_projeto.cod_empresa=".$_SESSION['cod_empresa']." and								
+								cad_anexo_projeto.cod_projeto='".$id."'							
 
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		$json='var db_grid=[{"id":0 ,"id_grid":999999 ,"id_grid_pai":-1 ,"numero":"0","nome":"Consolidado"}';
-		while($row = mysql_fetch_array($resultado))
-		{
-			$numero=$formatar->formatar($row['numero'],3);				
-			$id_grid=$formatar->id($numero);
-			$id_grid_pai=$formatar->pai($numero);
-			$nome=$row['descricao'];
-			$json.='{
-					"id":'.$row['id'].',
-					"id_grid":'.$id_grid.',
-					"id_grid_pai":'.$id_grid_pai.',
-					"numero":"'.$numero.'",
-					"nome":"'.$numero." - ".$nome.'"
-					}';
-		}
-		$json=str_replace("}{","},{",$json);
-		$json.="];";
-		echo $json;
+								";
+								
+					$resultado=mysql_query($select,$conexao) or die (mysql_error());
+					$tabela= "<table class='uk-table uk-table-hover uk-table-condensed' style='font-size: 11px;width: 100%;'>
 
-	}
-	function caixas($schema){
-		include "config.php";
-		$formatar=new cadastro;
-
-		$select= "
-					SELECT 
-						tb_tipo.id_tb_tipo_caixas as id,
-						-1 as id_pai,
-						tb_tipo.descricao as descricao
-					FROM 
-						(SELECT distinct caixas.tipo,tb_tipo_caixas.descricao, tb_tipo_caixas.id_tb_tipo_caixas FROM orcamento.caixas, orcamento.tb_tipo_caixas where caixas.tipo=tb_tipo_caixas.tipo) as tb_tipo 
-				
-					UNION ALL
-					
-					SELECT
-						caixas.id_caixas,
-						tb_tipo_caixas.id_tb_tipo_caixas as id_pai,
-						caixas.descricao
-					FROM 
-						orcamento.caixas,
-						orcamento.tb_tipo_caixas
-					WHERE
-						caixas.`schema`='".$schema."' and
-						caixas.tipo=tb_tipo_caixas.tipo
-					ORDER BY
-						id_pai desc ; ";
-
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		$json='var db_grid=[';
-		while($row = mysql_fetch_array($resultado))
-		{
-			$numero=$row['id'];			
-			$id_grid=$row['id'];
-			$id_grid_pai=$row['id_pai'];
-			$nome=$row['descricao'];
-			$json.='{
-					"id":'.$row['id'].',
-					"id_grid":'.$id_grid.',
-					"id_grid_pai":'.$id_grid_pai.',
-					"numero":"'.$numero.'",
-					"nome":"'.$numero." - ".$nome.'"
-					}';
-		}
-		$json=str_replace("}{","},{",$json);
-		$json.="];";
-		echo $json;
-
-	}
-	
-}
-
-
-class selects{
-	public function orcamento($id_orcamento){
-		include "config.php";
-		$select = "SELECT * FROM orcamento.tb_orcamento;";
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		$selects="";
-		echo "<label class='' for='xxx'>Orçamento</label>
-				<select class='uk-form-small' id='id_orcamento' name='id_orcamento' style='width: 210px;'>
-					<option value=''></option>";
+							";
+					$n=1;
 					while($row = mysql_fetch_array($resultado))
 					{
-						if($row['id_orcamento']==$id_orcamento){
-								echo "<option value='".$row['id_orcamento']."' selected >".$row['descricao']."</option>";
-							}else{
-								echo "<option value='".$row['id_orcamento']."'>".$row['descricao']."</option>";
-							}						
+					$tabela.= "
+							<tr style='width: 100%;'>
+								<td style='width:30px;'><a href='php/delete_file.php?cod_anexo=". $row['cod_anexo_projeto']."&id=".$row['cod_projeto']."' class='uk-button uk-button-small uk-button-danger' style='padding: 4px 0px 0px; width: 25px; height: 20px;'><i class='uk-icon-trash' ></i></a></td>
+								<td style='width:30px;'><a href='". $row['caminho_arquivo']."' download='". $row['nome_arquivo']."'  class='uk-button uk-button-small uk-button-success' style='padding: 4px 0px 0px; width: 25px; height: 20px;'><i class='uk-icon-download'></i></a></td>
+								<td style=''><div style='width: 100px !important;' class='uk-text-truncate'>". $row['nome_arquivo']."</div></td>
+								<td style='width: 10%; text-align: right;'>". $row['tamanho_arquivo']." kb</td>
+								<td style='width: 5%;'>". $row['extensao']."</td>
+								<td style='width: 10%;'>". $row['data_inclusao']."</td>
+							</tr>";
+							$n=$n+1;
 					}	
-			echo "</select>";
-	
-	}
-	public function idcaixa($id_orcamento){
-		include "config.php";
-		$select = "SELECT orcamento.caixas.id as 'text', concat(orcamento.caixas.id,' - ',orcamento.caixas.descricao) as 'value' FROM orcamento.caixas,orcamento.tb_orcamento 	where caixas.tipo='BC' and caixas.schema=tb_orcamento.schema_plano_de_contas and id_orcamento='".$id_orcamento."' ;";
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		$bs_ctrcusto="";
-		while($row = mysql_fetch_array($resultado))
-		{
-			$bs_ctrcusto.=json_encode($row);
-		}	
-			$bs_ctrcusto=str_replace("}{","},{",$bs_ctrcusto);
-			$bs_ctrcusto="var bs_idcaixa=[".$bs_ctrcusto."];";
-			echo $bs_ctrcusto;
-		
-		
-		
-	
-	}
-	public function ctrcusto_($id_orcamento){
-		include "config.php";
-		$select = "SELECT orcamento.centro_de_custos.* FROM orcamento.centro_de_custos,orcamento.tb_orcamento 	where centro_de_custos.schema=tb_orcamento.schema_plano_de_contas and id_orcamento='".$id_orcamento."' ;";
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		$selects="";
-		echo "<label class='' for='xxx'>Ctr.Custo</label>
-				<select class='uk-form-small' id='ctrcusto' name='ctrcusto' style='width: 220px;'>
-					<option value=''></option>";
-					while($row = mysql_fetch_array($resultado))
-					{
-						echo "<option value='".$row['numero']."'>".$row['numero']." - ".$row['descricao']."</option>";
-					}	
-			echo "</select>";
-		
-		
-		
-	
-	}
-	public function ctrcusto($id_orcamento){
-		include "config.php";
-		$select = "SELECT orcamento.centro_de_custos.numero as 'text', concat(orcamento.centro_de_custos.numero,' - ',orcamento.centro_de_custos.descricao) as 'value' FROM orcamento.centro_de_custos,orcamento.tb_orcamento 	where centro_de_custos.schema=tb_orcamento.schema_plano_de_contas and id_orcamento='".$id_orcamento."' ;";
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		$bs_ctrcusto="";
-		while($row = mysql_fetch_array($resultado))
-		{
-			$bs_ctrcusto.=json_encode($row);
-		}	
-			$bs_ctrcusto=str_replace("}{","},{",$bs_ctrcusto);
-			$bs_ctrcusto="var bs_ctrcusto=[".$bs_ctrcusto."];";
-			echo $bs_ctrcusto;
-	
-		
-		
-	
-	}
-	public function schema_real($schema_real){
-		include "config.php";
-		$select = "
-					SELECT 
-						`schema`,
-						tb_base.nome,
-						DATE_FORMAT(tb_base.data,'%d/%m/%Y') as data
-
-					FROM 
-						orcamento.lancamentos,
-						orcamento.tb_base
-
-					where 
-						lancamentos.`schema`=
-						tb_base.`ID`
-
-					group by 
-						`schema`;		
-		";
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		$selects="";
-		echo "<label class='' for='xxx'>Schema Real</label>
-				<select class='uk-form-small' id='schema_real' name='schema_real' style='width: 200px;'>
-					<option value=''></option>";
-					while($row = mysql_fetch_array($resultado))
-					{
-						if($row['id_orcamento']==$id_orcamento){
-								echo "<option value='".$row['schema']."' selected>".$row['nome']." - ".$row['data']."</option>";								
-							}else{
-								echo "<option value='".$row['schema']."'>".$row['nome']." - ".$row['data']."</option>";
-							}						
-
-					}	
-			echo "</select>";
-		
-		
-		
-	
-	}
-	public function conta_($id_orcamento){
-		include "config.php";
-		$select = "SELECT orcamento.plano_de_contas.* FROM orcamento.plano_de_contas,orcamento.tb_orcamento 	where plano_de_contas.schema=tb_orcamento.schema_plano_de_contas and id_orcamento='".$id_orcamento."' ;";
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		$selects="";
-		echo "<label class='' for='xxx'>Conta</label>
-				<select class='uk-form-small' id='idconta' name='idconta' style='width: 220px;'>
-					<option value=''></option>";
-					while($row = mysql_fetch_array($resultado))
-					{
-						echo "<option value='".$row['numero']."'>".$row['numero']." - ".$row['descricao']."</option>";
-					}	
-			echo "</select>";
-		
-		
-		
-	
-	}
-	public function conta($id_orcamento){
-		include "config.php";
-		$select = "SELECT orcamento.plano_de_contas.numero as 'text', concat(orcamento.plano_de_contas.numero,' - ',orcamento.plano_de_contas.descricao) as 'value' FROM orcamento.plano_de_contas,orcamento.tb_orcamento 	where plano_de_contas.schema=tb_orcamento.schema_plano_de_contas and id_orcamento='".$id_orcamento."' ;";
-		$resultado=mysql_query($select,$conexao) or die (mysql_error());
-		$bs_conta="";
-		while($row = mysql_fetch_array($resultado))
-		{
-			$bs_conta.=json_encode($row);
-		}	
-			$bs_conta=str_replace("}{","},{",$bs_conta);
-			$bs_conta="var bs_conta=[".$bs_conta."];";
-			echo $bs_conta;
-		
-		
-		
-	
-	}
-	public function txt_intervalo_data(){
-	
-	echo"
-				<label class='uk-form-label uk-width-1-1' style='padding: 0px;'>Data</label>
-				<div class='uk-width-1-2' style='padding: 0px;'>
-					<input class='uk-form-small' data-uk-datepicker='{format:'DD/MM/YYYY'}' name='data_inicio' id='data_inicio' value='01/01/".date('Y')."' placeholder='00/00/".date('Y')."' type='text'>	
-				</div>
-				<div class='uk-width-1-2' style='padding:0px 0px 0px 5px'>
-					<input class='uk-form-small' data-uk-datepicker='{format:'DD/MM/YYYY'}' name='data_fim' id='data_fim' value='31/12/".date('Y')."' placeholder='31/12/".date('Y')."' type='text'>
-				</div>
-
-		";
+					$tabela.= "</table>";
 	
 	
 	
-	}
-
-}
-
-class filtros{
-	public function filtro_orcado_real_conta($id_orcamento,$schema_real){
-		$selects= new selects;
-				
-		echo	"<form class='uk-form' action='#' method='post'>
-				<div class='uk-grid' style='padding: 0px ;'>
-					<div class='uk-width-1-4' id='div_cod_orcamento' style='width: 200px;margin: 3px;'>";
-						$selects-> orcamento($id_orcamento);  
-		echo	"	</div>
-					<div class='uk-width-1-4' id='div_cod_orcamento' style='width: 200px;margin: 3px;'>";
-						$selects-> schema_real($schema_real);  
-		echo	"	</div>
-					<div class='uk-width-1-4' id='div_cod_ctrcusto' style='width: 200px;margin: 3px;'>
-						<script>";
-						if($id_orcamento!=''){
-						$selects-> ctrcusto($id_orcamento);
-						}
-		echo		"</script>
-						<div class='uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_ctrcusto}'>
-								<label class='' for='xxx'>Centro de Custo</label>
-								<input type='text' id='ctrcusto' name='ctrcusto' class='uk-form-small' style='width: 150px;'>
-
-						</div>		
-						
-					</div>
-					<div class='uk-width-1-4' style='width: 100px; margin: 20px 0px 0px;'>
-						<button class='uk-button uk-button-success' type='submit'>Pesquisar</button>
-					</div>
-				</div>
-			</form>";
 	
 	
-	}
-	public function filtro_orcado_real_ctrcusto($id_orcamento,$schema_real){
-		$selects= new selects;
-				
-		echo	"<form class='uk-form' action='#' method='post'>
-				<div class='uk-grid' style='padding: 0px 0px 0px 0px;'>
-					<div class='uk-width-1-4' id='div_cod_orcamento' style='width: 200px;margin: 3px;'>";
-						$selects-> orcamento($id_orcamento);  
-		echo	"	</div>
-					<div class='uk-width-1-4' id='div_cod_orcamento' style='width: 200px;margin: 3px;'>";
-						$selects-> schema_real($schema_real);  
-		echo	"	</div>
-					<div class='uk-width-1-4' id='div_cod_ctrcusto' style='width: 200px;margin: 3px;'>
-						<script>";
-						if($id_orcamento!=''){
-						$selects-> conta($id_orcamento);
-						}
-		echo			"</script>
-						<div class='uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_conta}'>
-								<label class='' for='xxx'>Conta</label>
-								<input type='text' id='idconta' name='idconta' class='uk-form-small' style='width: 150px;'>
-						</div>		
-						
-					</div>
-					<div class='uk-width-1-4' style='width: 100px; margin: 20px 0px 0px;'>
-						<button class='uk-button uk-button-success' type='submit'>Pesquisar</button>
-					</div>
-				</div>
-			</form>";
 	
-	
-	}
-	public function filtro_lancamento_orcamento($id_orcamento){
-		$selects= new selects;
-		
-	echo"		<form class='uk-form' action='#' method='post'>
-				<div class='uk-grid' style='padding: 0px 0px 0px 0px;'>
-					<div class='uk-width-1-4' id='div_cod_orcamento' style='width: 200px;margin: 0px;'>";
-
-						if($id_orcamento!=''){
-							$selects-> orcamento($id_orcamento);  
-						}else{
-							$selects-> orcamento('');  
-						}
-
-		echo"			</div>";
-		
-		if($id_orcamento!=''){
-			echo	"		<div class='uk-width-1-4 uk-grid' id='div_cod_orcamento' style='width: 200px;margin: 3px;'>";
-							$selects-> txt_intervalo_data(); 
-			echo			"</div>";
-			echo			"<div class='uk-width-1-4' id='div_cod_ctrcusto' style='width: 200px;margin: 3px;'>
-							<script>";
-							 $selects-> ctrcusto($id_orcamento);
-			echo			"</script>
-							<div class='uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_ctrcusto}'>
-									<label class='' for='xxx'>Centro de Custo</label>
-									<input type='text' id='ctrcusto' name='ctrcusto' class='uk-form-small' style='width: 100%;'>
-							</div>		
+	echo "
+			<div id='div_anexos' name='div_anexos' class='uk-width-1-1' >
+						<form id='form_anexos' name='form_anexos' action='php/upload_file.php' method='POST' enctype='multipart/form-data'>
+							<span class='uk-button uk-button-small uk-button-primary uk-navbar-flip' style='margin-right: 20px;' onclick='getFile();'><i class='uk-icon-cloud-upload'></i> Fazer o upload de arquivos</span>
+							<input type='file'  name='file' id='file' style='visibility:hidden;' onchange=script:document.getElementById('form_anexos').submit(); ><br>
+							<input type='text' id='cod_projeto' name='cod_projeto' value='".$id."' style=' width: 1px;  visibility: hidden;'>
 							
-						</div>
-						<div class='uk-width-1-4' id='div_cod_conta' style='width: 200px;margin: 3px;'>
-							<script>";
-							$selects-> conta($id_orcamento);
-			echo			"</script>
-							<div class='uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_conta}'>
-									<label class='' for='xxx'>Conta</label>
-									<input type='text' id='idconta' name='idconta' class='uk-form-small' style='width: 100%;'>
-
-							</div>		
-							
-						</div>
-						<div class='uk-width-1-4' id='div_cod_conta' style='width: 200px;margin: 3px;'>
-							<script>";
-							$selects-> idcaixa($id_orcamento);
-			echo			"</script>
-							<div class='uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_idcaixa}'>
-									<label class='' for='xxx'>Conta bancaria</label>
-									<input type='text' id='idcaixa' name='idcaixa' class='uk-form-small' style='width: 100%;'>
-
-							</div>		
-							
-						</div>
-						
-						
-						";
-				
-			}
-					
-					
-
-			echo		"<div class='uk-width-1-4' style='width: 100px; margin: 20px 0px 0px;'>
-						<div class='uk-button-group'>
-							<button class='uk-button uk-button-success' type='submit'>Pesquisar</button>
-							<button class='uk-button uk-button-success' type='button' id='bt_salvar_lancamentos'>Salvar</button>			
-						</div>
-					</div>
-				</div>
-				
-
-			</form>	
+						</form>
+						<div id='anexos' name='anexos' class='anexos'>".$tabela."</div>
+			</div>	
+	
 	";
 	
 	
+	}
+	function cad_centro_custo($cod_projeto){
+		
+		include "config.php";		
+		$select= "
+				SELECT 
+					cad_centro_custo.cod_centro_custo as ID,
+					if(cod_centro_custo_mae=0,-1,cod_centro_custo_mae) as PID,
+					cod_centro_custo_mae,
+					concat('#',numero_centro_custo) as numero_centro_custo,
+					concat('#',numero_centro_custo,' - ',cad_centro_custo.descricao) as centro_custo,						
+					cad_centro_custo.descricao,
+					if(`status`='ativa',if(xx.`check`='true','checked',''),'disabled') as check_
+					
+				FROM 
+					".$schema_contabil.".cad_centro_custo 
+					
+				LEFT JOIN (SELECT cod_projeto, cod_centro_custo,`check` FROM projetos.cad_projeto_centro_custo where cod_projeto='".$cod_projeto."') as xx on xx.cod_centro_custo=cad_centro_custo.cod_centro_custo
+					
+				WHERE
+					cod_empresa='".$_SESSION['cod_empresa']."' 
+				ORDER BY
+					numero_centro_custo;";
+			
+		$pesquisa=new pesquisa;
+		$json=$pesquisa->json($select);
+		
+	
+			$column ="{headerText: 'Centro de Custo', key: 'centro_custo', width: '200px', dataType: 'string'},";
+			//$column.="{headerText: 'Status', key: 'status',width: '50px',  dataType: 'string'},";
+			$column.="{headerText: 'Check', key: 'check_',width: '30px',  dataType: 'checkbox'}";
+
+			$tabela="cad_centro_custo";
+			$combo="";
+			
+			
+			$igniteui=new igniteui;
+			echo $igniteui->TreeGrid($json,$column,$tabela,$combo,'');
+
+	
+	
+	
+	
+	
+	
+	}
+	function tabela_orcamento($data_inicio,$data_fim){
+		
+		///meses
+		$ts1 = new DateTime($data_inicio);
+		$ts2 = new DateTime($data_fim);
+		
+		$diff =  $ts1->diff($ts2);	
+		$months = $diff->y * 12 + $diff->m + $diff->d / 30;
+		$months =  (int) round($months);
+		
+		//$date = $ts1;
+		//date_add($date, date_interval_create_from_date_string('2 months'));
+		//echo date_format($date, 'Y-m-d');
+		
+		$meses="";
+		$meses_="";
+		$column_mes="";
+		$data_n=date_format($ts1, 'm-Y');
+		$data_n_=date_format($ts1, 'Y-m-d');
+		
+		for($n=1;$n<=$months;$n++){
+			
+			
+			$meses.="'' as mes_".$n.", ";
+			$meses_.="'".$data_n."' as mes_".$n.", ";
+			$column_mes.="{headerText: '".$data_n."', key: 'mes_".$n."',width: '80px',  dataType: 'number'},";
+			
+			$data_n=date_format(date_add($ts1, date_interval_create_from_date_string('1 months')), 'm-Y');
+			
+		}
+		$meses.="'' as historico, ";
+		
+		//echo $meses_;
+		include "config.php";		
+		$select= "
+				SELECT 
+					cod_conta as ID,
+					if(cod_conta_mae=0,-1,cod_conta_mae) as PID,
+					cad_conta.cod_tipo_conta,
+					concat('#',numero_conta) as numero_conta,
+					concat('#',numero_conta,' - ',cad_conta.descricao) as conta,					
+					cad_conta.descricao,
+					".$meses."
+					`status`					
+
+				FROM 
+					".$schema_contabil.".cad_conta 
+					
+				left join ".$schema_contabil.".cad_tipo_conta on cad_tipo_conta.cod_tipo_conta=cad_conta.cod_tipo_conta
+					
+				WHERE
+					cod_empresa='".$_SESSION['cod_empresa']."' 
+				ORDER BY
+					numero_conta;";
+		//echo $select;	
+		$pesquisa=new pesquisa;
+		$json=$pesquisa->json($select);
+		
+		$select= "
+				SELECT 
+					-1 as ID,
+					0 as PID,
+					concat('Conta Raiz') as conta,
+					'Conta Raiz' as descricao
+				union all
+				SELECT 
+					cod_conta as ID,
+					cod_conta_mae as PID,
+					concat('#',numero_conta,' - ',descricao) as conta,
+					descricao
+
+				FROM 
+					".$schema_contabil.".cad_conta 
+				WHERE
+					cod_empresa='".$_SESSION['cod_empresa']."'  ;";	
+					
+		$contas=$pesquisa->json($select);
+		
+
+
+			$column="{headerText: 'conta', key: 'conta', width: '350px', dataType: 'string'},";
+			$column.=$column_mes;
+			$column.="{headerText: 'historico', key: 'hitorico',width: '150px',  dataType: 'string'}";
+
+			$tabela="cad_conta";
+			$combo="
+                        {
+                            columnKey: 'cod_conta_mae',
+                            editorType: 'combo',
+							required: true,
+                            editorOptions: {
+                                dataSource: ".$contas.",
+								textKey: 'conta',
+                                valueKey: 'ID'								
+                            }
+                        },
+                        {
+                            columnKey: 'status',
+                            editorType: 'combo',
+							required: true,
+                            editorOptions: {
+                                dataSource: [{'status':'ativa'},{'status':'bloqueada'}]							
+                            }
+                        },{
+							columnKey: 'tipo_conta',
+							readOnly: true						
+							
+                        },{
+							columnKey: 'ID',
+							readOnly: true,
+							required: true							
+							
+                        },{
+							columnKey: 'numero_conta',
+							readOnly: false,
+							required: true
+							
+                        },{
+							columnKey: 'descricao',
+							readOnly: false,
+							required: true
+						},		
+			";
+			
+			
+			$igniteui=new igniteui;
+			echo $igniteui->TreeGrid($json,$column,$tabela,$combo,$_GET['id']);
+	
+	
 	
 	
 	
@@ -1859,6 +1481,1856 @@ class filtros{
 	}
 
 }
+
+class cadastros{
+	function pesquisa($select,$tabela,$id){
+		include "config.php";
+		
+			$sql=new sql;
+			$menus=new menus;
+			$pesquisa=new pesquisa;
+			$inputs=new inputs;
+			$selects=new selects;
+			
+			
+			$resultado=mysql_query($select,$conexao) or die (mysql_error());
+			$row = mysql_fetch_array($resultado);
+			for($i=0;$i<mysql_num_fields($resultado);$i++){
+				$campo=mysql_field_name($resultado,$i);
+				$$campo=$row[$campo];
+			}
+			include "includes/".$tabela.".php";
+
+
+	}
+	function modelo($id){
+		include "config.php";
+		$select="SELECT * FROM ".$schema.".cad_fornecedor where cod_fornecedor='".$id."' and cod_empresa='".$_SESSION['cod_empresa']."' ;";
+		$cadastro=new cadastros;
+		$cadastro->pesquisa($select,'cad_fornecedor','cod_fornecedor');
+	}
+	function cad_orcamento($id){
+		include "config.php";
+
+		$select="
+						
+				SELECT `cad_orcamento`.`cod_orcamento`,
+					`cad_orcamento`.`cod_projeto`,
+					DATE_FORMAT(`cad_orcamento`.`data_inicio`,'%d/%m/%Y') as data_inicio,
+					DATE_FORMAT(`cad_orcamento`.`data_fim`,'%d/%m/%Y') as data_fim,
+					`cad_orcamento`.`data_inclusao`,
+					`cad_orcamento`.`data_ultima_alteracao`,
+					`cad_orcamento`.`usuario_inclusao`,
+					`cad_orcamento`.`usuario_ultima_alteracao`
+				FROM `".$schema."`.`cad_orcamento`
+				
+				WHERE
+					cod_orcamento='".$id."' and cod_empresa='".$_SESSION['cod_empresa']."' ";
+		$cadastro=new cadastros;
+		$cadastro->pesquisa($select,'cad_orcamento','cod_orcamento');
+	}
+	function cad_orcamento_lancamento($id){
+		include "config.php";
+
+		$select="
+						
+				SELECT `cad_orcamento`.`cod_orcamento`,
+					`cad_orcamento`.`cod_projeto`,
+					`cad_orcamento`.`data_inicio`,
+					`cad_orcamento`.`data_fim`
+
+				FROM `".$schema."`.`cad_orcamento`
+				
+				WHERE
+					cod_orcamento='".$id."' and cod_empresa='".$_SESSION['cod_empresa']."' ";
+
+			$resultado=mysql_query($select,$conexao) or die (mysql_error());			
+			$row = mysql_fetch_array($resultado);
+
+
+		
+		echo "<div id='msg'></div>";
+		
+		$html=new html;
+		$html->tabela_orcamento($row['data_inicio'],$row['data_fim']);
+
+		echo "<script>$('select').change(function(){pesquisar_orcamento();});</script>";
+
+		
+	
+	}
+	
+}
+
+class editar{
+	function modelo($id){
+		include "config.php";
+		
+		//var_dump($_POST);
+		//var_dump($_GET);
+		
+		
+		$select="
+				SELECT 
+					cad_conta.* ,
+					tb_conta_mae.numero_conta as numero_conta_mae,
+					tb_conta_mae.descricao as descricao_conta_mae
+				FROM 
+					".$schema.".cad_conta,
+					(select cod_conta,numero_conta,descricao from ".$schema.".cad_conta  ) as tb_conta_mae
+					
+				where 
+					cad_conta.cod_conta='".$id."' and 
+					cad_conta.cod_conta_mae=tb_conta_mae.cod_conta and
+					cad_conta.cod_empresa='".$_SESSION['cod_empresa']."' 
+					
+					
+					;";
+
+		$cadastro=new cadastros;
+		$cadastro->pesquisa($select,'cad_conta','cod_conta');
+		
+
+	}
+
+	
+}
+class pesquisa{
+	function json($consulta_sql){
+				include "config.php";
+				$resultado=mysql_query($consulta_sql,$conexao) or die (mysql_error());
+				$json="";
+				
+				while($row = mysql_fetch_array($resultado)){
+					for($i=0;$i<mysql_num_fields($resultado);$i++){
+						$campo=mysql_field_name($resultado,$i);
+						$array[$campo]=$row[$campo];
+					}
+							$json_="{";
+								$keys=array_keys($array);
+								for($c=0;$c<count($keys);$c++){
+									if(is_numeric($array[$keys[$c]])==true){
+										$json_.='"'.$keys[$c].'":'.$array[$keys[$c]].',';
+										
+									}else{
+										$json_.='"'.$keys[$c].'":"'.$array[$keys[$c]].'",';
+										
+									}
+
+
+									
+								}
+							$json_.="}";
+					$json.=$json_;
+				}
+				$json=str_replace("}{","},{",$json);	
+				$json=str_replace('"',"'",$json);	
+				$json=str_replace(',}',"}",$json);	
+				$json=str_replace('#',"",$json);	
+				$json="[".$json."]";				
+				return $json;
+	}
+	function modelo($id){
+		include "config.php";
+		
+		$menus=new menus;
+		
+		
+		$filtro="";
+		if($id!=""){
+			$filtro=" WHERE  cad_grupo_patrimonio.cod_grupo_patrimonio like '%".$id."%' or cad_grupo_patrimonio.descricao like '%".$id."%' ";
+		}
+				$select= "
+					SELECT
+						cod_grupo_patrimonio as id,
+						descricao,
+						vida_util,
+						taxa_depreciacao_anual
+					FROM 
+						".$schema.".cad_grupo_patrimonio 
+					".$filtro." ;";
+					
+					$pesquisa=new pesquisa;
+					$json=$pesquisa->json($select);
+
+					$column= "{headerText: 'ID', key: 'id', width: '50px', dataType: 'string'},";
+					$column.="{headerText: 'Vida útil', key: 'vida_util', width: '150px', dataType: 'string'},";
+					$column.="{headerText: 'Depreciação', key: 'taxa_depreciacao_anual', width: '150px', dataType: 'string'},";
+					$column.="{headerText: 'Descrição', key: 'descricao', width: '250px', dataType: 'string'}";			
+
+					$tabela="cad_grupo_patrimonio";
+					
+					$igniteui=new igniteui;
+					echo $igniteui->igrid($json,$column,$tabela);
+	}
+	function cad_orcamento($id){
+		include "config.php";
+		
+		$menus=new menus;
+		
+		
+		$filtro="";
+
+		$select="
+
+				SELECT `cad_orcamento`.`cod_orcamento` as id,
+					`cad_orcamento`.`cod_projeto`,
+					DATE_FORMAT(`cad_orcamento`.`data_inicio`,'%d/%m/%Y') as data_inicio,
+					DATE_FORMAT(`cad_orcamento`.`data_fim`,'%d/%m/%Y') as data_fim,
+					`cad_orcamento`.`data_inclusao`,
+					`cad_orcamento`.`data_ultima_alteracao`,
+					`cad_orcamento`.`usuario_inclusao`,
+					`cad_orcamento`.`usuario_ultima_alteracao`,
+					cad_projeto.nome_projeto
+				
+				FROM 
+					`".$schema."`.`cad_orcamento`,
+					`".$schema_projeto."`.`cad_projeto`
+
+				WHERE 
+					cad_orcamento.cod_empresa=".$_SESSION['cod_empresa']."
+					and cad_orcamento.cod_projeto=cad_projeto.cod_projeto
+					
+					;";	
+
+
+					$pesquisa=new pesquisa;
+					$json=$pesquisa->json($select);
+
+					$column= "{headerText: 'ID', key: 'id', width: '50px', dataType: 'string'},";
+					$column.="{headerText: 'Nome projeto', key: 'nome_projeto', width: '350px', dataType: 'string'},";
+					$column.="{headerText: 'Data Inicio', key: 'data_inicio', width: '150px', dataType: 'string'},";
+					$column.="{headerText: 'Data Fim', key: 'data_fim', width: '150px', dataType: 'string'}";
+		
+
+					$tabela="cad_orcamento";
+					
+					$igniteui=new igniteui;
+					echo $igniteui->igrid($json,$column,$tabela);
+	}
+	function orcamento($id){
+		include "config.php";
+		
+		$menus=new menus;
+		
+		
+		$filtro="";
+
+		$select="
+
+				SELECT `cad_orcamento`.`cod_orcamento` as id,
+					`cad_orcamento`.`cod_projeto`,
+					DATE_FORMAT(`cad_orcamento`.`data_inicio`,'%d/%m/%Y') as data_inicio,
+					DATE_FORMAT(`cad_orcamento`.`data_fim`,'%d/%m/%Y') as data_fim,
+					`cad_orcamento`.`data_inclusao`,
+					`cad_orcamento`.`data_ultima_alteracao`,
+					`cad_orcamento`.`usuario_inclusao`,
+					`cad_orcamento`.`usuario_ultima_alteracao`,
+					cad_projeto.nome_projeto
+				
+				FROM 
+					`".$schema."`.`cad_orcamento`,
+					`".$schema_projeto."`.`cad_projeto`
+
+				WHERE 
+					cad_orcamento.cod_empresa=".$_SESSION['cod_empresa']."
+					and cad_orcamento.cod_projeto=cad_projeto.cod_projeto
+					
+					;";	
+
+
+					$pesquisa=new pesquisa;
+					$json=$pesquisa->json($select);
+
+					$column= "{headerText: 'ID', key: 'id', width: '50px', dataType: 'string'},";
+					$column.="{headerText: 'Nome projeto', key: 'nome_projeto', width: '350px', dataType: 'string'},";
+					$column.="{headerText: 'Data Inicio', key: 'data_inicio', width: '150px', dataType: 'string'},";
+					$column.="{headerText: 'Data Fim', key: 'data_fim', width: '150px', dataType: 'string'}";
+		
+
+					$tabela="cad_orcamento_lancamento";
+					
+					$igniteui=new igniteui;
+					echo $igniteui->igrid($json,$column,$tabela);
+	}
+
+	
+
+
+	
+}
+
+
+class importar{
+	function ofx(){
+
+			echo "
+					<script>";
+							$selects=new selects;
+							$selects-> ctrcusto_autocomplete('');
+
+			echo		"</script>
+						<script>";
+							$selects=new selects;
+							$selects-> conta_autocomplete('');
+
+			echo  "</script>";
+
+		echo 
+		"<div class='uk-grid' id='msg'>
+			<div class='uk-width-small-1-1 uk-width-medium-1-3 uk-width-large-1-4' >
+				<div class='uk-panel uk-panel-box uk-panel-box-primary'>	
+					<form class='uk-form uk-form-horizontal'>
+						<div class='uk-form-row'>
+							<p class='uk-article-meta'><i class='uk-icon-location-arrow'></i>  Suporta apenas formato de arquivo Open Finacial Exchange (OFX).</p>
+						</div>
+						<div class='uk-form-row'>
+							<div class='uk-button-group' style='width:100%'>
+								<input id='input_selecionar_ofx' disabled placeholder='.ofx' class='uk-form-small' style='height: 23px ! important;width: 60%;' type='text'>
+								<button id='bt_selecionar_ofx' class='uk-button uk-button-mini uk-button-primary' style='height: 23px ! important; width: 40%; font-size: 10px; text-transform: lowercase ! important;' type='button'>selecione um arquivo</button>
+							</div>
+						</div>						
+						<div class='uk-form-row'>
+							<div class=' uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_conta}' style='width:100%' id='cod_conta_banco'>
+								<input  coluna='conta_ofx' id='cod_conta' placeholder='Conta Contábil' class='uk-form-small' type='text' style='width:100%' value=''>
+							</div>
+							<script>
+								document.getElementById('cod_conta').addEventListener('click', verificar_ajax_ofx_input);
+								document.getElementById('cod_conta').addEventListener('change', verificar_ajax_ofx_input);
+								document.getElementById('cod_conta').addEventListener('onblur', verificar_ajax_ofx_input);
+								document.getElementById('cod_conta').addEventListener('keyup', verificar_ajax_ofx_input);
+								document.getElementById('cod_conta').addEventListener('keydown', verificar_ajax_ofx_input);							
+							</script>
+						</div>
+						<div class='uk-form-row'>
+							<div class=' uk-autocomplete uk-form' data-uk-autocomplete='{source:bs_conta}' style='width:100%'>
+								<hr class='uk-article-divider'>
+								<button class='uk-button uk-button-mini uk-button-danger' type='button' onclick='importar_transacoes_ofx();' style='width: 100%;'><i class='uk-icon-mail-forward'></i>  Importar transações</button>
+							</div>
+						</div>
+					</form>
+					<div>
+						<input type='file' id='file-input' accept='.ofx' style='visibility: hidden;'/>
+						<script>document.getElementById('file-input').addEventListener('change', readSingleFile, false);</script>
+					</div>
+				</div>
+			</div>
+			<div class='uk-width-small-1-1 uk-width-medium-2-3 uk-width-large-3-4'>
+				<div class='uk-panel uk-panel-box uk-panel-box-primary' style='background: rgb(255, 255, 255) none repeat scroll 0% 0%; padding: 0px;'>
+					<div class='uk-width-1-1'  id='div_preview_' style='visibility: hidden; height: 0px; width: 0px;'></div>					
+					<div class='uk-width-1-1 uk-form'  id='div_preview' style='overflow: auto; min-height: 300px; height: auto;'></div>					
+				</div>			
+			</div>
+
+		</div>"	;
+		
+		
+		
+	}
+	
+}
+
+
+class relatorios{
+	function filtros($tipo){
+		$inputs=new inputs;
+		$selects=new selects;
+		if($tipo==1){
+					echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
+					echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
+						echo "<div class='uk-offcanvas-bar'>";
+								
+								echo "<div class=' uk-width-1-1' style='padding-right: 40px;'>
+											<style>
+												label{
+													font-size: 11px !important;
+												}
+											</style>
+											<h3>Filtro</h3>
+											<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
+												<div class='uk-grid '>
+												<div class=' uk-width-1-1'>
+													<ul class='uk-subnav' style='margin-left: -40px;'>
+														";
+															
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
+																<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_lancamento_de','Data de lançamento','',"value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+															echo"</div>									
+																<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_lancamento_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+															echo"</div>
+														</li>";
+																		
+																		
+																		
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_base_de','Data base',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div>									<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_base_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div></li>";
+																		
+																		
+																		
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_estorno_de','Data de estorno',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div>									<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_estorno_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div></li>";
+																		
+																		
+																		
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_alteracao_de','Data de alteração',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div>									<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_alteracao_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div></li>";
+																		
+																		
+																		
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_inclusao_de','Data de inclusão',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div>									<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','data_inclusao_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+													echo"</div></li>";
+
+														
+														
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+													$inputs->input_form_row('','cod_documento','Cód. de documento',"","");
+													echo"</div>
+														<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','referencia','Referência',"","");
+													echo"</div></li>";
+													
+
+
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
+														<div class='uk-width-1-1'>";
+													$inputs->input_form_row('','texto_cabecalho_documento','texto de cabeçalho',"","");
+													echo"</div>
+														</li>";
+													
+													
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
+														<div class='uk-width-1-1'>";
+													$inputs->input_form_row('','historico','Histórico',"","");
+													echo"</div>
+														</li>";
+													
+													
+													echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+													$inputs->input_form_row('','exercicio','Exercicio (ano)',"","");
+													echo"</div>
+														<div class='uk-width-1-2'>";
+													$inputs->input_form_row('','periodo','Período (mês)',"","");
+													echo"</div></li>";
+													
+													
+													
+													
+												echo "</ul>
+												</div>
+													<div class='uk-width-1-1'>
+														<li style='text-align: right; padding-right: 0px; margin-right: -30px;'>		
+															<br/>
+															<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
+														</li>
+													</div>
+											</div>
+
+										</form>
+
+									</div>
+
+									
+									";
+							
+						echo "</div>";
+					echo "</div>";
+
+		}
+		if($tipo==2){
+			echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
+			echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
+				echo "<div class='uk-offcanvas-bar'>";
+					echo "<div class=' uk-width-1-1' style='padding-right: 10px; padding-left: 10px;'>
+								<style>
+									label{
+										font-size: 11px !important;
+									}
+								</style>
+								<h3>Filtro</h3>
+								<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
+									<ul class='uk-list'>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-2'>
+												";
+													$inputs->input_form_row('00/00/0000','data_inicio','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+								echo "
+												</div>
+												<div class='uk-width-1-2'>
+									";
+													$inputs->input_form_row('00/00/0000','data_fim','até',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+								echo	 	"
+												</div>
+										</div>
+										</li>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-2'>
+												";
+													$inputs->input_form_row('','conta_inicio','Conta contábil',''," ");
+								echo "
+												</div>
+												<div class='uk-width-1-2'>
+									";
+													$inputs->input_form_row('','conta_fim','até',''," ");
+								echo	 	"
+												</div>
+										</div>
+										</li>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-2'>
+												";
+													$inputs->input_form_row('','ctr_custo_inicio','Centro de custo',''," ");
+								echo "
+												</div>
+												<div class='uk-width-1-2'>
+									";
+													$inputs->input_form_row('','ctr_custo_fim','até',''," ");
+								echo	 	"
+												</div>
+										</div>
+										</li>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-1'>
+													</br>
+													<p>Agrupar por:</p>
+												</div>	
+												<div class='uk-width-1-2'>
+													<input type='radio' name='relatorio' value='conta' checked /> Conta Contábil
+												</div>
+												<div class='uk-width-1-2'>
+													<input type='radio' name='relatorio' value='centro_custo' /> Centro de Custo
+												</div>
+										</div>
+										</li>
+										<li>
+							";
+							echo		 "
+										</li>
+
+										<li>
+										<div class='uk-width-1-1' style='text-align: right ! important;'>
+			
+												<br/>
+												<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
+
+										</div>
+										</li>
+									</ul>
+								
+								</form>
+
+							
+						</div>";
+				echo "</div>";
+			echo "</div>";
+		
+		}
+		if($tipo==3){
+			echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
+			echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
+				echo "<div class='uk-offcanvas-bar'>";
+				echo "<div class=' uk-width-1-1' style='padding-right: 10px; padding-left: 10px;'>
+							<style>
+								label{
+									font-size: 11px !important;
+								}
+							</style>
+							<h3>Filtro</h3>
+							<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
+								<ul class='uk-list'>
+									<li>
+										<div class='uk-grid'>
+											<div class='uk-width-1-2'>
+											";
+												$inputs->input_form_row('00/00/0000','data_inicio','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+							echo "
+											</div>
+											<div class='uk-width-1-2'>
+								";
+												$inputs->input_form_row('00/00/0000','data_fim','até',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+							echo	 	"
+											</div>
+									</div>
+									</li>
+									<li>
+										<div class='uk-grid'>
+											<div class='uk-width-1-2'>
+											";
+												$inputs->input_form_row('','conta_inicio','Conta contábil',''," ");
+							echo "
+											</div>
+											<div class='uk-width-1-2'>
+								";
+												$inputs->input_form_row('','conta_fim','até',''," ");
+							echo	 	"
+											</div>
+									</div>
+									</li>
+									<li>
+										<div class='uk-grid'>
+											<div class='uk-width-1-2'>
+											";
+												$inputs->input_form_row('','ctr_custo_inicio','Centro de custo',''," ");
+							echo "
+											</div>
+											<div class='uk-width-1-2'>
+								";
+												$inputs->input_form_row('','ctr_custo_fim','até',''," ");
+							echo	 	"
+											</div>
+									</div>
+									</li>
+									<li>
+									<div class='uk-width-1-1' style='text-align: right ! important;'>
+		
+											<br/>
+											<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
+
+									</div>
+									</li>
+								</ul>
+							
+							</form>
+
+						
+					</div>";
+				echo "</div>";
+			echo "</div>";
+		
+		}
+		if($tipo==4){
+			echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
+			echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
+				echo "<div class='uk-offcanvas-bar'>";
+					echo "<div class=' uk-width-1-1' style='padding-right: 10px; padding-left: 10px;'>
+								<style>
+									label{
+										font-size: 11px !important;
+									}
+								</style>
+								<h3>Filtro</h3>
+								<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
+									<ul class='uk-list'>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-2'>
+												";
+													$inputs->input_form_row('00/00/0000','data_inicio','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+								echo "
+												</div>
+												<div class='uk-width-1-2'>
+									";
+													$inputs->input_form_row('00/00/0000','data_fim','até',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+								echo	 	"
+												</div>
+										</div>
+										</li>
+										<li>
+										<div class='uk-width-1-1' style='text-align: right ! important;'>
+											<br/>
+												<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
+										</div>
+										</li>
+									</ul>
+								</form>
+						</div>";
+				echo "</div>";
+			echo "</div>";
+		
+		}
+		if($tipo==5){
+					echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
+					echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
+						echo "<div class='uk-offcanvas-bar'>";
+
+							echo "<div class=' uk-width-1-1' style='padding-right: 40px;'>
+										<style>
+											label{
+												font-size: 11px !important;
+											}
+										</style>
+										<h3>Filtro</h3>
+										<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
+											<div class='uk-grid '>
+											<div class=' uk-width-1-1'>
+												<ul class='uk-subnav' style='margin-left: -40px;'>
+													";
+														
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
+															<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_lancamento_de','Data de lançamento','',"value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+														echo"</div>									
+															<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_lancamento_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+														echo"</div>
+													</li>";
+																	
+																	
+																	
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_base_de','Data base',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div>									<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_base_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div></li>";
+																	
+																	
+																	
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_estorno_de','Data de estorno',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div>									<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_estorno_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div></li>";
+																	
+																	
+																	
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_alteracao_de','Data de alteração',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div>									<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_alteracao_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div></li>";
+																	
+																	
+																	
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_inclusao_de','Data de inclusão',"","value='01/01/1900' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div>									<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','data_inclusao_ate','até',"","value='01/01/9999' data-uk-datepicker={format:'DD/MM/YYYY'}");
+												echo"</div></li>";
+
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','numero_conta','Numero Conta',"","");
+												echo"</div>									<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','numero_ctr_custo','Numero Ctr. Custo',"","");
+												echo"</div></li>";
+											
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','cod_documento','Cód. de documento',"","");
+												echo"</div>
+													<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','referencia','Referência',"","");
+												echo"</div></li>";
+												
+
+
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
+													<div class='uk-width-1-1'>";
+												$inputs->input_form_row('','texto_cabecalho_documento','texto de cabeçalho',"","");
+												echo"</div>
+													</li>";
+												
+												
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'>
+													<div class='uk-width-1-1'>";
+												$inputs->input_form_row('','historico','Histórico',"","");
+												echo"</div>
+													</li>";
+												
+												
+												echo "<li class='uk-grid' style='margin-top: 10px; margin-left: 30px; max-width: 280px; width: 100%;'><div class='uk-width-1-2'>";
+												$inputs->input_form_row('','exercicio','Exercicio (ano)',"","");
+												echo"</div>
+													<div class='uk-width-1-2'>";
+												$inputs->input_form_row('','periodo','Período (mês)',"","");
+												echo"</div></li>";
+												
+												
+												
+												
+											echo "</ul>
+											</div>
+												<div class='uk-width-1-1'>
+													<li style='text-align: right; padding-right: 0px; margin-right: -30px;'>		
+														<br/>
+														<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
+													</li>
+												</div>
+										</div>
+
+									</form>
+
+								</div>
+
+								
+								";
+
+							
+						echo "</div>";
+					echo "</div>";
+		}
+		if($tipo==6){
+			echo "<button class='uk-button uk-button-mini uk-button-primary' data-uk-offcanvas={target:'#div_filtro'}><i class='uk-icon-filter'></i> Filtro</button>";
+			echo "<div class=' uk-offcanvas' id='div_filtro'  style=''>";			
+				echo "<div class='uk-offcanvas-bar'>";
+					echo "<div class=' uk-width-1-1' style='padding-right: 10px; padding-left: 10px;'>
+								<style>
+									label{
+										font-size: 11px !important;
+									}
+								</style>
+								<h3>Filtro</h3>
+								<form class='uk-form' action='#' method='post' style='text-align: left; color:#fff;'>
+									<ul class='uk-list'>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-2'>
+												";
+													$inputs->input_form_row('00/00/0000','data_inicio','de',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+								echo "
+												</div>
+												<div class='uk-width-1-2'>
+									";
+													$inputs->input_form_row('00/00/0000','data_fim','até',''," data-uk-datepicker={format:'DD/MM/YYYY'}");
+								echo	 	"
+												</div>
+										</div>
+										</li>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-1'>
+												";
+													$inputs->input_form_row('','conta_inicio','Conta contábil',''," ");
+								echo "
+												</div>
+										</div>
+										</li>
+										<li>
+											<div class='uk-grid'>
+												<div class='uk-width-1-2'>
+												";
+													$inputs->input_form_row('','ctr_custo_inicio','Centro de custo',''," ");
+								echo "
+												</div>
+												<div class='uk-width-1-2'>
+									";
+													$inputs->input_form_row('','ctr_custo_fim','até',''," ");
+								echo	 	"
+												</div>
+										</div>
+										</li>
+
+										<li>
+										<div class='uk-width-1-1' style='text-align: right ! important;'>
+			
+												<br/>
+												<button class='uk-button uk-button-mini uk-button-danger' type='submit' id='' ><i class='uk-icon-check'></i> Confirmar</button>
+
+										</div>
+										</li>
+									</ul>
+								
+								</form>
+
+							
+						</div>";
+				echo "</div>";
+			echo "</div>";
+		
+		}
+
+	
+	}
+
+	function balancete_consulta_conta_(){
+			//var_dump($_POST);
+				if(isset($_POST['cod_orcamento']) and isset($_POST['cod_centro_custo']) and $_POST['cod_orcamento']!="" and $_POST['cod_centro_custo']!="" ){
+		
+					include "config.php";
+					
+					$select="
+								select 
+									min(tb_datas.data_) as data_min,
+									max(tb_datas.data_) as data_max
+								from(
+										SELECT 
+											min(cad_documento.data_base) as data_
+										FROM 
+											contabil.cad_documento_item,
+											contabil.cad_documento,
+											orcamento.cad_orcamento
+										where 
+											cad_orcamento.cod_projeto=cad_documento_item.cod_projeto
+											and cad_orcamento.cod_orcamento='".$_POST['cod_orcamento']."'
+											and cad_documento.cod_documento=cad_documento_item.cod_documento
+											and cad_documento_item.cod_ctr_custo='".$_POST['cod_centro_custo']."'
+											
+									union all
+										SELECT 
+											max(cad_documento.data_base) as data_ 
+										FROM 
+											contabil.cad_documento_item,
+											contabil.cad_documento,
+											orcamento.cad_orcamento
+										where 
+											cad_orcamento.cod_projeto=cad_documento_item.cod_projeto
+											and cad_orcamento.cod_orcamento='".$_POST['cod_orcamento']."'
+											and cad_documento.cod_documento=cad_documento_item.cod_documento
+											and cad_documento_item.cod_ctr_custo='".$_POST['cod_centro_custo']."'
+											
+									union all
+										SELECT 
+											min(cad_lancamento.data) as data_
+										FROM 
+											orcamento.cad_lancamento
+										where 
+											cad_lancamento.cod_orcamento='".$_POST['cod_orcamento']."'
+										and cad_lancamento.cod_centro_custo='".$_POST['cod_centro_custo']."'											
+
+									union all
+										SELECT 
+											max(cad_lancamento.data) as data_ 
+										FROM 
+											orcamento.cad_lancamento
+										where 
+											cad_lancamento.cod_orcamento='".$_POST['cod_orcamento']."'
+										and cad_lancamento.cod_centro_custo='".$_POST['cod_centro_custo']."'											
+
+								) as tb_datas ";
+							$resultado=mysql_query($select,$conexao) or die (mysql_error());
+							$row = mysql_fetch_array($resultado);
+
+						//	var_dump($row);
+							
+							///meses
+							$ts1 = new DateTime($row['data_min']);
+							$ts2 = new DateTime($row['data_max']);
+							
+							$diff =  $ts1->diff($ts2);	
+							$months = $diff->y * 12 + $diff->m + $diff->d / 30;
+							$months =  (int) round($months);
+							
+							
+							$ts1=new DateTime(date_format($ts1, 'Y-m')."-01");
+							
+
+							$meses="";
+							$meses_="";
+							$column_mes="";
+
+							
+							$datas_R="";
+							$datas_O="";
+							
+							$tb_grid2_datas="";
+							$tb_grid3_datas="";
+							
+							$column_="";
+							
+							for($n=0;$n<=$months;$n++){
+								$dt_i=date_format($ts1, 'Y-m-d');
+								
+								$ts3=$ts1;
+								$ts3=date_add($ts3, date_interval_create_from_date_string('1 months'));
+								$ts3=date_add($ts3, date_interval_create_from_date_string('-1 days'));
+
+								$dt_f=date_format($ts3, 'Y-m-d');
+								//$id_R="mes_".$n."_R";
+								//$id_O="mes_".$n."_O";
+								$dt_name=date_format($ts1, 'M_Y');
+								$id_R=$dt_name."_R";
+								$id_O=$dt_name."_O";
+								
+
+								$tb_grid2_datas.=",REPLACE(REPLACE(REPLACE(FORMAT(sum(tb_grid2.".$id_R."),2),'.','|'),',','.'),'|',',') as ".$id_R." ";
+								$tb_grid3_datas.=",REPLACE(REPLACE(REPLACE(FORMAT(sum(tb_grid3.".$id_O."),2),'.','|'),',','.'),'|',',') as ".$id_O." ";
+
+								$datas_R.=", IFNULL(sum(if(data_base between '".$dt_i."' and '".$dt_f."' ,if(cad_documento_item.codigo_lancamento='C',cad_documento_item.montante*-1,cad_documento_item.montante),0)),0) as ".$id_R." ";
+								$datas_O.=", IFNULL(sum(if(cad_lancamento.data between '".$dt_i."' and '".$dt_f."' ,valor,0)),0) as ".$id_O." ";
+
+								$column_.=",{headerText: '".$id_R."', key: '".$id_R."',width: '70px',  dataType: 'number'}";
+								$column_.=",{headerText: '".$id_O."', key: '".$id_O."',width: '70px',  dataType: 'number'}";
+
+								$ts1=date_add($ts3, date_interval_create_from_date_string('1 days'));
+							
+								
+							}
+
+			$select=" SELECT 
+							real_.* 
+							".$tb_grid3_datas."
+							
+						FROM (
+								select
+									tb_grid.*
+									".$tb_grid2_datas."
+								from
+									(
+										SELECT 
+											cad_conta.cod_conta as ID,
+											if(cad_conta.cod_conta_mae=0,-1,cad_conta.cod_conta_mae) as PID,
+											concat('#',cad_conta.numero_conta,' - ',cad_conta.descricao) as conta,
+											concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(0,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_ini,
+											concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(9,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_fim
+
+										FROM 
+											contabil.cad_conta
+
+										WHERE
+											cad_conta.cod_empresa='1'
+
+										ORDER BY
+											cad_conta.cod_conta
+
+									) as tb_grid
+									
+									left join
+								
+									 (
+										SELECT 
+											cad_conta.cod_conta as ID,
+											if(cad_conta.cod_conta_mae=0,-1,cad_conta.cod_conta_mae) as PID,
+											concat('#',cad_conta.numero_conta,' - ',cad_conta.descricao) as conta,
+											concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(0,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_ini,
+											concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(9,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_fim,
+
+
+
+											tb_real.*
+											
+										FROM 
+											contabil.cad_conta
+
+											LEFT JOIN (
+														SELECT 
+															cad_documento_item.cod_conta 
+															".$datas_R."
+															 
+														FROM 
+															contabil.cad_documento_item,
+															contabil.cad_documento,
+															orcamento.cad_orcamento
+														where 
+															cad_orcamento.cod_projeto=cad_documento_item.cod_projeto
+															and cad_orcamento.cod_orcamento='1'
+															and cad_documento.cod_documento=cad_documento_item.cod_documento
+															and cad_documento_item.cod_ctr_custo='4'
+
+														group by
+															cad_documento_item.cod_conta
+											) as tb_real on tb_real.cod_conta=cad_conta.cod_conta
+									 ) as tb_grid2 	on  tb_grid2.conta_ini>=tb_grid.conta_ini and tb_grid2.conta_fim<=tb_grid.conta_fim
+								group by tb_grid.ID	
+								
+								) as real_
+
+							 
+							 LEFT JOIN 
+									 (
+									 
+										SELECT 
+											cad_conta.cod_conta as ID,
+											if(cad_conta.cod_conta_mae=0,-1,cad_conta.cod_conta_mae) as PID,
+											concat('#',cad_conta.numero_conta,' - ',cad_conta.descricao) as conta,
+											concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(0,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_ini,
+											concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(9,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_fim,
+											tb_orcado.*
+											
+										FROM 
+											contabil.cad_conta
+
+											LEFT JOIN (
+													SELECT 
+														cad_lancamento.cod_conta as cod_conta_O_
+														".$datas_O."
+														 
+													FROM 
+														orcamento.cad_lancamento
+														
+													where 
+															cad_lancamento.cod_orcamento='".$_POST['cod_orcamento']."'
+														and cad_lancamento.cod_centro_custo='".$_POST['cod_centro_custo']."'											
+
+													group by
+														cod_conta_O_	
+											) as tb_orcado on tb_orcado.cod_conta_O_=cad_conta.cod_conta
+							 
+									 
+									 ) as tb_grid3	on  tb_grid3.conta_ini>=real_.conta_ini  and tb_grid3.conta_fim<=real_.conta_fim								 
+									 
+									 GROUP BY real_.ID	";			
+
+						$table=new table;
+						$table->select=$select;
+
+						$pesquisa=new pesquisa;
+
+						$column ="{headerText: 'conta', key: 'conta', width: '350px', dataType: 'string'}";
+						$column.=$column_;
+
+						$table->column=$column;
+						$table->tabela="";
+						$caption="";		
+						
+						echo $table->TreeGrid_();
+					
+				}
+							
+		
+	}
+	function balancete_consulta_conta(){
+			//var_dump($_POST);
+				if(isset($_POST['cod_orcamento'])  and $_POST['cod_orcamento']!=""  ){
+		
+					include "config.php";
+					
+					///filtro ctr custo 
+					if(isset($_POST['cod_centro_custo'])==false or $_POST['cod_centro_custo']=="" ){
+						$where_1="";
+						$where_2="";
+					}else{
+						$where_1="and cad_documento_item.cod_ctr_custo='".$_POST['cod_centro_custo']."'";
+						$where_2="and cad_lancamento.cod_centro_custo='".$_POST['cod_centro_custo']."'";
+					}					
+					
+					
+					$select="
+								select 
+									min(tb_datas.data_) as data_min,
+									max(tb_datas.data_) as data_max
+								from(
+										SELECT 
+											min(cad_documento.data_base) as data_
+										FROM 
+											contabil.cad_documento_item,
+											contabil.cad_documento,
+											orcamento.cad_orcamento
+										where 
+											cad_orcamento.cod_projeto=cad_documento_item.cod_projeto
+											and cad_orcamento.cod_orcamento='".$_POST['cod_orcamento']."'
+											and cad_documento.cod_documento=cad_documento_item.cod_documento
+											".$where_1."
+											
+									union all
+										SELECT 
+											max(cad_documento.data_base) as data_ 
+										FROM 
+											contabil.cad_documento_item,
+											contabil.cad_documento,
+											orcamento.cad_orcamento
+										where 
+											cad_orcamento.cod_projeto=cad_documento_item.cod_projeto
+											and cad_orcamento.cod_orcamento='".$_POST['cod_orcamento']."'
+											and cad_documento.cod_documento=cad_documento_item.cod_documento
+											".$where_1."
+											
+									union all
+										SELECT 
+											min(cad_lancamento.data) as data_
+										FROM 
+											orcamento.cad_lancamento
+										where 
+											cad_lancamento.cod_orcamento='".$_POST['cod_orcamento']."'
+											".$where_2."											
+
+									union all
+										SELECT 
+											max(cad_lancamento.data) as data_ 
+										FROM 
+											orcamento.cad_lancamento
+										where 
+											cad_lancamento.cod_orcamento='".$_POST['cod_orcamento']."'
+											".$where_2."											
+
+								) as tb_datas ";
+							$resultado=mysql_query($select,$conexao) or die (mysql_error());
+							$row = mysql_fetch_array($resultado);
+
+						//	var_dump($row);
+							
+							///meses
+							$ts1 = new DateTime($row['data_min']);
+							$ts2 = new DateTime($row['data_max']);
+							
+							$diff =  $ts1->diff($ts2);	
+							$months = $diff->y * 12 + $diff->m + $diff->d / 30;
+							$months =  (int) round($months);
+							
+							
+							$ts1=new DateTime(date_format($ts1, 'Y-m')."-01");
+							
+
+							$meses="";
+							$meses_="";
+							$column_mes="";
+
+							
+							$datas_R="";
+							$datas_O="";
+							
+							$tb_grid2_datas="";
+							$tb_grid3_datas="";
+							
+							$column_="";
+							
+							for($n=0;$n<=$months;$n++){
+								$dt_i=date_format($ts1, 'Y-m-d');
+								
+								$ts3=$ts1;
+								$ts3=date_add($ts3, date_interval_create_from_date_string('1 months'));
+								$ts3=date_add($ts3, date_interval_create_from_date_string('-1 days'));
+
+								$dt_f=date_format($ts3, 'Y-m-d');
+								//$id_R="mes_".$n."_R";
+								//$id_O="mes_".$n."_O";
+								$dt_name=date_format($ts1, 'M_Y');
+								$id_R=$dt_name."_R";
+								$id_O=$dt_name."_O";
+								
+
+								$tb_grid2_datas.=",REPLACE(REPLACE(REPLACE(FORMAT(sum(tb_grid2.".$id_R."),2),'.','|'),',','.'),'|',',') as ".$id_R." ";
+								$tb_grid3_datas.=",REPLACE(REPLACE(REPLACE(FORMAT(sum(tb_grid3.".$id_O."),2),'.','|'),',','.'),'|',',') as ".$id_O." ";
+
+								$datas_R.=", IFNULL(sum(if(data_base between '".$dt_i."' and '".$dt_f."' ,if(cad_documento_item.codigo_lancamento='C',cad_documento_item.montante*-1,cad_documento_item.montante),0)),0) as ".$id_R." ";
+								$datas_O.=", IFNULL(sum(if(cad_lancamento.data between '".$dt_i."' and '".$dt_f."' ,valor,0)),0) as ".$id_O." ";
+
+								$column_.=",{headerText: '".$id_R."', key: '".$id_R."',width: '70px',  dataType: 'number'}";
+								$column_.=",{headerText: '".$id_O."', key: '".$id_O."',width: '70px',  dataType: 'number'}";
+
+								$ts1=date_add($ts3, date_interval_create_from_date_string('1 days'));
+							
+								
+							}
+							
+
+							
+
+			$select=" SELECT 
+							real_.* 
+							".$tb_grid3_datas."
+							
+						FROM (
+								select
+									tb_grid.*
+									".$tb_grid2_datas."
+								from
+									(
+										SELECT 
+											cad_conta.cod_conta as ID,
+											if(cad_conta.cod_conta_mae=0,-1,cad_conta.cod_conta_mae) as PID,
+											concat('#',cad_conta.numero_conta,' - ',cad_conta.descricao) as conta,
+											concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(0,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_ini,
+											concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(9,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_fim
+
+										FROM 
+											contabil.cad_conta
+
+										WHERE
+											cad_conta.cod_empresa='".$_SESSION['cod_empresa']."'
+
+										ORDER BY
+											cad_conta.cod_conta
+
+									) as tb_grid
+									
+									left join
+								
+									 (
+										SELECT 
+											cad_conta.cod_conta as ID,
+											if(cad_conta.cod_conta_mae=0,-1,cad_conta.cod_conta_mae) as PID,
+											concat('#',cad_conta.numero_conta,' - ',cad_conta.descricao) as conta,
+											concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(0,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_ini,
+											concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(9,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_fim,
+
+
+
+											tb_real.*
+											
+										FROM 
+											contabil.cad_conta
+
+											LEFT JOIN (
+														SELECT 
+															cad_documento_item.cod_conta 
+															".$datas_R."
+															 
+														FROM 
+															contabil.cad_documento_item,
+															contabil.cad_documento,
+															orcamento.cad_orcamento
+														where 
+															cad_orcamento.cod_projeto=cad_documento_item.cod_projeto
+															and cad_orcamento.cod_orcamento='".$_POST['cod_orcamento']."'
+															and cad_documento.cod_documento=cad_documento_item.cod_documento
+															".$where_1."
+
+														group by
+															cad_documento_item.cod_conta
+											) as tb_real on tb_real.cod_conta=cad_conta.cod_conta
+									 ) as tb_grid2 	on  tb_grid2.conta_ini>=tb_grid.conta_ini and tb_grid2.conta_fim<=tb_grid.conta_fim
+								group by tb_grid.ID	
+								
+								) as real_
+
+							 
+							 LEFT JOIN 
+									 (
+									 
+										SELECT 
+											cad_conta.cod_conta as ID,
+											if(cad_conta.cod_conta_mae=0,-1,cad_conta.cod_conta_mae) as PID,
+											concat('#',cad_conta.numero_conta,' - ',cad_conta.descricao) as conta,
+											concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(0,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_ini,
+											concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(9,20-length(REPLACE(cad_conta.numero_conta,'.','')))) as conta_fim,
+											tb_orcado.*
+											
+										FROM 
+											contabil.cad_conta
+
+											LEFT JOIN (
+													SELECT 
+														cad_lancamento.cod_conta as cod_conta_O_
+														".$datas_O."
+														 
+													FROM 
+														orcamento.cad_lancamento
+														
+													where 
+															cad_lancamento.cod_orcamento='".$_POST['cod_orcamento']."'
+														".$where_2."											
+
+													group by
+														cod_conta_O_	
+											) as tb_orcado on tb_orcado.cod_conta_O_=cad_conta.cod_conta
+							 
+									 
+									 ) as tb_grid3	on  tb_grid3.conta_ini>=real_.conta_ini  and tb_grid3.conta_fim<=real_.conta_fim								 
+									 
+									 GROUP BY real_.ID	";			
+
+						$table=new table;
+						$table->select=$select;
+
+						$pesquisa=new pesquisa;
+
+						$column ="{headerText: 'conta', key: 'conta', width: '350px', dataType: 'string'}";
+						$column.=$column_;
+
+						$table->column=$column;
+						$table->tabela="";
+						$caption="";		
+						
+						echo $table->TreeGrid_();
+					
+				}
+							
+		
+	}
+
+
+	function orcamento(){
+
+
+
+
+
+						
+		 $this->balancete_consulta_conta();
+		
+	}
+}
+
+class conciliacao{
+	function conciliar(){
+
+		
+	}
+	function compensar(){
+		echo "<div id='msg'></div>";
+		if($_POST['conta_inicio']!=""){
+			$pesquisa=new pesquisa;
+			$pesquisa->razao_conciliacao();
+		}
+
+		
+	}
+	
+	
+}
+
+
+
+
+class table{
+		public $thead;
+		public $tbody;
+		public $tfoot;
+		public $select;
+		public $group_by;
+		public $caption;
+		public $json;
+
+		
+		
+		function tabela(){
+			//variáveis da função
+				$saldo=0;
+				$table="";
+			
+			//executar select mysql
+				include "config.php";
+				$resultado=mysql_query($this->select,$conexao) or die (mysql_error());
+				
+			
+			//montar caption
+				$caption="
+					<caption style='font-size: 12px ! important;  color: rgb(0, 0, 0) ! important;'>
+						<div class='uk-grid'>
+							<div class='uk-width-1-1'>".$this->caption['razao_social']."</div>
+							<div class='uk-width-1-1'>".$this->caption['cnpj']."</div>
+							<div class='uk-width-1-1'>
+								<div class='uk-grid'>
+									<div class='uk-width-3-5'>".$this->caption['titulo']."</div>
+									<div class='uk-width-1-5'>Livro:xxx</div>
+									<div class='uk-width-1-5'>Folha:xxx</div>
+								</div>
+							</div>
+						</div>
+
+					</caption>					
+				";
+			
+			//montar thead
+				$table.="<thead><tr>";
+				for($n=1;$n<=count($this->thead);$n++){
+					$l=$this->thead[$n];
+					$table.="<th style='".$l['style']."'>".$l['label']."</th>";
+				}
+				$table.="</tr></thead>";	
+
+				
+			//montar tbody
+				$conta="";
+				$saldo=0;
+				$table.="<tbody>";
+				while($row = mysql_fetch_array($resultado))
+				{
+					//linhas de agrupamento
+						if($row[$this->group_by]!=$conta){
+							$conta=$row[$this->group_by];					
+							if(isset($row['saldo_inicial_'.$this->group_by])){
+								if($row['saldo_inicial_'.$this->group_by]>=0){$DC='D';}else{$DC='C';}
+								$table.="<tr ><td colspan='".(count($this->tbody)-2)."'><b>".$conta."</b></td><td style='text-align: right !important;'><b>".number_format(abs((float)$row['saldo_inicial_'.$this->group_by]), 2, ',', '.')."</b></td><td>".$DC."</td></tr>";
+							}else{
+								$table.="<tr ><td colspan='".count($this->tbody)."'><b>".$conta."</b></td></tr>";
+							}
+							if(isset($row['saldo_inicial_'.$this->group_by])){
+								$saldo=$row['saldo_inicial_'.$this->group_by]+$row['debito']-$row['credito'];
+							}
+							
+						}else{
+							$saldo=$saldo+$row['debito']-$row['credito'];
+						}
+					
+					//linhas normais
+						$table.="<tr>";
+						for($n=1;$n<=count($this->tbody);$n++){
+							$l=$this->tbody[$n];
+							if($l['formato']=='decimal'){$row[$l['campo']]=number_format((float)$row[$l['campo']], 2, ',', '.');}
+							if($l['formato']=='data'){$row[$l['campo']]=data($row[$l['campo']]);}
+							if($l['campo']=='saldo'){$table.="<td style='".$l['style']."'>".number_format(abs((float)$saldo), 2, ',', '.')."</td>";}
+							else{$table.="<td style='".$l['style']."'>".$row[$l['campo']]."</td>";}
+							
+						}
+						$table.="</tr>";
+
+					
+				}
+				$table.="<tbody>";
+
+				
+			//montar tfoot
+				$table.="<tfoot><tr>";
+				for($n=1;$n<=count($this->thead);$n++){
+					$table.="<td>..</td>";
+				}
+				$table.="</tr></tfoot>";				
+			
+			
+			//finalizar tabela
+				$table="<div id='relatorio' style='width: 21.0cm;height:29.7cm; padding: 1.5cm 0.5cm;'>
+							<table class='' style='font-size: 12px ! important;  color: rgb(0, 0, 0) ! important;'>
+								".$caption.$table."								
+							</table>
+						</div>";
+				
+				return $table;
+		}
+		function criar(){
+			return $this->tabela();
+			//return $this->select;
+		}
+		function TreeGrid(){
+			$pesquisa=new pesquisa;
+			$this->json=$pesquisa->json($this->select);
+			$igniteui=new igniteui;
+			$igniteui->TreeGrid($this->json,$this->column,$this->tabela,'','');
+		}
+		function TreeGrid_(){
+			$pesquisa=new pesquisa;
+			$this->json=$pesquisa->json($this->select);
+			$igniteui=new igniteui;
+			$igniteui->TreeGrid_($this->json,$this->column,$this->tabela,'','');
+		}
+	
+	
+}
+
+class imprimir{
+	function ficha_ativa($id){
+		include "config.php";
+
+	
+		$select="
+				SELECT 
+					cad_itens.*,
+					cad_filial.descricao as filial,
+					cad_localizacao.descricao as localizacao,
+					cad_fornecedor. nome_razao_social,
+					cad_grupo_patrimonio.descricao as grupo,
+					cad_grupo_patrimonio.vida_util as vida_util_grupo,
+					cad_grupo_patrimonio.taxa_depreciacao_anual as taxa_depreciacao_anual_grupo,
+					cad_tipo_aquisicao.descricao as tipo_aquisicao,
+					cad_tipo_documento.descricao as tipo_documento,
+					cad_tipo_patrimonio.descricao as tipo_patrimonio,
+					cad_status_patrimonio.descricao as status_patrimonio
+
+					
+				 FROM 
+					".$schema.".cad_itens
+
+				left join (".$schema.".cad_filial) on cad_itens.cod_filial=cad_filial.cod_filial
+				left join (".$schema.".cad_localizacao) on cad_itens.cod_localizacao=cad_localizacao.cod_localizacao
+				left join (".$schema.".cad_fornecedor) on cad_itens.cod_fornecedor=cad_fornecedor.cod_fornecedor
+				left join (".$schema.".cad_grupo_patrimonio) on cad_itens.cod_grupo_patrimonio=cad_grupo_patrimonio.cod_grupo_patrimonio
+				left join (".$schema.".cad_tipo_aquisicao) on cad_itens.cod_tipo_aquisicao=cad_tipo_aquisicao.cod_tipo_aquisicao
+				left join (".$schema.".cad_tipo_documento) on cad_itens.cod_tipo_documento=cad_tipo_aquisicao.cod_tipo_aquisicao
+				left join (".$schema.".cad_tipo_patrimonio) on cad_itens.cod_tipo_patrimonio=cad_tipo_patrimonio.cod_tipo_patrimonio
+				left join (".$schema.".cad_status_patrimonio) on cad_itens.cod_status_patrimonio=cad_status_patrimonio.cod_status_patrimonio
+
+				where cad_itens.cod_item='".$id."' ;";
+				
+			$resultado=mysql_query($select,$conexao) or die (mysql_error());
+			$row = mysql_fetch_array($resultado);
+			for($i=0;$i<mysql_num_fields($resultado);$i++){
+				$campo=mysql_field_name($resultado,$i);
+				$$campo=$row[$campo];
+			}		
+			$data_aquisicao= DateTime::createFromFormat('Y-m-d', $data_aquisicao)->format('d/m/Y');
+			$data_inclusao= DateTime::createFromFormat('Y-m-d H:i:s', $data_inclusao)->format('d/m/Y');
+			$data_inicio_depreciacao= DateTime::createFromFormat('Y-m-d', $data_inicio_depreciacao)->format('d/m/Y');
+			$data_baixa= DateTime::createFromFormat('Y-m-d', $data_baixa)->format('d/m/Y');
+
+
+///////////////////////////////////////////////////////////////////////////////////	
+	echo "<style>
+		.uk-grid{
+			margin-top: 2px !important;
+		}
+		label{
+			 font-weight: bold;
+		}
+		p{
+			margin-top: 2px !important;
+		}
+		.uk-grid:not(.uk-grid-preserve) > * {
+			padding: 3px !important;
+		}	
+		[class*='uk-width'] {
+			padding: 5px !important;
+			margin: 0px !important;
+		}
+		.uk-panel {
+
+			height: 40px !important;
+		}
+		.uk-panel-box {
+			padding: 10px !important;
+		}
+	
+	</style>";
+
+	echo	"<div class='' style='width: 850px;margin-left:80px;'>	
+				<div class='uk-grid'>
+					<div class='uk-width-1-4'>
+						<img src='imagens/logo.png' >					
+					</div>
+					<div class='uk-width-3-4' style='text-align: right;'>
+					<p>".$inicio."</p>
+					<p>".$cnpj." - ".$razao_social."</p>
+					</div>
+				</div>						
+
+
+				<hr class='uk-article-divider'>	
+				<h3 class='tm-article-subtitle'>Ficha de ativa</h3>			
+
+						<div class='uk-grid'>
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>codigo do item</label>
+									<p>".$cod_item."</p>
+								</div>
+							</div>
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Status</label>
+									<p>".$cod_status_patrimonio." - ".$status_patrimonio."</p>
+								
+								</div>						
+							</div>								
+						</div>
+
+
+						<div class='uk-grid'>	
+					
+							<div class='uk-width-1-1'>
+								<div class=' uk-panel uk-panel-box '>							
+									<label>Descrição do Item</label>
+									<p>".$descricao."</p>
+								</div>
+							</div>
+						</div>
+
+
+						<div class='uk-grid'>	
+							<div class='uk-width-1-3'>
+								<div class=' uk-panel uk-panel-box '>							
+									<label>Número de plaqueta</label>
+									<p>".$codigo_patrimonio."</p>
+								</div>
+							</div>
+							<div class='uk-width-2-3'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Código de barras</label>
+									<p>".$codigo_barras."</p>
+								</div>
+							</div>
+						</div>
+
+
+						<div class='uk-grid'>							
+							<div class='uk-width-3-5'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Grupo de patrimônio</label>
+									<p>".$cod_grupo_patrimonio." - ".$grupo."</p>
+								</div>		
+							</div>	
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Vida útil do grupo</label>
+									<p>".$vida_util_grupo."</p>
+								</div>		
+							</div>	
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Depr. a.a. do grupo</label>
+									<p>".$taxa_depreciacao_anual_grupo."</p>
+								</div>		
+							</div>	
+						</div>	
+						<div class='uk-grid'>
+							<div class='uk-width-1-1'>
+								<div class=' uk-panel uk-panel-box '>							
+									<label>Item pai</label>
+									<p>".$cod_item_pai."</p>
+								</div>
+							</div>
+						</div>	
+						<div class='uk-grid'>
+							<div class='uk-width-1-3'>
+								<div class=' uk-panel uk-panel-box '>							
+									<label>Filial</label>
+									<p>".$cod_filial." - ".$filial."</p>			
+								</div>						
+							</div>						
+							<div class='uk-width-2-3'>
+								<div class=' uk-panel uk-panel-box '>							
+									<label>Localização</label>
+									<p>".$cod_localizacao." - ".$localizacao."</p>			
+								</div>						
+							</div>						
+						</div>
+
+				<hr class='uk-article-divider'>				
+
+						<div class='uk-grid'>
+							<div class='uk-width-1-1'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Fornecedor</label>
+									<p>".$cod_fornecedor." - ".$nome_razao_social."</p>
+								</div>	
+							</div>	
+						</div>	
+						<div class='uk-grid'>
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Tipo de patrimônio</label>
+									<p>".$cod_tipo_patrimonio." - ".$tipo_patrimonio."</p>
+								</div>						
+							</div>						
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Aquisição</label>
+									<p>".$cod_tipo_aquisicao." - ".$tipo_aquisicao."</p>
+								</div>						
+							</div>		
+						</div>	
+						<div class='uk-grid'>							
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Tipo de documento</label>
+									<p>".$cod_tipo_documento." - ".$tipo_documento."</p>
+								</div>						
+							</div>						
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Número documento</label>
+									<p>".$numero_documento."</p>
+								</div>
+							</div>
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Número de Série</label>
+									<p>".$serie."</p>
+								</div>						
+							</div>
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Quantidade</label>
+									<p>".$quantidade."</p>
+								</div>
+							</div>
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Unidade</label>
+									<p>".$unidade."</p>
+								</div>
+							</div>								
+						</div>	
+
+
+				<hr class='uk-article-divider'>
+
+						<div class='uk-grid'>
+				
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Valor de aquisição</label>
+									<p>".$valor_aquisicao."</p>
+								</div>
+							</div>
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Valor atual</label>
+									<p>".$valor_atual."</p>
+								</div>
+							</div>
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Valor residual</label>
+									<p>".$valor_residual."</p>
+								</div>
+							</div>
+						
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Vida útil</label>
+									<p>".$vida_util."</p>
+								</div>
+							</div>					
+							<div class='uk-width-1-2'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Depreciação a.a.</label>
+									<p>".$taxa_depreciacao_anual."</p>
+								</div>
+							</div>
+						</div>	
+						<div class='uk-grid'>								
+							<div class='uk-width-1-4'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Aquisição</label>
+									<p>".$data_aquisicao."</p>
+								</div>
+							</div>	
+							<div class='uk-width-1-4'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Inclusão</label>
+									<p>".$data_inclusao."</p>
+								</div>
+							</div>
+							<div class='uk-width-1-4'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Inicio depreciação</label>
+									<p>".$data_inicio_depreciacao."</p>
+								</div>
+							</div>						
+							<div class='uk-width-1-4'>
+								<div class=' uk-panel uk-panel-box '>
+									<label>Baixa</label>
+									<p>".$data_baixa."</p>
+								</div>
+							</div>
+						</div>						
+					</div>
+				</div>";
+	
+	
+///////////////////////////////////////////////////////////////////////////////////	
+	
+	
+	}
+
+}
+
+class layout{
+	function layout_1(){
+}
+
+
+}
+
+
+	function data($data){
+		if($data!=null){
+			if(strpos($data,"-")!==false){
+				$dat = explode ("-",$data,3);
+				return $dat[2]."/".$dat[1]."/".$dat[0];
+			}else{
+				$dat = explode ("/",$data,3);
+				return $dat[2]."-".$dat[1]."-".$dat[0];
+			}
+		}
+
+
+	}
+	function decimal($valor){
+		if(strpos($valor,",")!== false){
+			$valor=str_replace(".","",$valor);
+			return str_replace(',','.',$valor);
+		}else{
+			return str_replace('.',',',$valor);
+		}
+	}
+	function decimal_($valor){
+		return number_format((float)$valor, 2, ',', '.');
+	}
 
 
 

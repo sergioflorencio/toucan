@@ -811,7 +811,8 @@ function pesquisar_centro_custo_mae(a){
 				table+="<th style='min-width: 150px;padding: 0px;'><div style='padding: 0px 3px;'>Conta Contábil</div></th>";
 				table+="<th style='min-width: 150px;padding: 0px;'><div style='padding: 0px 3px;'>Centro de Custo</div></th>";
 				table+="<th style='min-width: 30px;padding: 0px;'></th>";
-				table+="</tr></thead>";		
+				table+="</tr></thead>";	
+		 table+="<tbody style='max-height: inherit ! important;'>";				
 			for(var n=0;n<Object.keys(tb).length;n++){
 				table+="<tr style='height: 34px;'>";
 				//keys=Object.keys(tb[n]);
@@ -856,6 +857,10 @@ function pesquisar_centro_custo_mae(a){
 				
 				
 			}
+		 
+		 
+		 
+		 table+="</tbody>";
 		 table+="</table>";
 		//console.log(table);
 		document.getElementById('div_preview').innerHTML = table;

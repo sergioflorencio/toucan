@@ -726,7 +726,7 @@ class igniteui{
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		///border: 1px solid #ccc; bottom: 10px ! important; position: absolute; top: 60px; left: 10px; right: 10px; overflow: auto;
 " 
-		<div id='grid' style='margin-top: -20px; resize: none;height: 100%;'></div>
+		<div id='grid' style='margin-top: -20px; resize: none;'></div>
 		<style>
 			tr{
 				cursor:pointer;
@@ -2094,7 +2094,7 @@ class pesquisa{
 										cad_documento_item.cod_ctr_custo=cad_centro_custo.cod_centro_custo and
 										cad_documento.cod_empresa='".$_SESSION['cod_empresa']."' ";					
 										
-							if ($_POST['data_inicio']!="00/00/0000" || $_POST['data_fim']!="00/00/0000"){ $select=$select. "and (`".$schema."`.cad_documento.`data_base` between '".data($_POST['data_base_de'])."' and '".data($_POST['data_base_ate'])."')";}
+							if ($_POST['data_inicio']!="00/00/0000" || $_POST['data_fim']!="00/00/0000"){ $select=$select. "and (`".$schema."`.cad_documento.`data_base` between '".data($_POST['data_inicio'])."' and '".data($_POST['data_fim'])."')";}
 	
 							if ($_POST['conta_inicio']!=""){ $select=$select. " and (numero_conta='".$_POST['conta_inicio']."')";}
 						//	if ($_POST['conta_fim']!=""){ $select=$select. " and (concat(REPLACE(cad_conta.numero_conta,'.',''),repeat(9,20-length(REPLACE(cad_conta.numero_conta,'.',''))))<=concat(REPLACE('".$_POST['conta_fim']."','.',''),repeat(9,20-length(REPLACE('".$_POST['conta_fim']."','.','')))))";}
@@ -3410,13 +3410,9 @@ class relatorios{
 }
 
 class conciliacao{
-	function conciliar(){
-
-		
-	}
 	function compensar(){
 		echo "<div id='msg'></div>";
-		if($_POST['conta_inicio']!=""){
+		if(isset($_POST['conta_inicio']) and $_POST['conta_inicio']!=""){
 			$pesquisa=new pesquisa;
 			$pesquisa->razao_conciliacao();
 		}

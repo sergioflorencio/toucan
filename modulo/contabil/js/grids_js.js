@@ -39,7 +39,7 @@
 				}
 				 thead+="<th style='width: 100% !important;'></th></tr></thead>";			
 				 //overflow-y: auto ! important; overflow-x: hidden; position: absolute; top: 69px; bottom: 15px;
-				 tbody="<tbody id='tbody_"+a.idGrid+"' style=' '><tbody>"
+				 tbody="<tbody id='tbody_"+a.idGrid+"' style='overflow: hidden; max-height: inherit ! important; '><tbody>"
 				document.getElementById(a.idGrid).innerHTML="<div style='width:"+a.width+"; ' ><table id='"+a.tableId+"' class='uk-table uk-table-condensed uk-table-hover' style='font-size: 12px; border-top: 0px none ! important;'>"+thead+tbody+"</table></div>";
 			
 		
@@ -158,7 +158,7 @@
 			});
 		}
 
-		tbody="<tbody id='tbody_"+a.idGrid+"' style=''>"+getTbody(-1,0,0)+"<tbody>";
+		tbody="<tbody id='tbody_"+a.idGrid+"' style='overflow: hidden; max-height: inherit ! important;'>"+getTbody(-1,0,0)+"<tbody>";
 		var table="<div style='100%' ><table class='uk-table uk-table-condensed uk-table-hover'>"+thead+tbody+"</table></div>";
 		document.getElementById(a.idGrid).innerHTML=table;
 		
